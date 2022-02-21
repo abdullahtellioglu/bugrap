@@ -45,6 +45,11 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
+        <repository>
+            <id>bugrap</id>
+            <url>https://repo.vaadin.com/nexus/content/repositories/vaadin-bugrap</url>
+        </repository>
+
     </repositories>
 
     <pluginRepositories>
@@ -123,6 +128,13 @@
             <version>4.4.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.vaadin</groupId>
+            <artifactId>bugrap-domain-hibernate</artifactId>
+            <version>1.1</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>

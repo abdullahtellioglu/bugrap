@@ -1,0 +1,10 @@
+.report-status {
+
+}
+.report-status label {
+    margin: auto;
+}
+.report-status .status-label {
+    margin-left: 16px;
+}
+

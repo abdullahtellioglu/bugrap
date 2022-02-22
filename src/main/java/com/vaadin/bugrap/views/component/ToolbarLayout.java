@@ -50,7 +50,7 @@ public class ToolbarLayout extends HorizontalLayout {
         this.add(horizontalLayout);
         this.add(searchTextField);
         this.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        setMargin(true);
+
     }
 
 

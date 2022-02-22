@@ -1,0 +1,7 @@
+.version-combo-container label {
+    margin: auto;
+}
+.version-combo-container vaadin-combo-box {
+    width: 150px ;
+}
+

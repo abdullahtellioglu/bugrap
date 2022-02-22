@@ -1,0 +1,32 @@
+.distribution-bar .closed {
+    background-color: #4B5BD6;
+    height: 20px;
+}
+.distribution-bar .assigned{
+    background-color: #0A8BAE;
+    height: 20px;
+}
+.distribution-bar .un-assigned {
+    background-color: #DF9135;
+    height: 20px;
+}
+.distribution-bar div {
+    justify-content: start;
+    display: flex;
+}
+.distribution-bar div:first-child {
+    border-bottom-left-radius: 2px;
+    border-top-left-radius: 2px;
+}
+.distribution-bar div:last-child {
+    border-bottom-right-radius: 2px;
+    border-top-right-radius: 2px;
+}
+.distribution-bar label {
+    color: white;
+    padding-left: 4px;
+    font-size: small;
+    font-weight: bold;
+
+}
+ /* TODO how to read colors from theme ? */

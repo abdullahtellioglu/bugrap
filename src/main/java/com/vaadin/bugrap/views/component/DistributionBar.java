@@ -7,30 +7,55 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 //@Tag("distribution-bar")
 public class DistributionBar extends HorizontalLayout {
+    private final Div closedChunkDiv;
+    private final Div assignedChunkDiv;
+    private final Div unAssignedChunkDiv;
 
-    public DistributionBar(int closed, int assigned, int unAssigned){
+    public DistributionBar(){
         setSpacing(false);
         setClassName("distribution-bar");
-        createChunk(closed, "closed");
-        createChunk(assigned, "assigned");
-        createChunk(unAssigned, "un-assigned");
+        closedChunkDiv = createChunk( "closed");
+        assignedChunkDiv = createChunk( "assigned");
+        unAssignedChunkDiv = createChunk( "un-assigned");
         setDefaultVerticalComponentAlignment(Alignment.START);
-
     }
-    private void createChunk(int value, String className){
-        if(value == 0){
-            return;
-        }
+    public DistributionBar(long closed, long assigned, long unAssigned){
+        this();
+        updateChunk(closed, closedChunkDiv);
+        updateChunk(assigned, assignedChunkDiv);
+        updateChunk(unAssigned, unAssignedChunkDiv);
+    }
+
+    private Div createChunk( String className){
         Div chunk = new Div();
-        //TODO fix max width
-        chunk.setMinWidth(value * 30, Unit.PIXELS);
         chunk.setClassName(className);
 
-        Label label = new Label(String.valueOf(value));
+        Label label = new Label();
         chunk.add(label);
         add(chunk);
 
+        updateChunk(0, chunk);
+        return chunk;
+    }
+    public void setClosedValue(long value){
+        updateChunk(value, closedChunkDiv);
+    }
+    public void setAssignedValue(long value){
+        updateChunk(value, assignedChunkDiv);
+    }
+    public void setUnAssignedValue(long value){
+        updateChunk(value, unAssignedChunkDiv);
+    }
+    private void updateChunk(long value, Div chunk){
+
+        chunk.setMinWidth(value * 30, Unit.PIXELS);
+        chunk.removeClassNames("has-value", "no-value");
+        chunk.addClassName(value > 0 ? "has-value" : "no-value");
+        chunk.getChildren().filter( child -> child instanceof Label).findFirst().ifPresent(label -> ((Label) label).setText(String.valueOf(value)));
     }
 }

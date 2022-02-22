@@ -1,11 +1,18 @@
 package com.vaadin.bugrap.views.component;
 
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 
 public class ReportStatusLayout extends HorizontalLayout {
+    private Button onlyMeButton;
+    private Button everyoneButton;
+
+
+    private Button selectedAssigneeButton;
 
     public ReportStatusLayout() {
         setClassName("report-status");
@@ -19,10 +26,20 @@ public class ReportStatusLayout extends HorizontalLayout {
         assigneeButtonContainer.setMargin(false);
         assigneeButtonContainer.setSpacing(false);
 
-        Button onlyMeButton = new Button("Only me");
+        onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        Button everyoneButton = new Button("Everyone");
+        onlyMeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+            onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+            everyoneButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        });
 
+        everyoneButton = new Button("Everyone");
+        everyoneButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+                onlyMeButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
+                everyoneButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        });
+
+        //TODO how to get user ?
 
         assigneeButtonContainer.add(onlyMeButton, everyoneButton);
 

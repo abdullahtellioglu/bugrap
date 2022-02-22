@@ -33,6 +33,7 @@ public class Application implements AppShellConfigurator, ServletContextListener
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContextListener.super.contextInitialized(sce);
+
         DBTools.create();
     }
 }

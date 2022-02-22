@@ -14,13 +14,16 @@
     justify-content: start;
     display: flex;
 }
-.distribution-bar div:first-child {
+.distribution-bar .has-value:first-child {
     border-bottom-left-radius: 2px;
     border-top-left-radius: 2px;
 }
-.distribution-bar div:last-child {
+.distribution-bar .has-value:last-of-type {
     border-bottom-right-radius: 2px;
     border-top-right-radius: 2px;
+}
+.distribution-bar .no-value {
+    display: none;
 }
 .distribution-bar label {
     color: white;

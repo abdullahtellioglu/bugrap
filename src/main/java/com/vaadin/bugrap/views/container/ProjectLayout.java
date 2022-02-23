@@ -17,8 +17,10 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 public class ProjectLayout extends VerticalLayout {
     //services
@@ -49,6 +51,7 @@ public class ProjectLayout extends VerticalLayout {
         this.currentUser = currentUser;
         query.project = project;
         query.reportAssignee = currentUser;
+        query.reportStatuses = Collections.singleton(Report.Status.OPEN);
 
         fetchProjectVersions();
         fetchReportCounts();
@@ -69,6 +72,11 @@ public class ProjectLayout extends VerticalLayout {
         reportStatusLayout.setCurrentUser(currentUser);
         reportStatusLayout.setAssigneeChangeListener(reporter -> {
             query.reportAssignee = reporter;
+            reports = projectService.findReports(query);
+            reportGrid.setItems(reports);
+        });
+        reportStatusLayout.setStatusChangeListener(statuses -> {
+            query.reportStatuses = statuses;
             reports = projectService.findReports(query);
             reportGrid.setItems(reports);
         });

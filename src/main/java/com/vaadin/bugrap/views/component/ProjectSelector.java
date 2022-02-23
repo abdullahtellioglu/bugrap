@@ -17,7 +17,7 @@ import java.util.List;
 
 public class ProjectSelector extends HorizontalLayout {
     private final Select<Project> projectSelect;
-    private final Label managerLabel;
+    private final Button managerLabel;
     private final Button closeButton;
     public void setProjectSelectListener(ProjectSelectListener listener){
         this.listener = listener;
@@ -30,15 +30,13 @@ public class ProjectSelector extends HorizontalLayout {
         setClassName("project-selector");
         setWidth(100, Unit.PERCENTAGE);
         projectSelect = new Select<>();
-        managerLabel = new Label();
+        managerLabel = new Button();
+        managerLabel.setIcon(VaadinIcon.USER.create());
         managerLabel.setClassName("manager-label");
         closeButton = new Button(VaadinIcon.POWER_OFF.create());
-
-        Icon icon = new Icon(VaadinIcon.USER);
-        icon.setSize("small");
         setJustifyContentMode(JustifyContentMode.BETWEEN);
 
-        HorizontalLayout rightContainer = new HorizontalLayout(icon, managerLabel, closeButton);
+        HorizontalLayout rightContainer = new HorizontalLayout(managerLabel, closeButton);
 
         add(projectSelect);
         add(rightContainer);

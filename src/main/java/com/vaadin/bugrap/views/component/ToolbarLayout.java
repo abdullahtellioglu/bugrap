@@ -24,6 +24,7 @@ public class ToolbarLayout extends HorizontalLayout {
         this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
         requestFeatureButton.addClassName("shadow");
         this.manageProjectButton = new Button("Manage project", new Icon(VaadinIcon.ACCESSIBILITY));
+        manageProjectButton.addClassName("shadow");
         this.searchTextField = new TextField();
         searchTextField.setPlaceholder("Search");
 
@@ -35,11 +36,8 @@ public class ToolbarLayout extends HorizontalLayout {
            String value =  e.getValue();
             System.out.println(value);
         });
-        reportBugButton.addClickListener(new ComponentEventListener<ClickEvent<Button>>() {
-            @Override
-            public void onComponentEvent(ClickEvent<Button> event) {
+        reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
 
-            }
         });
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();

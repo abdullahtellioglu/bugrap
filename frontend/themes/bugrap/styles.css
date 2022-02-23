@@ -5,6 +5,7 @@
 @import url('./custom/report-status.css');
 @import url('./custom/project-selector.css');
 @import url('./custom/priority-bar.css');
+@import url('./custom/home-page.css');
 
 html {
     --_lumo-button-background-color: white;
@@ -14,12 +15,3 @@ html {
     --_lumo-button-color: var(--lumo-primary-text-color);
     background-color: var(--lumo-contrast-20pct);
 }
-.home-page {
-    /*ask this important. How to do this better*/
-    margin: 32px;
-    width: unset !important;
-    border: 1px solid var(--lumo-contrast-10pct);
-}
-/*.shadow {*/
-/*    box-shadow: 1px 1px black;*/
-/*}*/

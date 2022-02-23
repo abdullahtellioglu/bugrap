@@ -1,10 +1,21 @@
 .project-selector {
     background-color: white;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    margin-bottom: unset;
+    -webkit-box-shadow: 0 2px 4px #888888;
+    -moz-box-shadow: 0 2px 4px #888888;
+    box-shadow: 0 2px 4px #888888;
+    z-index: 1;
+
 }
 .project-selector label{
     margin: auto;
     color: var(--lumo-primary-color);
 
+}
+.project-selector .manager-label {
+    border:unset;
 }
 .project-selector vaadin-icon {
     margin:auto;

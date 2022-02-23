@@ -7,3 +7,12 @@
 /*:host {*/
 /*    border: 1px solid blue;*/
 /*}*/
+:host([theme~='primary']) {
+    background-color: var(--_lumo-button-color);
+}
+/*:host :not([theme~='primary']) {*/
+/*    border: 1px solid black;*/
+/*}*/
+:host(:not([theme~='icon']):not([slot="value"])) {
+    border: 1px solid var(--lumo-contrast-20pct);
+}

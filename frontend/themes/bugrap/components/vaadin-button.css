@@ -1,0 +1,9 @@
+/*:host ([theme~="primary"]){*/
+/*    border: none;*/
+/*}*/
+/*:host ([theme~="shadow"]){*/
+/*    box-shadow: 1px 1px black;*/
+/*}*/
+/*:host {*/
+/*    border: 1px solid blue;*/
+/*}*/

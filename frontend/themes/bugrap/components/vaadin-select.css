@@ -1,0 +1,6 @@
+:host{
+
+}
+:host vaadin-input-container {
+    background-color: unset;
+}

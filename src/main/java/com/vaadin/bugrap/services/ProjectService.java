@@ -5,6 +5,7 @@ import org.vaadin.bugrap.domain.ReportStatus;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
+import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.List;
 
@@ -27,8 +28,10 @@ public class ProjectService {
         return bugrapRepository.countClosedReports(project);
     }
     public long getCountClosedReports(ProjectVersion projectVersion){
+
         return bugrapRepository.countClosedReports(projectVersion);
     }
+
 
     public long getCountOpenedReports(Project project){
         return bugrapRepository.countOpenedReports(project);

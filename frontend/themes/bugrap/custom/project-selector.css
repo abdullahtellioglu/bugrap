@@ -1,0 +1,14 @@
+.project-selector {
+    background-color: white;
+}
+.project-selector label{
+    margin: auto;
+    color: var(--lumo-primary-color);
+
+}
+.project-selector vaadin-icon {
+    margin:auto;
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+    color: var(--lumo-primary-color);
+}

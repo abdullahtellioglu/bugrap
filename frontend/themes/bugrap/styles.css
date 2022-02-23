@@ -1,5 +1,25 @@
 @import url('line-awesome/dist/line-awesome/css/line-awesome.min.css');
-@import url('./components/distribution-bar.css');
-@import url('./components/version-combo-container.css');
-@import url('./components/project-layout.css');
-@import url('./components/report-status.css');
+@import url('./custom/distribution-bar.css');
+@import url('./custom/version-combo-container.css');
+@import url('./custom/project-layout.css');
+@import url('./custom/report-status.css');
+@import url('./custom/project-selector.css');
+@import url('./custom/priority-bar.css');
+
+html {
+    --_lumo-button-background-color: white;
+    --lumo-primary-color: #4B5BD6;
+    --lumo-primary-text-color: #414FBC;
+    --lumo-secondary-color: #0A8BAE;
+    --_lumo-button-color: var(--lumo-primary-text-color);
+    background-color: var(--lumo-contrast-20pct);
+}
+.home-page {
+    /*ask this important. How to do this better*/
+    margin: 32px;
+    width: unset !important;
+    border: 1px solid var(--lumo-contrast-10pct);
+}
+/*.shadow {*/
+/*    box-shadow: 1px 1px black;*/
+/*}*/

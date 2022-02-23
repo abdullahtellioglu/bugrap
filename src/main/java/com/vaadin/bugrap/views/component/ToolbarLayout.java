@@ -20,7 +20,9 @@ public class ToolbarLayout extends HorizontalLayout {
     private final TextField searchTextField;
     public ToolbarLayout() {
         this.reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
+        reportBugButton.addClassName("shadow");
         this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
+        requestFeatureButton.addClassName("shadow");
         this.manageProjectButton = new Button("Manage project", new Icon(VaadinIcon.ACCESSIBILITY));
         this.searchTextField = new TextField();
         searchTextField.setPlaceholder("Search");

@@ -1,5 +1,10 @@
+.distribution-bar {
+    --closed-color: #4B5BD6;
+    width: 70%;
+
+}
 .distribution-bar .closed {
-    background-color: #4B5BD6;
+    background-color: var(--closed-color);
     height: 20px;
 }
 .distribution-bar .assigned{

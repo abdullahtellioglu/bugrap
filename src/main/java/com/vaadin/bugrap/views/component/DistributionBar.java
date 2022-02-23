@@ -26,9 +26,7 @@ public class DistributionBar extends HorizontalLayout {
     }
     public DistributionBar(long closed, long assigned, long unAssigned){
         this();
-        updateChunk(closed, closedChunkDiv);
-        updateChunk(assigned, assignedChunkDiv);
-        updateChunk(unAssigned, unAssignedChunkDiv);
+        setValues(closed, assigned, unAssigned);
     }
 
     private Div createChunk( String className){
@@ -39,21 +37,22 @@ public class DistributionBar extends HorizontalLayout {
         chunk.add(label);
         add(chunk);
 
-        updateChunk(0, chunk);
+        updateChunk(0, chunk,0);
         return chunk;
     }
-    public void setClosedValue(long value){
-        updateChunk(value, closedChunkDiv);
+    public void setValues(long closed, long assigned, long unAssigned){
+        long total = closed + assigned + unAssigned;
+        float maxClosedPercentage = (closed / (float)total) * 100;
+        float maxAssignedPercentage = (assigned / (float)total) * 100;
+        float maxUnAssignedPercentage = (unAssigned / (float) total) * 100;
+        updateChunk(closed, closedChunkDiv, maxClosedPercentage);
+        updateChunk(assigned, assignedChunkDiv, maxAssignedPercentage);
+        updateChunk(unAssigned, unAssignedChunkDiv, maxUnAssignedPercentage);
     }
-    public void setAssignedValue(long value){
-        updateChunk(value, assignedChunkDiv);
-    }
-    public void setUnAssignedValue(long value){
-        updateChunk(value, unAssignedChunkDiv);
-    }
-    private void updateChunk(long value, Div chunk){
-
-        chunk.setMinWidth(value * 30, Unit.PIXELS);
+    private void updateChunk(long value, Div chunk, float maxWidthPercentage){
+        chunk.setMinWidth(30, Unit.PIXELS);
+        chunk.setWidth(value * 30, Unit.PIXELS);
+        chunk.setMaxWidth(maxWidthPercentage, Unit.PERCENTAGE);
         chunk.removeClassNames("has-value", "no-value");
         chunk.addClassName(value > 0 ? "has-value" : "no-value");
         chunk.getChildren().filter( child -> child instanceof Label).findFirst().ifPresent(label -> ((Label) label).setText(String.valueOf(value)));

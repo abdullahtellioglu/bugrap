@@ -4,23 +4,24 @@ import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
+import com.vaadin.bugrap.views.component.overview.ReportsOverviewLayout;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HasValue;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
+import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.data.selection.SelectionListener;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class ProjectLayout extends VerticalLayout {
     //services
@@ -32,6 +33,7 @@ public class ProjectLayout extends VerticalLayout {
     private List<ProjectVersion> projectVersions;
     private ProjectVersion projectVersion;
     private List<Report> reports;
+    private Reporter currentUser;
 
     long closedReportCount = 0;
     long openedReportCount = 0;
@@ -42,8 +44,13 @@ public class ProjectLayout extends VerticalLayout {
     private DistributionBar distributionBar;
     private ProjectVersionSelect projectVersionSelect;
     private ReportStatusLayout reportStatusLayout;
+    private ProjectToolbarLayout projectToolbarLayout;
+    private SplitLayout gridSplitLayout;
+    private final ReportsOverviewLayout reportsOverviewLayout = new ReportsOverviewLayout();
     private final BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
-    private Reporter currentUser;
+
+
+    private Set<Report> selectedReports = new HashSet<>();
 
     public ProjectLayout(Project project, Reporter currentUser){
         this.project = project;
@@ -57,16 +64,10 @@ public class ProjectLayout extends VerticalLayout {
         fetchReportCounts();
 
         reportGrid = new ReportGrid();
-
+        reportGrid.createGridColumns(projectVersion.getId() == -1);
+        projectToolbarLayout = new ProjectToolbarLayout();
         setClassName("project-layout");
-        addAndExpand(new ToolbarLayout());
-
-        VerticalLayout panel = new VerticalLayout();
-        panel.setClassName("inner-panel");
-        panel.setPadding(false);
-        panel.setMargin(false);
-        Component reportVersionsAndDistributionBar = getReportVersionsAndDistributionBar();
-        panel.addAndExpand(reportVersionsAndDistributionBar);
+        add(projectToolbarLayout);
 
         reportStatusLayout = new ReportStatusLayout();
         reportStatusLayout.setCurrentUser(currentUser);
@@ -80,14 +81,40 @@ public class ProjectLayout extends VerticalLayout {
             reports = projectService.findReports(query);
             reportGrid.setItems(reports);
         });
-        panel.add(reportStatusLayout);
 
         reports = projectService.findReports(query);
 
-
         reportGrid.setItems(reports);
-        panel.add(reportGrid);
-        add(panel);
+        reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
+            onSelectedReportsChanged(event.getAllSelectedItems());
+        });
+//        gridDistributionContainerLayout.add(reportGrid);
+
+
+
+        VerticalLayout gridDistributionContainerLayout = new VerticalLayout();
+        gridDistributionContainerLayout.setClassName("inner-panel");
+        gridDistributionContainerLayout.setHeight(100, Unit.PERCENTAGE);
+        gridDistributionContainerLayout.setPadding(true);
+        gridDistributionContainerLayout.setMargin(false);
+
+        Component reportVersionsAndDistributionBar = getReportVersionsAndDistributionBar();
+        gridDistributionContainerLayout.add(reportVersionsAndDistributionBar);
+
+
+        gridDistributionContainerLayout.add(reportStatusLayout);
+
+        gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);
+        gridSplitLayout.setClassName("secondary-hidden");
+        gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
+        gridSplitLayout.setSplitterPosition(100);
+        gridSplitLayout.setOrientation(SplitLayout.Orientation.VERTICAL);
+        gridDistributionContainerLayout.add(gridSplitLayout);
+
+
+
+        add(gridDistributionContainerLayout);
+
     }
 
     private void fetchProjectVersions(){
@@ -110,12 +137,20 @@ public class ProjectLayout extends VerticalLayout {
         }
     }
 
-    private Component getReportVersionsAndDistributionBar(){
-        HorizontalLayout reportDistributionLayout = new HorizontalLayout();
-        reportDistributionLayout.setWidth(100, Unit.PERCENTAGE);
-        reportDistributionLayout.setAlignItems(Alignment.CENTER);
-        reportDistributionLayout.setJustifyContentMode(JustifyContentMode.START);
+    private void onSelectedReportsChanged(Set<Report> selectedReports){
+        this.selectedReports = selectedReports;
+        if(selectedReports.isEmpty()){
+            gridSplitLayout.setClassName("secondary-hidden");
+            gridSplitLayout.setSplitterPosition(100);
+        }else{
+            reportsOverviewLayout.setReports(selectedReports);
+            gridSplitLayout.removeClassName("secondary-hidden");
+            gridSplitLayout.setSplitterPosition(70);
 
+        }
+    }
+
+    private Component getReportVersionsAndDistributionBar(){
         projectVersionSelect = new ProjectVersionSelect();
         projectVersionSelect.setItems(projectVersions);
         projectVersionSelect.setValue(projectVersion);
@@ -124,15 +159,19 @@ public class ProjectLayout extends VerticalLayout {
             ProjectVersion value = event.getValue();
             this.projectVersion = value;
             fetchReportCounts();
-
             onProjectVersionChange(value);
         });
 
+
         distributionBar = new DistributionBar(closedReportCount, openedReportCount, unAssignedReportCount);
 
+        HorizontalLayout reportDistributionLayout = new HorizontalLayout();
+        reportDistributionLayout.setWidth(100, Unit.PERCENTAGE);
+        reportDistributionLayout.setAlignItems(Alignment.CENTER);
+        reportDistributionLayout.setJustifyContentMode(JustifyContentMode.START);
         reportDistributionLayout.add(projectVersionSelect);
-        reportDistributionLayout.add(distributionBar);
-        reportDistributionLayout.setMargin(true);
+        reportDistributionLayout.addAndExpand(distributionBar);
+
         return reportDistributionLayout;
     }
 
@@ -140,24 +179,25 @@ public class ProjectLayout extends VerticalLayout {
         if(projectVersion == null || projectVersion.getId() == -1){
             closedReportCount = projectService.getCountClosedReports(project);
             openedReportCount = projectService.getCountOpenedReports(project);
-            unAssignedReportCount = 10;
-//            unAssignedProjectCount = projectService.getCountUnAssignedReports(project);
+            unAssignedReportCount = projectService.getCountUnAssignedReports(project);
         }else{
             closedReportCount = projectService.getCountClosedReports(projectVersion);
             openedReportCount = projectService.getCountOpenedReports(projectVersion);
-            unAssignedReportCount = 10;
-//            unAssignedProjectCount = projectService.getCountUnAssignedReports(projectVersion);
+            unAssignedReportCount = projectService.getCountUnAssignedReports(projectVersion);
         }
     }
     private void onProjectVersionChange(ProjectVersion projectVersion){
         if(projectVersion.getId() == -1){
             query.projectVersion = null;
+            reportGrid.createGridColumns(true);
         }else{
             query.projectVersion = projectVersion;
+            reportGrid.createGridColumns(false);
         }
 
         CookieUtils.addLastSelectedProjectVersion(project, projectVersion, RequestUtils.getCurrentHttpResponse());
 
+        //TODO some report comes with version null and still open.
         List<Report> reports = projectService.findReports(query);
         reportGrid.setItems(reports);
         //TODO fix these values
@@ -168,4 +208,7 @@ public class ProjectLayout extends VerticalLayout {
     }
 
 
+    public void setProjectCount(int projectCount) {
+        projectToolbarLayout.setProjectCount(projectCount);
+    }
 }

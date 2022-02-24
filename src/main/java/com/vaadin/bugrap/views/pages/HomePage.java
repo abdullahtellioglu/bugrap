@@ -36,7 +36,7 @@ public class HomePage extends VerticalLayout {
         userService = new UserService();
         setClassName("home-page");
         projectSelector = new ProjectSelector();
-
+        List<Project> activeProjects = projectService.getActiveProjects();
         add(projectSelector);
         projectSelector.setProjectSelectListener(project -> {
             if(projectLayout != null){
@@ -46,11 +46,11 @@ public class HomePage extends VerticalLayout {
             projectLayout = new ProjectLayout(project, currentUser);
             // we dont have login screen. That's why we need to find the current user from assignees if it is first run, otherwise read username from cookie
 
-
+            projectLayout.setProjectCount(activeProjects.size());
             projectSelector.setManagerName(project.getManager().getName());
             add(projectLayout);
         });
-        List<Project> activeProjects = projectService.getActiveProjects();
+
 
         projectSelector.setActiveProjects(activeProjects);
     }

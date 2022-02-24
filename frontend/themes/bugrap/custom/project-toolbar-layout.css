@@ -1,0 +1,4 @@
+.project-toolbar vaadin-text-field [slot="input"] {
+    color: var(--lumo-contrast-50pct);
+    font-style: italic;
+}

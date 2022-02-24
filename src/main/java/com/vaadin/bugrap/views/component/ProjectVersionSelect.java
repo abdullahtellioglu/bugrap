@@ -12,12 +12,15 @@ import java.util.List;
 public class ProjectVersionSelect extends HorizontalLayout {
     private final Select<ProjectVersion> versionSelect;
     public ProjectVersionSelect() {
-        versionSelect = new Select<>();
+
         setClassName("version-combo-container");
+        setJustifyContentMode(JustifyContentMode.CENTER);
+        versionSelect = new Select<>();
+        add(versionSelect);
         Label label = new Label("Reports for");
         add(label);
-        setJustifyContentMode(JustifyContentMode.CENTER);
-        add(versionSelect);
+
+
 
     }
     public void setItems(List<ProjectVersion> projectVersions){

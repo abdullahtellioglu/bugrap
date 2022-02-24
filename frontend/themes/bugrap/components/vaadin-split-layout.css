@@ -1,0 +1,6 @@
+:host(.secondary-hidden) [part="splitter"] {
+    display: none;
+}
+:host(.secondary-hidden) #secondary {
+    display: none;
+}

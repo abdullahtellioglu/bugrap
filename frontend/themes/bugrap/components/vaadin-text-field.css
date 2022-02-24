@@ -1,0 +1,24 @@
+:host {
+    /*padding:0;*/
+    /*background-color: white;*/
+    /*--lumo-text-field-size: var(--lumo-size-s);*/
+}
+:host [class$='container']{
+    width: 250px;
+}
+:host [part="input-field"]:placeholder {
+    font-style: italic;
+}
+:host [part="clear-button"]{
+    display: block;
+}
+:host [part="input-field"]{
+    background-color: white;
+    border: 1px solid var(--lumo-contrast-20pct);
+
+}
+:host ::slotted(vaadin-icon) {
+    color: var(--lumo-primary-text-color);
+    width: var(--lumo-icon-size-s);
+    height: var(--lumo-icon-size-s);
+}

@@ -6,12 +6,17 @@
 @import url('./custom/project-selector.css');
 @import url('./custom/priority-bar.css');
 @import url('./custom/home-page.css');
-
+@import url('./custom/project-toolbar-layout.css');
 html {
     --_lumo-button-background-color: white;
     --lumo-primary-color: #4B5BD6;
     --lumo-primary-text-color: #414FBC;
     --lumo-secondary-color: #0A8BAE;
-    --_lumo-button-color: var(--lumo-primary-text-color);
+    --lumo-secondary-text-color: #097492;
+    --lumo-tertiary-color: #DF9135;
+    --lumo-tertiary-text-color: #BC8341;
+
+
+    /*--_lumo-button-color: var(--lumo-primary-color);*/
     background-color: var(--lumo-contrast-20pct);
 }

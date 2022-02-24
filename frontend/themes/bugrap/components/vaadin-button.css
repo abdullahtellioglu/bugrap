@@ -7,8 +7,12 @@
 /*:host {*/
 /*    border: 1px solid blue;*/
 /*}*/
+:host(:not([theme~='icon'])) {
+    /*min-width: calc(var(--lumo-button-size) * 3) !important;*/
+    /*TODO is there a better solution than important? Primary theme overrides min-width */
+}
 :host([theme~='primary']) {
-    background-color: var(--_lumo-button-color);
+    /*background-color: var(--_lumo-button-color);*/
 }
 /*:host :not([theme~='primary']) {*/
 /*    border: 1px solid black;*/

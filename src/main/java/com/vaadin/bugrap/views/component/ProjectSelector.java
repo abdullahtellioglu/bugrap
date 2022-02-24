@@ -29,15 +29,16 @@ public class ProjectSelector extends HorizontalLayout {
         super();
         setClassName("project-selector");
         setWidth(100, Unit.PERCENTAGE);
-        projectSelect = new Select<>();
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        setPadding(true);
+
         managerLabel = new Button();
         managerLabel.setIcon(VaadinIcon.USER.create());
         managerLabel.setClassName("manager-label");
         closeButton = new Button(VaadinIcon.POWER_OFF.create());
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
 
         HorizontalLayout rightContainer = new HorizontalLayout(managerLabel, closeButton);
-
+        projectSelect = new Select<>();
         add(projectSelect);
         add(rightContainer);
         projectSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<Project>, Project>>) event -> {
@@ -46,7 +47,6 @@ public class ProjectSelector extends HorizontalLayout {
                 listener.onSelect(value);
             }
         });
-        setPadding(true);
     }
     public void setManagerName(String name){
         this.managerLabel.setText(name);
@@ -57,9 +57,6 @@ public class ProjectSelector extends HorizontalLayout {
             projectSelect.setValue(projects.get(0));
             listener.onSelect(projects.get(0));
         }
-    }
-    private void initUI(){
-
     }
 
     public interface ProjectSelectListener {

@@ -11,6 +11,7 @@ import org.vaadin.bugrap.domain.DBTools;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
+import java.util.Locale;
 
 /**
  * The entry point of the Spring Boot application.
@@ -33,7 +34,7 @@ public class Application implements AppShellConfigurator, ServletContextListener
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         ServletContextListener.super.contextInitialized(sce);
-
+        Locale.setDefault(Locale.ENGLISH);
         DBTools.create();
     }
 }

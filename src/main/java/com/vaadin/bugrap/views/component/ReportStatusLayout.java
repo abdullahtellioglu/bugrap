@@ -46,18 +46,12 @@ public class ReportStatusLayout extends HorizontalLayout {
         //initial value
         selectedStatusSet.add(Report.Status.OPEN);
         setClassName("report-status");
-        setMargin(true);
         Label assigneesLabel = new Label("Assignees");
         add(assigneesLabel);
-
-        HorizontalLayout assigneeButtonContainer = new HorizontalLayout();
-
-        assigneeButtonContainer.setPadding(false);
-        assigneeButtonContainer.setMargin(false);
-        assigneeButtonContainer.setSpacing(false);
         //Change - Tabs instead of buttons.
         onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        onlyMeButton.setWidth("calc(var(--lumo-button-size) * 3)");
         onlyMeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             onlyMeButton.removeClassName("shadow");
@@ -69,7 +63,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         });
 
         everyoneButton = new Button("Everyone");
-        everyoneButton.addClassName("shadow");
+        everyoneButton.setMinWidth("calc(var(--lumo-button-size) * 3)");
         everyoneButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
                 onlyMeButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
                 onlyMeButton.removeClassName("shadow");
@@ -80,6 +74,12 @@ public class ReportStatusLayout extends HorizontalLayout {
                 }
         });
 
+        HorizontalLayout assigneeButtonContainer = new HorizontalLayout();
+        assigneeButtonContainer.setClassName("assignee-container");
+        assigneeButtonContainer.setPadding(false);
+        assigneeButtonContainer.setMargin(false);
+        assigneeButtonContainer.setSpacing(false);
+
         assigneeButtonContainer.add(onlyMeButton, everyoneButton);
 
         add(assigneeButtonContainer);
@@ -88,14 +88,10 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusLabel.setClassName("status-label");
         add(statusLabel);
 
-        HorizontalLayout statusButtonContainer = new HorizontalLayout();
-        statusButtonContainer.setPadding(false);
-        statusButtonContainer.setMargin(false);
-        statusButtonContainer.setSpacing(false);
 
         openStatusBtn = new Button("Open");
         openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-
+        openStatusBtn.setMinWidth("calc(var(--lumo-button-size) * 3)");
         openStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             selectedStatusSet.add(Report.Status.OPEN);
@@ -105,6 +101,7 @@ public class ReportStatusLayout extends HorizontalLayout {
             }
         });
         allKindsStatusBtn = new Button("All kinds");
+        allKindsStatusBtn.setMinWidth("calc(var(--lumo-button-size) * 3)");
         allKindsStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             setThemeVariables();
@@ -113,9 +110,10 @@ public class ReportStatusLayout extends HorizontalLayout {
             }
         });
 
+
+
         customStatusMenuBar = new MenuBar();
         customStatusMenuItem = customStatusMenuBar.addItem("Custom...");
-
         SubMenu customItemsSubMenu = customStatusMenuItem.getSubMenu();
         Report.Status[] statuses = Report.Status.values();
         for (Report.Status status : statuses) {
@@ -126,6 +124,12 @@ public class ReportStatusLayout extends HorizontalLayout {
             statusMenuItem.setChecked(selectedStatusSet.contains(status));
         }
 
+
+        HorizontalLayout statusButtonContainer = new HorizontalLayout();
+        statusButtonContainer.setClassName("status-button-container");
+        statusButtonContainer.setPadding(false);
+        statusButtonContainer.setMargin(false);
+        statusButtonContainer.setSpacing(false);
         statusButtonContainer.add(openStatusBtn, allKindsStatusBtn, customStatusMenuBar);
         add(statusButtonContainer);
     }
@@ -150,6 +154,8 @@ public class ReportStatusLayout extends HorizontalLayout {
         if(statusChangeListener != null){
             statusChangeListener.onChange(selectedStatusSet.isEmpty() ? null : selectedStatusSet);
         }
+
+        //use context menu for buttons
     };
     private void setThemeVariables(){
         if(selectedStatusSet.isEmpty()){

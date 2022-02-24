@@ -3,21 +3,56 @@ package com.vaadin.bugrap.views.component;
 import com.vaadin.bugrap.utils.DateUtils;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.function.SerializableBiConsumer;
-import com.vaadin.flow.function.SerializableBiFunction;
 import com.vaadin.flow.function.SerializableFunction;
 import org.vaadin.bugrap.domain.entities.Report;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
 
 public class ReportGrid extends Grid<Report> {
-
+    Boolean lastAllVersionState = null;
     public ReportGrid(){
+
+    }
+    public void createGridColumns(boolean allVersionSelected){
+        List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();
+        //disable re creating all components.
+//        if(lastAllVersionState != null && lastAllVersionState == allVersionSelected){
+//            return;
+//        }
+
         setSelectionMode(SelectionMode.MULTI);
-        addColumn(createPriorityComponentRenderer()).setHeader("Priority").setComparator(Comparator.comparing(Report::getPriority));
+        removeAllColumns();
+        lastAllVersionState = allVersionSelected;
+        if(allVersionSelected){
+            Column<Report> version = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
+            version.setComparator((o1, o2) -> {
+                if(o1.getVersion() == null && o2.getVersion() != null){
+                    return 1;
+                }
+                if(o1.getVersion() != null && o2.getVersion() == null){
+                    return -1;
+                }
+                if(o1.getVersion() != null && o2.getVersion() != null){
+                    return o1.getVersion().getVersion().compareTo(o2.getVersion().getVersion());
+                }
+                return 0;
+            });
+            GridSortOrder<Report> versionOrder = new GridSortOrder<>(version, SortDirection.ASCENDING);
+            sortOrderList.add(versionOrder);
+        }
+        Column<Report> priority = addColumn(createPriorityComponentRenderer()).setHeader("Priority");
+        priority.setComparator(Comparator.comparing(Report::getPriority));
+
+        GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priority, SortDirection.DESCENDING);
+        sortOrderList.add(priorityOrder);
+
         addColumn(Report::getType).setHeader("Type").setComparator(Comparator.comparing(Report::getType));
         addColumn(Report::getSummary).setHeader("Summary").setComparator(Comparator.comparing(Report::getSummary));
         addColumn(createAssigneeComponentRenderer()).setHeader("Assigned to").setComparator((o1, o2) -> {
@@ -32,9 +67,19 @@ public class ReportGrid extends Grid<Report> {
             }
             return 0;
         });
-        //TODO last modified and reported time ? There is no updatetimestamp. Instead I used getTimeStamp
         addColumn(createReportLastModifiedComponentRenderer()).setHeader("Last modified").setComparator(Comparator.comparing(Report::getTimestamp));
         addColumn(createReportTimeStampComponentRenderer()).setHeader("Reported").setComparator(Comparator.comparing(Report::getReportedTimestamp));
+
+        sort(sortOrderList);
+    }
+
+    private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            if (report != null && report.getVersion() != null) {
+                return new Span(report.getVersion().getVersion());
+            }
+            return new Span();
+        });
     }
 
     private static ComponentRenderer<Component, Report> createReportLastModifiedComponentRenderer(){

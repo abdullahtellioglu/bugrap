@@ -1,11 +1,8 @@
 package com.vaadin.bugrap.views.component;
 
-import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.vaadin.bugrap.domain.entities.Report;
-
-import java.util.ArrayList;
 
 public class PriorityBar extends HorizontalLayout {
     public PriorityBar(Report.Priority priority){

@@ -8,3 +8,18 @@
     margin-left: 16px;
 }
 
+.report-status .assignee-container vaadin-button:first-child {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+}
+.report-status .assignee-container vaadin-button:last-child {
+    border-top-left-radius: unset;
+    border-bottom-left-radius: unset;
+}
+.report-status .status-button-container vaadin-button:first-child {
+    border-top-right-radius: unset;
+    border-bottom-right-radius: unset;
+}
+.report-status .status-button-container vaadin-button:last-of-type {
+    border-radius: unset;
+}

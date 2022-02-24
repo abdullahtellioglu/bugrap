@@ -1,5 +1,12 @@
 .project-layout {
     background-color: rgb(243,245,247);
+    height: 100%;
+}
+.project-layout vaadin-split-layout {
+    height: 100%;
+}
+.project-layout #selectAllCheckbox {
+    display: none;
 }
 .inner-panel {
     background-color: white;

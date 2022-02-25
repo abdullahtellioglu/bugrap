@@ -6,11 +6,10 @@ import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
 import com.vaadin.bugrap.views.component.overview.ReportsOverviewLayout;
-import com.vaadin.flow.component.AbstractField;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.HasValue;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.ItemClickEvent;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
@@ -66,8 +65,7 @@ public class ProjectLayout extends VerticalLayout {
         fetchProjectVersions();
         fetchReportCounts();
 
-        reportGrid = new ReportGrid();
-        reportGrid.createGridColumns(projectVersion.getId() == -1);
+
         projectToolbarLayout = new ProjectToolbarLayout();
         setClassName("project-layout");
         add(projectToolbarLayout);
@@ -87,12 +85,6 @@ public class ProjectLayout extends VerticalLayout {
 
         reports = reportService.findReports(query);
 
-        reportGrid.setItems(reports);
-        reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
-            onSelectedReportsChanged(event.getAllSelectedItems());
-        });
-//        gridDistributionContainerLayout.add(reportGrid);
-
 
 
         VerticalLayout gridDistributionContainerLayout = new VerticalLayout();
@@ -111,6 +103,24 @@ public class ProjectLayout extends VerticalLayout {
             List<Report> reports = reportService.findReports(query);
             reportGrid.setItems(reports);
             onSelectedReportsChanged(new HashSet<>());
+        });
+
+
+
+        reportGrid = new ReportGrid();
+        reportGrid.createGridColumns(projectVersion.getId() == -1);
+        reportGrid.setItems(reports);
+        reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
+            onSelectedReportsChanged(event.getAllSelectedItems());
+        });
+        reportGrid.addItemClickListener((ComponentEventListener<ItemClickEvent<Report>>) event -> {
+            reportGrid.getSelectionModel().deselectAll();
+            reportGrid.getSelectionModel().select(event.getItem());
+            onSelectedReportsChanged(Collections.singleton(event.getItem()));
+        });
+        reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
+            //OPEN new tab.
+            getUI().ifPresent(ui -> ui.getPage().open("/report/"+event.getItem().getId(), "_blank"));
         });
 
         gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);

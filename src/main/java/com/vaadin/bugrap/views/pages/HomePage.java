@@ -45,6 +45,7 @@ public class HomePage extends VerticalLayout {
                 remove(projectLayout);
             }
             Reporter currentUser = createDummyUserFromListOrReadFromCookie(project);
+            //Do not create ui, instead update variables.
             projectLayout = new ProjectLayout(project, currentUser);
             // we dont have login screen. That's why we need to find the current user from assignees if it is first run, otherwise read username from cookie
 

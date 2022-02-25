@@ -2,8 +2,10 @@ package com.vaadin.bugrap.views.component;
 
 import com.vaadin.bugrap.utils.DateUtils;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
+import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
@@ -32,6 +34,7 @@ public class ReportGrid extends Grid<Report> {
         lastAllVersionState = allVersionSelected;
         if(allVersionSelected){
             Column<Report> version = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
+            //change visibility instead of re-creating
             version.setComparator((o1, o2) -> {
                 if(o1.getVersion() == null && o2.getVersion() != null){
                     return 1;

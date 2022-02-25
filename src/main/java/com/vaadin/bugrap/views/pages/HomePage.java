@@ -1,6 +1,7 @@
 package com.vaadin.bugrap.views.pages;
 
 import com.vaadin.bugrap.services.ProjectService;
+import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
@@ -27,12 +28,13 @@ import java.util.Optional;
 @RouteAlias(value = "")
 public class HomePage extends VerticalLayout {
     private final ProjectService projectService;
+    private final ReportService reportService;
     private final ProjectSelector projectSelector;
     private final UserService userService;
     private ProjectLayout projectLayout;
     public HomePage(){
-
         this.projectService = new ProjectService();
+        this.reportService = new ReportService();
         userService = new UserService();
         setClassName("home-page");
         projectSelector = new ProjectSelector();
@@ -57,7 +59,7 @@ public class HomePage extends VerticalLayout {
     private Reporter getDummyUserFromProject(Project project){
         BugrapRepository.ReportsQuery reportsQuery = new BugrapRepository.ReportsQuery();
         reportsQuery.project = project;
-        List<Report> reports = this.projectService.findReports(reportsQuery);
+        List<Report> reports = this.reportService.findReports(reportsQuery);
 
         String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
         if(currentUserName == null){

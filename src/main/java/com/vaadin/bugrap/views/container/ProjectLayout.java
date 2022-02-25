@@ -1,6 +1,7 @@
 package com.vaadin.bugrap.views.container;
 
 import com.vaadin.bugrap.services.ProjectService;
+import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
@@ -26,6 +27,7 @@ import java.util.*;
 public class ProjectLayout extends VerticalLayout {
     //services
     private final ProjectService projectService;
+    private final ReportService reportService;
 
 
     //entities
@@ -55,6 +57,7 @@ public class ProjectLayout extends VerticalLayout {
     public ProjectLayout(Project project, Reporter currentUser){
         this.project = project;
         this.projectService = new ProjectService();
+        this.reportService = new ReportService();
         this.currentUser = currentUser;
         query.project = project;
         query.reportAssignee = currentUser;
@@ -73,16 +76,16 @@ public class ProjectLayout extends VerticalLayout {
         reportStatusLayout.setCurrentUser(currentUser);
         reportStatusLayout.setAssigneeChangeListener(reporter -> {
             query.reportAssignee = reporter;
-            reports = projectService.findReports(query);
+            reports = reportService.findReports(query);
             reportGrid.setItems(reports);
         });
         reportStatusLayout.setStatusChangeListener(statuses -> {
             query.reportStatuses = statuses;
-            reports = projectService.findReports(query);
+            reports = reportService.findReports(query);
             reportGrid.setItems(reports);
         });
 
-        reports = projectService.findReports(query);
+        reports = reportService.findReports(query);
 
         reportGrid.setItems(reports);
         reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
@@ -98,8 +101,7 @@ public class ProjectLayout extends VerticalLayout {
         gridDistributionContainerLayout.setPadding(true);
         gridDistributionContainerLayout.setMargin(false);
 
-        Component reportVersionsAndDistributionBar = getReportVersionsAndDistributionBar();
-        gridDistributionContainerLayout.add(reportVersionsAndDistributionBar);
+        initReportVersionsAndDistributionBar(gridDistributionContainerLayout);
 
 
         gridDistributionContainerLayout.add(reportStatusLayout);
@@ -150,7 +152,7 @@ public class ProjectLayout extends VerticalLayout {
         }
     }
 
-    private Component getReportVersionsAndDistributionBar(){
+    private void initReportVersionsAndDistributionBar(VerticalLayout parentComponent){
         projectVersionSelect = new ProjectVersionSelect();
         projectVersionSelect.setItems(projectVersions);
         projectVersionSelect.setValue(projectVersion);
@@ -172,18 +174,18 @@ public class ProjectLayout extends VerticalLayout {
         reportDistributionLayout.add(projectVersionSelect);
         reportDistributionLayout.addAndExpand(distributionBar);
 
-        return reportDistributionLayout;
+        parentComponent.add(reportDistributionLayout);
     }
 
     private void fetchReportCounts(){
         if(projectVersion == null || projectVersion.getId() == -1){
-            closedReportCount = projectService.getCountClosedReports(project);
-            openedReportCount = projectService.getCountOpenedReports(project);
-            unAssignedReportCount = projectService.getCountUnAssignedReports(project);
+            closedReportCount = reportService.getCountClosedReports(project);
+            openedReportCount = reportService.getCountOpenedReports(project);
+            unAssignedReportCount = reportService.getCountUnAssignedReports(project);
         }else{
-            closedReportCount = projectService.getCountClosedReports(projectVersion);
-            openedReportCount = projectService.getCountOpenedReports(projectVersion);
-            unAssignedReportCount = projectService.getCountUnAssignedReports(projectVersion);
+            closedReportCount = reportService.getCountClosedReports(projectVersion);
+            openedReportCount = reportService.getCountOpenedReports(projectVersion);
+            unAssignedReportCount = reportService.getCountUnAssignedReports(projectVersion);
         }
     }
     private void onProjectVersionChange(ProjectVersion projectVersion){
@@ -197,8 +199,7 @@ public class ProjectLayout extends VerticalLayout {
 
         CookieUtils.addLastSelectedProjectVersion(project, projectVersion, RequestUtils.getCurrentHttpResponse());
 
-        //TODO some report comes with version null and still open.
-        List<Report> reports = projectService.findReports(query);
+        List<Report> reports = reportService.findReports(query);
         reportGrid.setItems(reports);
         //TODO fix these values
         distributionBar.setValues(closedReportCount, openedReportCount, unAssignedReportCount);

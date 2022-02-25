@@ -18,40 +18,10 @@ public class ProjectService {
         return bugrapRepository.getProjectVersions(project);
     }
     public List<Project> getActiveProjects(){
-
         return bugrapRepository.getActiveProjects();
     }
-    public List<Report> getReports(ProjectVersion version){
-
-        return bugrapRepository.getReportsForVersion(version);
-    }
-    public long getCountClosedReports(Project project){
-        return bugrapRepository.countClosedReports(project);
-    }
-    public long getCountClosedReports(ProjectVersion projectVersion){
-
-        return bugrapRepository.countClosedReports(projectVersion);
-    }
 
 
 
-    public long getCountOpenedReports(Project project){
-        return bugrapRepository.countOpenedReports(project);
-    }
-    public long getCountOpenedReports(ProjectVersion projectVersion){
-        return bugrapRepository.countOpenedReports(projectVersion);
-    }
-    public long getCountUnAssignedReports(Project project){
-        //TODO This method has stack over flow exception.
-//        return bugrapRepository.countUnassignedReports(project);
-        return 1;
-    }
-    public long getCountUnAssignedReports(ProjectVersion projectVersion){
-        return bugrapRepository.countUnassignedReports(projectVersion);
-    }
 
-
-    public List<Report> findReports(BugrapRepository.ReportsQuery query){
-        return bugrapRepository.findReports(query);
-    }
 }

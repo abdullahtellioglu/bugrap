@@ -1,5 +1,5 @@
 .project-layout {
-    background-color: rgb(243,245,247);
+    background-color: var(--background-color);
     height: 100%;
 }
 .project-layout vaadin-split-layout {

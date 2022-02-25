@@ -106,6 +106,13 @@ public class ProjectLayout extends VerticalLayout {
 
         gridDistributionContainerLayout.add(reportStatusLayout);
 
+        reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
+            //TODO do something with updated reports ?
+            List<Report> reports = reportService.findReports(query);
+            reportGrid.setItems(reports);
+            onSelectedReportsChanged(new HashSet<>());
+        });
+
         gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);
         gridSplitLayout.setClassName("secondary-hidden");
         gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
@@ -148,7 +155,6 @@ public class ProjectLayout extends VerticalLayout {
             reportsOverviewLayout.setReports(selectedReports);
             gridSplitLayout.removeClassName("secondary-hidden");
             gridSplitLayout.setSplitterPosition(70);
-
         }
     }
 

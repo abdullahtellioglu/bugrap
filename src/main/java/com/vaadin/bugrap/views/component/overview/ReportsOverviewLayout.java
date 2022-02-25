@@ -25,6 +25,14 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     private final Label secondaryLabel;
     private final Label openInNewTabLabel;
 
+
+
+    private ReportUpdateListener reportUpdateListener;
+
+    public void setReportUpdateListener(ReportUpdateListener reportUpdateListener) {
+        this.reportUpdateListener = reportUpdateListener;
+    }
+
     public ReportsOverviewLayout(){
         reportService = new ReportService();
 
@@ -40,6 +48,9 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         openInNewTabLabel = new Label("Open");
         reportInfoContainerLayout.add(openInNewTabLabel);
         add(reportInfoContainerLayout);
+
+
+        overviewUpdateBar.setListener(this);
         add(overviewUpdateBar);
 
     }
@@ -122,7 +133,12 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
             report.setVersion(version);
             reportService.save(report);
         });
+        reportUpdateListener.onUpdated(reports);
         Notification.show("Reports updated successfully!");
         //TODO invalidate grid.
+    }
+
+    public interface ReportUpdateListener {
+        void onUpdated(Set<Report> reports);
     }
 }

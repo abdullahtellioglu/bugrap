@@ -32,9 +32,10 @@ public class ReportService {
         return bugrapRepository.countOpenedReports(projectVersion);
     }
     public long getCountUnAssignedReports(Project project){
-        //TODO This method has stack over flow exception.
+        List<ProjectVersion> projectVersions = bugrapRepository.getProjectVersions(project);
+        long total = projectVersions.stream().mapToLong(bugrapRepository::countUnassignedReports).sum();
 //        return bugrapRepository.countUnassignedReports(project);
-        return 1;
+        return total;
     }
     public long getCountUnAssignedReports(ProjectVersion projectVersion){
         return bugrapRepository.countUnassignedReports(projectVersion);

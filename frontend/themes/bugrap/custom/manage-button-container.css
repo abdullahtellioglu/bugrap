@@ -1,0 +1,18 @@
+.manage-button-container {
+    gap: var(--lumo-space-s);
+}
+.manage-button-container label {
+    margin: auto;
+}
+.manage-button-container vaadin-icon {
+    padding: 0.25em;
+}
+.manage-button-container span {
+    margin:auto;
+    padding-left: 0.50em;
+    padding-right: 0.50em;
+    background-color: var(--lumo-secondary-color);
+    border-radius: 1em;
+    color: white;
+    font-size: var(--lumo-font-size-xs);
+}

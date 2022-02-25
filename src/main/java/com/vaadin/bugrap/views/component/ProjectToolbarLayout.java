@@ -6,6 +6,9 @@ import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.charts.model.style.Color;
 import com.vaadin.flow.component.charts.model.style.Theme;
+import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -13,12 +16,19 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
+import java.util.function.Consumer;
+
 public class ProjectToolbarLayout extends HorizontalLayout {
 
     private final Button reportBugButton;
     private final Button requestFeatureButton;
     private final Button manageProjectButton;
     private final TextField searchTextField;
+
+    private final Span manageProjectCountSpan;
+
+    private Consumer<String> searchTextChangeListener;
+
     public ProjectToolbarLayout() {
         setClassName("project-toolbar");
         setWidth(100, Unit.PERCENTAGE);
@@ -28,7 +38,23 @@ public class ProjectToolbarLayout extends HorizontalLayout {
 
         this.reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
         this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
-        this.manageProjectButton = new Button("Manage project", new Icon(VaadinIcon.ACCESSIBILITY));
+
+        HorizontalLayout manageButtonInternalContainer = new HorizontalLayout();
+        manageButtonInternalContainer.setClassName("manage-button-container");
+        Icon cogIcon = VaadinIcon.COG.create();
+
+        manageButtonInternalContainer.add(cogIcon);
+        Label manageProjectLabel = new Label("Manage project");
+        manageButtonInternalContainer.add(manageProjectLabel);
+
+        manageProjectCountSpan = new Span("10");
+        manageButtonInternalContainer.add(manageProjectCountSpan);
+        this.manageProjectButton = new Button(manageButtonInternalContainer);
+        this.manageProjectButton.setThemeName("icon-text-badge-button");
+
+
+
+
         reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             Notification.show("Not implemented yet");
         });
@@ -48,17 +74,21 @@ public class ProjectToolbarLayout extends HorizontalLayout {
         searchTextField.setClearButtonVisible(true);
         searchTextField.addValueChangeListener(e -> {
             String value =  e.getValue();
-            System.out.println(value);
+            if(searchTextChangeListener != null){
+                searchTextChangeListener.accept(value);
+            }
         });
-
-
         this.add(searchTextField);
+    }
 
-
+    public void setSearchTextChangeListener(Consumer<String> searchTextChangeListener) {
+        this.searchTextChangeListener = searchTextChangeListener;
     }
 
     public void setProjectCount(int count){
-        //TODO how to set secondary badge into Button
+
+        //TODO what is this value? Count of reports or count of projects ?? What should it display
+        manageProjectCountSpan.setText(String.valueOf(count));
     }
 
 }

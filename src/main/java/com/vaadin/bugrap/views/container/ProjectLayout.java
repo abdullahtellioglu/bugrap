@@ -15,6 +15,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.data.selection.SelectionListener;
+import org.apache.commons.lang3.StringUtils;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
@@ -22,18 +23,18 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class ProjectLayout extends VerticalLayout {
     //services
     private final ProjectService projectService;
     private final ReportService reportService;
 
-
-    //entities
-    private final Project project;
+    private Project project;
     private List<ProjectVersion> projectVersions;
     private ProjectVersion projectVersion;
-    private List<Report> reports;
+    private List<Report> reports = new ArrayList<>();
     private Reporter currentUser;
 
     long closedReportCount = 0;
@@ -49,42 +50,36 @@ public class ProjectLayout extends VerticalLayout {
     private SplitLayout gridSplitLayout;
     private final ReportsOverviewLayout reportsOverviewLayout = new ReportsOverviewLayout();
     private final BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
+    private String textSearchQuery;
 
 
     private Set<Report> selectedReports = new HashSet<>();
 
-    public ProjectLayout(Project project, Reporter currentUser){
-        this.project = project;
+    public ProjectLayout(Reporter currentUser){
         this.projectService = new ProjectService();
         this.reportService = new ReportService();
-        this.currentUser = currentUser;
-        query.project = project;
+
         query.reportAssignee = currentUser;
         query.reportStatuses = Collections.singleton(Report.Status.OPEN);
 
-        fetchProjectVersions();
-        fetchReportCounts();
-
-
         projectToolbarLayout = new ProjectToolbarLayout();
+
+        projectToolbarLayout.setSearchTextChangeListener(textQuery -> {
+            textSearchQuery = textQuery;
+            onReportQueryChanged();
+        });
         setClassName("project-layout");
         add(projectToolbarLayout);
 
         reportStatusLayout = new ReportStatusLayout();
-        reportStatusLayout.setCurrentUser(currentUser);
         reportStatusLayout.setAssigneeChangeListener(reporter -> {
             query.reportAssignee = reporter;
-            reports = reportService.findReports(query);
-            reportGrid.setItems(reports);
+            onReportQueryChanged();
         });
         reportStatusLayout.setStatusChangeListener(statuses -> {
             query.reportStatuses = statuses;
-            reports = reportService.findReports(query);
-            reportGrid.setItems(reports);
+            onReportQueryChanged();
         });
-
-        reports = reportService.findReports(query);
-
 
 
         VerticalLayout gridDistributionContainerLayout = new VerticalLayout();
@@ -100,7 +95,7 @@ public class ProjectLayout extends VerticalLayout {
 
         reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
             //TODO do something with updated reports ?
-            List<Report> reports = reportService.findReports(query);
+            onReportQueryChanged();
             reportGrid.setItems(reports);
             onSelectedReportsChanged(new HashSet<>());
         });
@@ -108,7 +103,7 @@ public class ProjectLayout extends VerticalLayout {
 
 
         reportGrid = new ReportGrid();
-        reportGrid.createGridColumns(projectVersion.getId() == -1);
+        reportGrid.createGridColumns(projectVersion == null|| projectVersion.getId() == -1);
         reportGrid.setItems(reports);
         reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
             onSelectedReportsChanged(event.getAllSelectedItems());
@@ -120,6 +115,8 @@ public class ProjectLayout extends VerticalLayout {
         });
         reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
             //OPEN new tab.
+            //TODO open new tab with Router Link
+//            getUI().get().navigate();
             getUI().ifPresent(ui -> ui.getPage().open("/report/"+event.getItem().getId(), "_blank"));
         });
 
@@ -134,6 +131,34 @@ public class ProjectLayout extends VerticalLayout {
 
         add(gridDistributionContainerLayout);
 
+    }
+
+
+    /**
+     * Fetches reports and filters by search query if exists.<br/>
+     * Fill the grid with selected items.
+     */
+    private void onReportQueryChanged(){
+        List<Report> reports = reportService.findReports(query);
+        if(StringUtils.isNotEmpty(textSearchQuery)){
+            reports = reports.stream().filter(report ->
+                    StringUtils.containsIgnoreCase(report.getSummary(), textSearchQuery) ||
+                            StringUtils.containsIgnoreCase(report.getDescription(), textSearchQuery)).collect(Collectors.toList());
+        }
+        this.reports = reports;
+        reportGrid.setItems(reports);
+    }
+
+    public void setProject(Project project){
+        this.project = project;
+        query.project = project;
+
+        onReportQueryChanged();
+        fetchProjectVersions();
+        fetchReportCounts();
+
+        projectVersionSelect.setItems(projectVersions);
+        projectVersionSelect.setValue(projectVersion);
     }
 
     private void fetchProjectVersions(){
@@ -170,11 +195,12 @@ public class ProjectLayout extends VerticalLayout {
 
     private void initReportVersionsAndDistributionBar(VerticalLayout parentComponent){
         projectVersionSelect = new ProjectVersionSelect();
-        projectVersionSelect.setItems(projectVersions);
-        projectVersionSelect.setValue(projectVersion);
 
         projectVersionSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<ProjectVersion>, ProjectVersion>>) event -> {
             ProjectVersion value = event.getValue();
+            if(value == null){
+                return;
+            }
             this.projectVersion = value;
             fetchReportCounts();
             onProjectVersionChange(value);
@@ -212,16 +238,10 @@ public class ProjectLayout extends VerticalLayout {
             query.projectVersion = projectVersion;
             reportGrid.createGridColumns(false);
         }
-
+        onReportQueryChanged();
         CookieUtils.addLastSelectedProjectVersion(project, projectVersion, RequestUtils.getCurrentHttpResponse());
 
-        List<Report> reports = reportService.findReports(query);
-        reportGrid.setItems(reports);
-        //TODO fix these values
         distributionBar.setValues(closedReportCount, openedReportCount, unAssignedReportCount);
-    }
-    public void setCurrentUser(Reporter user){
-        this.currentUser = user;
     }
 
 

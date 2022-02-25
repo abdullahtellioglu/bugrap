@@ -8,6 +8,7 @@
 @import url('./custom/home-page.css');
 @import url('./custom/project-toolbar-layout.css');
 @import url('./custom/reports-overview.css');
+@import url('./custom/manage-button-container.css');
 
 html {
     --_lumo-button-background-color: white;

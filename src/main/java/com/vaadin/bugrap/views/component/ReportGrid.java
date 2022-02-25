@@ -19,42 +19,32 @@ import java.util.List;
 
 public class ReportGrid extends Grid<Report> {
     Boolean lastAllVersionState = null;
+    private Column<Report> versionColumn;
+    private Column<Report> priorityColumn;
     public ReportGrid(){
-
-    }
-    public void createGridColumns(boolean allVersionSelected){
-        List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();
-        //disable re creating all components.
-//        if(lastAllVersionState != null && lastAllVersionState == allVersionSelected){
-//            return;
-//        }
-
         setSelectionMode(SelectionMode.MULTI);
-        removeAllColumns();
-        lastAllVersionState = allVersionSelected;
-        if(allVersionSelected){
-            Column<Report> version = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
-            //change visibility instead of re-creating
-            version.setComparator((o1, o2) -> {
-                if(o1.getVersion() == null && o2.getVersion() != null){
-                    return 1;
-                }
-                if(o1.getVersion() != null && o2.getVersion() == null){
-                    return -1;
-                }
-                if(o1.getVersion() != null && o2.getVersion() != null){
-                    return o1.getVersion().getVersion().compareTo(o2.getVersion().getVersion());
-                }
-                return 0;
-            });
-            GridSortOrder<Report> versionOrder = new GridSortOrder<>(version, SortDirection.ASCENDING);
-            sortOrderList.add(versionOrder);
-        }
-        Column<Report> priority = addColumn(createPriorityComponentRenderer()).setHeader("Priority");
-        priority.setComparator(Comparator.comparing(Report::getPriority));
+        createColumns();
+    }
 
-        GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priority, SortDirection.DESCENDING);
-        sortOrderList.add(priorityOrder);
+    private void createColumns(){
+        versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
+        //change visibility instead of re-creating
+
+        versionColumn.setComparator((o1, o2) -> {
+            if(o1.getVersion() == null && o2.getVersion() != null){
+                return 1;
+            }
+            if(o1.getVersion() != null && o2.getVersion() == null){
+                return -1;
+            }
+            if(o1.getVersion() != null && o2.getVersion() != null){
+                return o1.getVersion().getVersion().compareTo(o2.getVersion().getVersion());
+            }
+            return 0;
+        });
+        priorityColumn = addColumn(createPriorityComponentRenderer()).setHeader("Priority");
+        priorityColumn.setComparator(Comparator.comparing(Report::getPriority));
+
 
         addColumn(Report::getType).setHeader("Type").setComparator(Comparator.comparing(Report::getType));
         addColumn(Report::getSummary).setHeader("Summary").setComparator(Comparator.comparing(Report::getSummary));
@@ -73,6 +63,18 @@ public class ReportGrid extends Grid<Report> {
         addColumn(createReportLastModifiedComponentRenderer()).setHeader("Last modified").setComparator(Comparator.comparing(Report::getTimestamp));
         addColumn(createReportTimeStampComponentRenderer()).setHeader("Reported").setComparator(Comparator.comparing(Report::getReportedTimestamp));
 
+    }
+    public void createGridColumns(boolean allVersionSelected){
+        List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();
+        if(allVersionSelected){
+            versionColumn.setVisible(true);
+            GridSortOrder<Report> versionOrder = new GridSortOrder<>(versionColumn, SortDirection.ASCENDING);
+            sortOrderList.add(versionOrder);
+        }else{
+            versionColumn.setVisible(false);
+        }
+        GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priorityColumn, SortDirection.DESCENDING);
+        sortOrderList.add(priorityOrder);
         sort(sortOrderList);
     }
 

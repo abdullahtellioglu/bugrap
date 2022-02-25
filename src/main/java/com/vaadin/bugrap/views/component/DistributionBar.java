@@ -51,7 +51,7 @@ public class DistributionBar extends HorizontalLayout {
     }
     private void updateChunk(long value, Div chunk, float maxWidthPercentage){
         chunk.setMinWidth(30, Unit.PIXELS);
-        chunk.setWidth(value * 30, Unit.PIXELS);
+        chunk.setWidth(maxWidthPercentage, Unit.PERCENTAGE);
         chunk.setMaxWidth(maxWidthPercentage, Unit.PERCENTAGE);
         chunk.removeClassNames("has-value", "no-value");
         chunk.addClassName(value > 0 ? "has-value" : "no-value");

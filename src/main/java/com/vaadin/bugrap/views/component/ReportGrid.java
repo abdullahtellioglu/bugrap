@@ -24,7 +24,7 @@ public class ReportGrid extends Grid<Report> {
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
 
-
+        //TODO how to add UP and DOWN listener to Rows and disable cell focus ??
 
         initializeColumns();
 

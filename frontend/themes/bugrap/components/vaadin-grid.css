@@ -1,3 +1,6 @@
 /*:host [part~='cell'] ::slotted(vaadin-grid-cell-content){*/
 /*    outline: none;*/
 /*}*/
+:host(:not([reordering])) [part~='row'][selected] [part~='body-cell']:not([part~='details-cell']) {
+    background-color: var(--table-row-selected-bg);
+}

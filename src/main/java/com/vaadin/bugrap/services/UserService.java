@@ -17,7 +17,6 @@ public class UserService {
         return bugrapRepository.getUser(username);
     }
     public List<Reporter> getUsers(){
-        //TODO fix
         return List.copyOf(bugrapRepository.findReporters());
     }
 }

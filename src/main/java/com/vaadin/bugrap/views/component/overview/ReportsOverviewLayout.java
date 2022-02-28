@@ -128,7 +128,6 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         if(statusSet.size() == 1){
             status = statusSet.iterator().next();
         }
-        //TODO check distinct is required
         Set<Reporter> reporterSet = reports.stream().map(Report::getAssigned).collect(Collectors.toSet());
         if(reporterSet.size() == 1){
             reporter = reporterSet.iterator().next();
@@ -160,7 +159,6 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         });
         reportUpdateListener.onUpdated(reports);
         Notification.show("Reports updated successfully!");
-        //TODO invalidate grid.
     }
 
     public interface ReportUpdateListener {

@@ -101,7 +101,6 @@ public class ProjectLayout extends VerticalLayout {
         gridDistributionContainerLayout.add(reportStatusLayout);
 
         reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
-            //TODO do something with updated reports ?
             onReportQueryChanged();
 
             reports.forEach(report -> {

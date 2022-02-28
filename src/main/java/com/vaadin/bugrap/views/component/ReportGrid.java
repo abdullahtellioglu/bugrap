@@ -1,35 +1,38 @@
 package com.vaadin.bugrap.views.component;
 
 import com.vaadin.bugrap.utils.DateUtils;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.grid.CellFocusEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
-import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.dom.ElementAttachEvent;
+import com.vaadin.flow.dom.ElementAttachListener;
 import com.vaadin.flow.function.SerializableFunction;
 import org.vaadin.bugrap.domain.entities.Report;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class ReportGrid extends Grid<Report> {
-    Boolean lastAllVersionState = null;
+
     private Column<Report> versionColumn;
     private Column<Report> priorityColumn;
+    private Consumer<Report> displayReportInNewTabConsumer;
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
-        createColumns();
+
+
+
+        initializeColumns();
+
+
     }
 
-    private void createColumns(){
+    private void initializeColumns(){
         versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
-        //change visibility instead of re-creating
-
         versionColumn.setComparator((o1, o2) -> {
             if(o1.getVersion() == null && o2.getVersion() != null){
                 return 1;
@@ -78,6 +81,9 @@ public class ReportGrid extends Grid<Report> {
         sort(sortOrderList);
     }
 
+    public void setDisplayReportInNewTabConsumer(Consumer<Report> consumer){
+        this.displayReportInNewTabConsumer = consumer;
+    }
     private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){
         return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
             if (report != null && report.getVersion() != null) {

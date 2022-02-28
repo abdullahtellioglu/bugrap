@@ -1,3 +1,13 @@
 .reports-overview {
     background-color: var(--background-color);
 }
+.reports-overview a vaadin-icon {
+    padding: 0.25em;
+}
+.reports-overview .primary-label {
+    font-weight: bold;
+    font-size: var(--lumo-font-size-l);
+}
+.reports-overview .secondary-label {
+    margin: auto;
+}

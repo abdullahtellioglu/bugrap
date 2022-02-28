@@ -7,10 +7,10 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
@@ -23,11 +23,11 @@ public class OverviewUpdateBar extends HorizontalLayout {
     private ReportsUpdateListener listener;
 
     //views
-    private final Select<Report.Priority> prioritySelect = new Select<>();
-    private final Select<Report.Type> typeSelect = new Select<>();
-    private final Select<Report.Status> statusSelect = new Select<>();
-    private final Select<Reporter> reporterSelect = new Select<>();
-    private final Select<ProjectVersion> versionSelect = new Select<>();
+    private final ComboBox<Report.Priority> prioritySelect = new ComboBox<>();
+    private final ComboBox<Report.Type> typeComboBox = new ComboBox<>();
+    private final ComboBox<Report.Status> statusComboBox = new ComboBox<>();
+    private final ComboBox<Reporter> reporterComboBox = new ComboBox<>();
+    private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();
 
     //for revert action, these values are stored.
     private Report.Priority initialPriority;
@@ -43,13 +43,13 @@ public class OverviewUpdateBar extends HorizontalLayout {
         setAlignItems(Alignment.BASELINE);
 
         initPrioritySelect();
-        initTypeSelect();
-        initStatusSelect();
-        initReporterSelect();
-        initVersionSelect();
+        initTypeComboBox();
+        initStatusComboBox();
+        initReporterComboBox();
+        initVersionComboBox();
 
 
-        HorizontalLayout selectContainers = new HorizontalLayout(prioritySelect, typeSelect, statusSelect, reporterSelect, versionSelect);
+        HorizontalLayout selectContainers = new HorizontalLayout(prioritySelect, typeComboBox, statusComboBox, reporterComboBox, versionComboBox);
 
 
         Button saveChangesButton = new Button("Save Changes");
@@ -59,20 +59,20 @@ public class OverviewUpdateBar extends HorizontalLayout {
 
         revertButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             prioritySelect.setValue(initialPriority);
-            typeSelect.setValue(initialType);
-            statusSelect.setValue(initialStatus);
-            reporterSelect.setValue(initialReporter);
-            versionSelect.setValue(initialProjectVersion);
+            typeComboBox.setValue(initialType);
+            statusComboBox.setValue(initialStatus);
+            reporterComboBox.setValue(initialReporter);
+            versionComboBox.setValue(initialProjectVersion);
         });
 
         saveChangesButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             if(listener != null){
                 listener.onUpdate(
                         prioritySelect.getValue(),
-                        typeSelect.getValue(),
-                        statusSelect.getValue(),
-                        reporterSelect.getValue(),
-                        versionSelect.getValue());
+                        typeComboBox.getValue(),
+                        statusComboBox.getValue(),
+                        reporterComboBox.getValue(),
+                        versionComboBox.getValue());
             }
         });
 
@@ -86,7 +86,10 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
 
     public void setProjectVersions(List<ProjectVersion> versions){
-        this.versionSelect.setItems(versions);
+        this.versionComboBox.setItems(versions);
+    }
+    public void setReporters(List<Reporter> reporters){
+        this.reporterComboBox.setItems(reporters);
     }
     public void setPriority(Report.Priority priority){
         initialPriority = priority;
@@ -94,19 +97,19 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     public void setType(Report.Type type){
         initialType = type;
-        typeSelect.setValue(type);
+        typeComboBox.setValue(type);
     }
     public void setStatus(Report.Status status){
         initialStatus = status;
-        statusSelect.setValue(status);
+        statusComboBox.setValue(status);
     }
     public void setReporter(Reporter reporter){
         initialReporter = reporter;
-        reporterSelect.setValue(reporter);
+        reporterComboBox.setValue(reporter);
     }
     public void setVersion(ProjectVersion version){
         initialProjectVersion = version;
-        versionSelect.setValue(version);
+        versionComboBox.setValue(version);
     }
     private void initPrioritySelect(){
         prioritySelect.setLabel("Priority");
@@ -118,34 +121,33 @@ public class OverviewUpdateBar extends HorizontalLayout {
             return new Span();
         }));
     }
-    private void initTypeSelect(){
-        typeSelect.setLabel("Type");
-        typeSelect.setItems(Report.Type.values());
+    private void initTypeComboBox(){
+        typeComboBox.setLabel("Type");
+        typeComboBox.setItems(Report.Type.values());
 
     }
-    private void initStatusSelect(){
-        statusSelect.setLabel("Status");
-        statusSelect.setItems(Report.Status.values());
-        statusSelect.setRenderer(new ComponentRenderer<>((SerializableFunction<Report.Status, Component>) status -> {
+    private void initStatusComboBox(){
+        statusComboBox.setLabel("Status");
+        statusComboBox.setItems(Report.Status.values());
+        statusComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Report.Status, Component>) status -> {
             if(status != null){
                 return new Span(status.toString());
             }
             return null;
         }));
     }
-    private void initReporterSelect(){
-        reporterSelect.setLabel("Assignee");
-        // TODO how to set all reporters
-        reporterSelect.setRenderer(new ComponentRenderer<>((SerializableFunction<Reporter, Component>) reporter -> {
+    private void initReporterComboBox(){
+        reporterComboBox.setLabel("Assignee");
+        reporterComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Reporter, Component>) reporter -> {
             if(reporter != null){
-                reporter.getName();
+                return new Span(reporter.getName());
             }
             return null;
         }));
     }
-    private void initVersionSelect(){
-        versionSelect.setLabel("Version");
-        versionSelect.setRenderer(new ComponentRenderer<>((SerializableFunction<ProjectVersion, Component>) projectVersion -> {
+    private void initVersionComboBox(){
+        versionComboBox.setLabel("Version");
+        versionComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<ProjectVersion, Component>) projectVersion -> {
             if(projectVersion != null){
                 return new Span(projectVersion.getVersion());
             }

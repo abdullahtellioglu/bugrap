@@ -4,6 +4,7 @@ import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class UserService {
@@ -17,6 +18,6 @@ public class UserService {
     }
     public List<Reporter> getUsers(){
         //TODO fix
-        throw new UnsupportedOperationException("Not implemented yet");
+        return List.copyOf(bugrapRepository.findReporters());
     }
 }

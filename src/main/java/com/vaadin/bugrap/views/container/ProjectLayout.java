@@ -59,6 +59,13 @@ public class ProjectLayout extends VerticalLayout {
         this.projectService = new ProjectService();
         this.reportService = new ReportService();
 
+
+        UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
+            if(selectedReports.size() == 1){
+                openReportInNewTab(selectedReports.iterator().next());
+            }
+        }, Key.ENTER, KeyModifier.CONTROL);
+
         query.reportAssignee = currentUser;
         query.reportStatuses = Collections.singleton(Report.Status.OPEN);
 
@@ -96,8 +103,14 @@ public class ProjectLayout extends VerticalLayout {
         reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
             //TODO do something with updated reports ?
             onReportQueryChanged();
-            reportGrid.setItems(reports);
-            onSelectedReportsChanged(new HashSet<>());
+
+            reports.forEach(report -> {
+                updatedReports.stream().filter(updatedReport -> report.getId() == updatedReport.getId()).findFirst().ifPresent(u -> {
+                    reportGrid.getSelectionModel().select(report);
+                });
+            });
+
+//            onSelectedReportsChanged(new HashSet<>());
         });
 
 
@@ -114,11 +127,9 @@ public class ProjectLayout extends VerticalLayout {
             onSelectedReportsChanged(Collections.singleton(event.getItem()));
         });
         reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
-            //OPEN new tab.
-            //TODO open new tab with Router Link
-//            getUI().get().navigate();
-            getUI().ifPresent(ui -> ui.getPage().open("/report/"+event.getItem().getId(), "_blank"));
+            openReportInNewTab(event.getItem());
         });
+        reportGrid.setDisplayReportInNewTabConsumer(this::openReportInNewTab);
 
         gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);
         gridSplitLayout.setClassName("secondary-hidden");
@@ -131,6 +142,10 @@ public class ProjectLayout extends VerticalLayout {
 
         add(gridDistributionContainerLayout);
 
+    }
+
+    private void openReportInNewTab(Report report){
+        getUI().ifPresent(ui -> ui.getPage().open("/report/"+report.getId(), "_blank"));
     }
 
 

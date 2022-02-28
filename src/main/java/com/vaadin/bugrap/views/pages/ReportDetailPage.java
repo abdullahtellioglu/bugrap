@@ -7,14 +7,14 @@ import com.vaadin.flow.router.*;
 @PageTitle("Report Detail")
 @Route(value = "/report")
 @RouteAlias(value = "/report")
-public class DetailPage extends VerticalLayout implements HasUrlParameter<Integer> {
+public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<Long> {
 
-    public DetailPage(){
+    public ReportDetailPage(){
         add(new Label("Detail page"));
     }
 
     @Override
-    public void setParameter(BeforeEvent event, Integer projectId) {
+    public void setParameter(BeforeEvent event, Long projectId) {
         System.out.println(projectId);
     }
 }

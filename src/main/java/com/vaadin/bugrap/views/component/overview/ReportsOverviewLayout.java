@@ -1,21 +1,30 @@
 package com.vaadin.bugrap.views.component.overview;
 
+import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
+import com.vaadin.bugrap.services.UserService;
+import com.vaadin.bugrap.views.pages.ReportDetailPage;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.RouteConfiguration;
+import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpdateBar.ReportsUpdateListener {
     private final ReportService reportService;
+    private final ProjectService projectService;
+    private final UserService userService;
 
     private Set<Report> reports;
     boolean massModificationModeOn;
@@ -23,9 +32,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     private final OverviewUpdateBar overviewUpdateBar = new OverviewUpdateBar();
     private final Label primaryLabel;
     private final Label secondaryLabel;
-    private final Label openInNewTabLabel;
-
-
+    private final Anchor openInNewTabLabel;
 
     private ReportUpdateListener reportUpdateListener;
 
@@ -35,27 +42,42 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     public ReportsOverviewLayout(){
         reportService = new ReportService();
+        projectService = new ProjectService();
+        userService = new UserService();
+
+        List<Reporter> users = userService.getUsers();
 
         setClassName("reports-overview");
         primaryLabel = new Label();
+        primaryLabel.setClassName("primary-label");
         secondaryLabel = new Label();
+        secondaryLabel.setClassName("secondary-label");
 
 
         reportInfoContainerLayout.setWidth(100, Unit.PERCENTAGE);
         reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
         HorizontalLayout labelContainerLayout = new HorizontalLayout(primaryLabel, secondaryLabel);
         reportInfoContainerLayout.add(labelContainerLayout);
-        openInNewTabLabel = new Label("Open");
+        openInNewTabLabel = new Anchor("aaa", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
+        openInNewTabLabel.setTarget("_blank");
+
         reportInfoContainerLayout.add(openInNewTabLabel);
         add(reportInfoContainerLayout);
 
 
         overviewUpdateBar.setListener(this);
+        overviewUpdateBar.setReporters(users);
         add(overviewUpdateBar);
 
     }
     public void setReports(Set<Report> reports){
         this.reports = reports;
+        if(!reports.isEmpty()){
+            Report next = reports.iterator().next();
+            Project project = next.getProject();
+            List<ProjectVersion> projectVersions = projectService.getProjectVersions(project);
+            this.overviewUpdateBar.setProjectVersions(projectVersions);
+        }
         initLayout();
         setInitialValues();
     }
@@ -74,6 +96,9 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         Report report = reports.iterator().next();
         primaryLabel.setText(report.getSummary());
 
+        RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
+        String url = routeConfiguration.getUrl(ReportDetailPage.class, report.getId());
+        openInNewTabLabel.setHref(url);
     }
     private void initMassModificationMode(){
         massModificationModeOn = true;

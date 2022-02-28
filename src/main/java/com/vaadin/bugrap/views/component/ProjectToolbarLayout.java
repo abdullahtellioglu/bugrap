@@ -86,8 +86,7 @@ public class ProjectToolbarLayout extends HorizontalLayout {
     }
 
     public void setProjectCount(int count){
-
-        //TODO what is this value? Count of reports or count of projects ?? What should it display
+        //TODO all open reports in project.
         manageProjectCountSpan.setText(String.valueOf(count));
     }
 

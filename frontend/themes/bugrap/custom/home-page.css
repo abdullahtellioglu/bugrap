@@ -1,9 +1,4 @@
 .home-page {
-    /*ask this important. How to do this better*/
     border: 1px solid var(--lumo-contrast-10pct);
     height: 100%;
-}
-.home-page {
-    gap: unset;
-    padding: unset;
 }

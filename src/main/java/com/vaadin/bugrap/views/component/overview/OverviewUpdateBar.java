@@ -11,6 +11,7 @@ import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
@@ -23,7 +24,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     private ReportsUpdateListener listener;
 
     //views
-    private final ComboBox<Report.Priority> prioritySelect = new ComboBox<>();
+    private final Select<Report.Priority> prioritySelect = new Select<>();
     private final ComboBox<Report.Type> typeComboBox = new ComboBox<>();
     private final ComboBox<Report.Status> statusComboBox = new ComboBox<>();
     private final ComboBox<Reporter> reporterComboBox = new ComboBox<>();

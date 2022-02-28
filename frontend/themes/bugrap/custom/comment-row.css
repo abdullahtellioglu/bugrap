@@ -1,0 +1,16 @@
+.comment-row {
+    background-color: white;
+    border: 1px solid var(--lumo-contrast-10pct);
+}
+.comment-row .user-label {
+    font-weight: bold;
+}
+.comment-row .time-label {
+    font-size: var(--lumo-font-size-xxs);
+    color: var(--lumo-contrast-40pct);
+}
+.comment-row .attachment-label {
+    font-size: var(--lumo-font-size-xs);
+    color: var(--lumo-contrast-40pct);
+
+}

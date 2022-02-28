@@ -14,6 +14,9 @@ public class ProjectService {
     public ProjectService(){
         this.bugrapRepository = new BugrapRepository();
     }
+    public Project getProject(long id){
+        return bugrapRepository.getProject(id);
+    }
     public List<ProjectVersion> getProjectVersions(Project project){
         return bugrapRepository.getProjectVersions(project);
     }

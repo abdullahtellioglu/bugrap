@@ -45,7 +45,6 @@ dependencies:
   '@vaadin/polymer-legacy-adapter': 22.0.4
   '@vaadin/progress-bar': 22.0.4
   '@vaadin/radio-group': 22.0.4
-  '@vaadin/rich-text-editor': 22.0.4
   '@vaadin/router': 1.7.4
   '@vaadin/scroller': 22.0.4
   '@vaadin/select': 22.0.4
@@ -89,7 +88,6 @@ dependencies:
   '@vaadin/vaadin-ordered-layout': 22.0.4
   '@vaadin/vaadin-progress-bar': 22.0.4
   '@vaadin/vaadin-radio-button': 22.0.4
-  '@vaadin/vaadin-rich-text-editor': 22.0.4
   '@vaadin/vaadin-select': 22.0.4
   '@vaadin/vaadin-shrinkwrap': 22.0.5
   '@vaadin/vaadin-split-layout': 22.0.4
@@ -8966,7 +8964,6 @@ specifiers:
   '@vaadin/polymer-legacy-adapter': 22.0.4
   '@vaadin/progress-bar': 22.0.4
   '@vaadin/radio-group': 22.0.4
-  '@vaadin/rich-text-editor': 22.0.4
   '@vaadin/router': 1.7.4
   '@vaadin/scroller': 22.0.4
   '@vaadin/select': 22.0.4
@@ -9012,7 +9009,6 @@ specifiers:
   '@vaadin/vaadin-ordered-layout': 22.0.4
   '@vaadin/vaadin-progress-bar': 22.0.4
   '@vaadin/vaadin-radio-button': 22.0.4
-  '@vaadin/vaadin-rich-text-editor': 22.0.4
   '@vaadin/vaadin-select': 22.0.4
   '@vaadin/vaadin-shrinkwrap': 22.0.5
   '@vaadin/vaadin-split-layout': 22.0.4

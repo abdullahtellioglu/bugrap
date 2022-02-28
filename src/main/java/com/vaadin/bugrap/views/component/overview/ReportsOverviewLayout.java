@@ -1,5 +1,6 @@
 package com.vaadin.bugrap.views.component.overview;
 
+import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.services.UserService;
@@ -17,6 +18,7 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +26,7 @@ import java.util.stream.Collectors;
 public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpdateBar.ReportsUpdateListener {
     private final ReportService reportService;
     private final ProjectService projectService;
+    private final CommentService commentService;
     private final UserService userService;
 
     private Set<Report> reports;
@@ -33,6 +36,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     private final Label primaryLabel;
     private final Label secondaryLabel;
     private final Anchor openInNewTabLabel;
+    private final CommentList commentList;
 
     private ReportUpdateListener reportUpdateListener;
 
@@ -44,8 +48,12 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         reportService = new ReportService();
         projectService = new ProjectService();
         userService = new UserService();
+        commentService = new CommentService();
 
         List<Reporter> users = userService.getUsers();
+
+        commentList = new CommentList();
+        commentList.setWidth(100, Unit.PERCENTAGE);
 
         setClassName("reports-overview");
         primaryLabel = new Label();
@@ -68,6 +76,10 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         overviewUpdateBar.setListener(this);
         overviewUpdateBar.setReporters(users);
         add(overviewUpdateBar);
+
+
+
+        add(commentList);
 
     }
     public void setReports(Set<Report> reports){
@@ -99,9 +111,11 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         String url = routeConfiguration.getUrl(ReportDetailPage.class, report.getId());
         openInNewTabLabel.setHref(url);
+        commentList.setComments(commentService.getGroupedComments(report));
     }
     private void initMassModificationMode(){
         massModificationModeOn = true;
+        commentList.setComments(new ArrayList<>());
         openInNewTabLabel.addClassName("hidden");
         secondaryLabel.removeClassName("hidden");
         primaryLabel.setText(String.format("%s items selected", reports.size()));

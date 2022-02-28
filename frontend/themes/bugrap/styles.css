@@ -9,6 +9,9 @@
 @import url('./custom/project-toolbar-layout.css');
 @import url('./custom/reports-overview.css');
 @import url('./custom/manage-button-container.css');
+@import url('./custom/comment-row.css');
+@import url('./custom/report-detail-breadcrumb.css');
+@import url('./custom/report-detail-page.css');
 
 html {
     --_lumo-button-background-color: white;

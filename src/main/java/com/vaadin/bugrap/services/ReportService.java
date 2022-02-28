@@ -45,6 +45,10 @@ public class ReportService {
     }
 
 
+    public Report getReport(long id){
+        return bugrapRepository.getReport(id);
+    }
+
     public List<Report> findReports(BugrapRepository.ReportsQuery query){
         return bugrapRepository.findReports(query);
     }

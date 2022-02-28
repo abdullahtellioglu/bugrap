@@ -1,0 +1,8 @@
+.report-detail-page {
+    border: 1px solid var(--lumo-contrast-10pct);
+    height: 100%;
+    background-color: var(--background-color);
+}
+.report-detail-page > label {
+    background-color: red;
+}

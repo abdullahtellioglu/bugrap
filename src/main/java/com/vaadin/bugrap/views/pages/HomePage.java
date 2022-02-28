@@ -37,6 +37,8 @@ public class HomePage extends VerticalLayout {
         this.reportService = new ReportService();
         userService = new UserService();
         setClassName("home-page");
+        setSpacing(false);
+        setPadding(false);
         projectSelector = new ProjectSelector();
         List<Project> activeProjects = projectService.getActiveProjects();
         add(projectSelector);

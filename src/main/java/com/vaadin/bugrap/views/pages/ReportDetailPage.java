@@ -66,6 +66,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         HorizontalLayout reviewAttachmentHorizontalLayout = new HorizontalLayout();
         commentRichTextEditor = new RichTextEditor("Initial value ");
         //TODO this is pro editor. If I use
+
         reviewAttachmentHorizontalLayout.add(commentRichTextEditor);
 
 

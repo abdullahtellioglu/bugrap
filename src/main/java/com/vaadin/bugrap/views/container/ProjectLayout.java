@@ -23,7 +23,6 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ProjectLayout extends VerticalLayout {
@@ -259,7 +258,7 @@ public class ProjectLayout extends VerticalLayout {
     }
 
 
-    public void setProjectCount(int projectCount) {
-        projectToolbarLayout.setProjectCount(projectCount);
+    public void setOpenedReportCount(long reportCount) {
+        projectToolbarLayout.setOpenedReportCount(reportCount);
     }
 }

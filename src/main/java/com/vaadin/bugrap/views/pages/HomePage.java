@@ -47,7 +47,7 @@ public class HomePage extends VerticalLayout {
         projectLayout = new ProjectLayout(currentUser);
 
         projectSelector.setProjectSelectListener(project -> {
-            projectLayout.setProjectCount(activeProjects.size());
+            projectLayout.setOpenedReportCount(reportService.getCountOpenedReports(project));
             projectLayout.setProject(project);
             projectSelector.setManagerName(project.getManager().getName());
         });

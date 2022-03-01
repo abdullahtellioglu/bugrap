@@ -85,8 +85,7 @@ public class ProjectToolbarLayout extends HorizontalLayout {
         this.searchTextChangeListener = searchTextChangeListener;
     }
 
-    public void setProjectCount(int count){
-        //TODO all open reports in project.
+    public void setOpenedReportCount(long count){
         manageProjectCountSpan.setText(String.valueOf(count));
     }
 

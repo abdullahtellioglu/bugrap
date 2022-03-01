@@ -14,6 +14,8 @@ public class CommentList extends Div {
 
     public CommentList() {
         commentListVerticalLayout.setPadding(false);
+        commentListVerticalLayout.setWidth(100, Unit.PERCENTAGE);
+        setWidth(100, Unit.PERCENTAGE);
         Scroller scroller = new Scroller();
         scroller.setMaxHeight(400, Unit.PIXELS);
         scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);

@@ -10,6 +10,7 @@ import com.vaadin.flow.component.avatar.Avatar;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -27,7 +28,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CommentRow extends HorizontalLayout {
-    private final Label descriptionLabel;
+    private final Span description;
     private final VerticalLayout metaDataLayout;
     private final VerticalLayout attachmentContainerLayout;
     private final Avatar avatar;
@@ -39,10 +40,10 @@ public class CommentRow extends HorizontalLayout {
         setPadding(true);
         setWidth(100, Unit.PERCENTAGE);
 
-        descriptionLabel = new Label();
+        description = new Span();
 
 
-        descriptionLabel.setWidth(80, Unit.PERCENTAGE);
+        description.setWidth(80, Unit.PERCENTAGE);
 
 
 
@@ -60,6 +61,7 @@ public class CommentRow extends HorizontalLayout {
 
         avatar = new Avatar();
 
+
         HorizontalLayout avatarContainerLayout = new HorizontalLayout();
         avatarContainerLayout.setAlignItems(Alignment.CENTER);
         avatarContainerLayout.add(avatar);
@@ -76,7 +78,7 @@ public class CommentRow extends HorizontalLayout {
 
 
         metaDataLayout.setWidth(20, Unit.PERCENTAGE);
-        add(descriptionLabel, metaDataLayout);
+        add(description, metaDataLayout);
 
         attachmentContainerLayout = new VerticalLayout();
         attachmentContainerLayout.setPadding(false);
@@ -85,7 +87,7 @@ public class CommentRow extends HorizontalLayout {
     }
     public void setComment(GroupedComment comment){
         attachmentContainerLayout.removeAll();
-        descriptionLabel.setText(comment.getComment());
+        description.getElement().setProperty("innerHTML",comment.getComment());
         avatar.setName(comment.getAuthor().getName());
         timeDisplayLabel.setText(DateUtils.getRelativeFormat(comment.getTimestamp()));
         userDisplayNameLabel.setText(comment.getAuthor().getName());

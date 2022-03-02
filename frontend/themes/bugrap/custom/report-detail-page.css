@@ -3,6 +3,18 @@
     height: 100%;
     background-color: var(--background-color);
 }
-.report-detail-page > label {
-    background-color: red;
+.report-detail-page .report-name {
+    font-weight: bold;
+    font-size: var(--lumo-font-size-m);
+}
+.report-detail-page .bottom-panel {
+    background-color: var(--lumo-contrast-10pct);
+}
+.report-detail-page .attachment-label-header {
+    font-weight: 500;
+    color: var(--lumo-contrast-50pct)
+}
+.report-detail-page .attachment-description-label {
+    color: var(--lumo-contrast-30pct);
+    font-size: var(--lumo-font-size-s);
 }

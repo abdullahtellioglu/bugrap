@@ -1,0 +1,9 @@
+:host [part="toolbar-group toolbar-group-glyph-transformation"], [part="toolbar-group toolbar-group-alignment"], [part="toolbar-group toolbar-group-rich-text"], [part="toolbar-group toolbar-group-format"]{
+    display: none;
+}
+:host [part="toolbar"]{
+    background-color: var(--lumo-contrast-5pct);
+}
+:host {
+    flex: 1;
+}

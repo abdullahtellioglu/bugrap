@@ -1,0 +1,3 @@
+:host [part='drop-label'] {
+    color: var(--lumo-contrast-90pct);
+}

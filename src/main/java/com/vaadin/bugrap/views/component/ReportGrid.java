@@ -23,8 +23,30 @@ public class ReportGrid extends Grid<Report> {
     private Consumer<Report> displayReportInNewTabConsumer;
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
-
         //TODO how to add UP and DOWN listener to Rows and disable cell focus ??
+
+        addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
+            if(event.getColumn().isEmpty()){
+                //for selection checkboxes
+
+                return;
+            }
+            Set<Report> selectedItems = getSelectionModel().getSelectedItems();
+            if(selectedItems.size() > 1){
+                return;
+            }
+
+            event.getItem().ifPresent(report -> {
+                if(selectedItems.iterator().hasNext()){
+                    Report current = selectedItems.iterator().next();
+                    if(current.getId() != report.getId()){
+                        deselect(current);
+                    }
+                }
+                select(report);
+            });
+
+        });
 
         initializeColumns();
 
@@ -45,6 +67,7 @@ public class ReportGrid extends Grid<Report> {
             }
             return 0;
         });
+
         priorityColumn = addColumn(createPriorityComponentRenderer()).setHeader("Priority");
         priorityColumn.setComparator(Comparator.comparing(Report::getPriority));
 

@@ -4,3 +4,6 @@
 :host(:not([reordering])) [part~='row'][selected] [part~='body-cell']:not([part~='details-cell']) {
     background-color: var(--table-row-selected-bg);
 }
+:host [part~="cell"] {
+    outline: unset;
+}

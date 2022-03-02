@@ -7,21 +7,16 @@
     z-index: 1;
     min-height: 52px;
 }
-.report-detail-breadcrumb label{
+.breadcrumb-label label {
     margin: auto;
 }
-/*.breadcrumb-label::before {*/
-/*    content: "";*/
-/*    border-top: 50px solid transparent;*/
-/*    border-left: 100px solid red;*/
-/*    border-bottom: 50px solid transparent;*/
-/*}*/
 .breadcrumb-label {
     position: relative;
     display: flex;
+    color: white;
     justify-content: center;
     background-color: var(--lumo-secondary-color);
-    clip-path: polygon(95% 0, 100% 50%, 95% 100%, 0% 100%, 0% 50%, 0% 0%);
+    clip-path: polygon(98% 0, 100% 50%, 98% 100%, 0% 100%, 0% 50%, 0% 0%);
 }
 .breadcrumb-label::after {
     /*content:"";*/

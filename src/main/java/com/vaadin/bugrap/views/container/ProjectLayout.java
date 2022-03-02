@@ -6,6 +6,7 @@ import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
 import com.vaadin.bugrap.views.component.overview.ReportsOverviewLayout;
+import com.vaadin.bugrap.views.pages.ReportDetailPage;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
@@ -15,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.data.selection.SelectionListener;
+import com.vaadin.flow.router.RouteConfiguration;
 import org.apache.commons.lang3.StringUtils;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
@@ -44,9 +46,8 @@ public class ProjectLayout extends VerticalLayout {
     private ReportGrid reportGrid;
     private DistributionBar distributionBar;
     private ProjectVersionSelect projectVersionSelect;
-    private ReportStatusLayout reportStatusLayout;
-    private ProjectToolbarLayout projectToolbarLayout;
-    private SplitLayout gridSplitLayout;
+    private final ProjectToolbarLayout projectToolbarLayout;
+    private final SplitLayout gridSplitLayout;
     private final ReportsOverviewLayout reportsOverviewLayout = new ReportsOverviewLayout();
     private final BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
     private String textSearchQuery;
@@ -77,7 +78,7 @@ public class ProjectLayout extends VerticalLayout {
         setClassName("project-layout");
         add(projectToolbarLayout);
 
-        reportStatusLayout = new ReportStatusLayout();
+        ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
         reportStatusLayout.setAssigneeChangeListener(reporter -> {
             query.reportAssignee = reporter;
             onReportQueryChanged();
@@ -143,7 +144,9 @@ public class ProjectLayout extends VerticalLayout {
     }
 
     private void openReportInNewTab(Report report){
-        getUI().ifPresent(ui -> ui.getPage().open("/report/"+report.getId(), "_blank"));
+        RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
+        String url = routeConfiguration.getUrl(ReportDetailPage.class, report.getId());
+        getUI().ifPresent(ui -> ui.getPage().open(url, "_blank"));
     }
 
 
@@ -202,6 +205,7 @@ public class ProjectLayout extends VerticalLayout {
         }else{
             reportsOverviewLayout.setReports(selectedReports);
             gridSplitLayout.removeClassName("secondary-hidden");
+            //TODO set position correctly.
             gridSplitLayout.setSplitterPosition(70);
         }
     }

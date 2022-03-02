@@ -12,6 +12,7 @@
 @import url('./custom/comment-row.css');
 @import url('./custom/report-detail-breadcrumb.css');
 @import url('./custom/report-detail-page.css');
+@import url('./custom/vaadin-notification-wrapper.css');
 
 html {
     --_lumo-button-background-color: white;
@@ -25,4 +26,7 @@ html {
     --table-row-selected-bg: rgba(231, 245, 237, 1);
     /*--_lumo-button-color: var(--lumo-primary-color);*/
    --background-color: var(--lumo-contrast-5pct);
+}
+.v-grid-cell-focused:before {
+    display: none !important;
 }

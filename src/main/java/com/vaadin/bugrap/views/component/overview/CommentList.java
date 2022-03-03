@@ -11,16 +11,21 @@ import java.util.List;
 
 public class CommentList extends Div {
     private final VerticalLayout commentListVerticalLayout = new VerticalLayout();
-
+    private final Scroller scroller = new Scroller();
     public CommentList() {
         commentListVerticalLayout.setPadding(false);
         commentListVerticalLayout.setWidth(100, Unit.PERCENTAGE);
         setWidth(100, Unit.PERCENTAGE);
-        Scroller scroller = new Scroller();
-        scroller.setMaxHeight(400, Unit.PIXELS);
+
         scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
         scroller.setContent(commentListVerticalLayout);
         add(scroller);
+    }
+    public void setPadding(boolean padding){
+        this.commentListVerticalLayout.setPadding(padding);
+    }
+    public void setMaxHeight(int maxHeight, Unit unit){
+        scroller.setMaxHeight(maxHeight, unit);
     }
     public void setComments(List<GroupedComment> comments){
         if(comments.isEmpty()){

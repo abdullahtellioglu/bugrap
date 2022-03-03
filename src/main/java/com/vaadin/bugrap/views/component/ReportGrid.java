@@ -20,11 +20,11 @@ public class ReportGrid extends Grid<Report> {
 
     private Column<Report> versionColumn;
     private Column<Report> priorityColumn;
-    private Consumer<Report> displayReportInNewTabConsumer;
+
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
-        //TODO how to add UP and DOWN listener to Rows and disable cell focus ??
 
+        //below listener is a listener for move between rows.
         addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
             if(event.getColumn().isEmpty()){
                 //for selection checkboxes
@@ -104,9 +104,6 @@ public class ReportGrid extends Grid<Report> {
         sort(sortOrderList);
     }
 
-    public void setDisplayReportInNewTabConsumer(Consumer<Report> consumer){
-        this.displayReportInNewTabConsumer = consumer;
-    }
     private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){
         return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
             if (report != null && report.getVersion() != null) {

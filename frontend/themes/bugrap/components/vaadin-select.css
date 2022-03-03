@@ -1,6 +1,6 @@
-:host{
-
-}
 :host vaadin-input-container {
     background-color: white;
+}
+:host [part="label"] {
+    color: var(--lumo-contrast-60pct);
 }

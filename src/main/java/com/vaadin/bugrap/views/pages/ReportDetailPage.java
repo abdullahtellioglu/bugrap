@@ -59,8 +59,8 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     private final RichTextEditor commentRichTextEditor;
     private final MultiFileMemoryBuffer attachmentFileMemoryBuffer;
     private final Upload attachmentUpload;
+    private final VerticalLayout reviewAttachmentParentVerticalLayout = new VerticalLayout();
 
-    private Project project;
     private Report report;
     private final Map<String, byte[]> fileMap = new HashMap<>();
 
@@ -75,7 +75,6 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         setSpacing(false);
         setPadding(false);
         setClassName("report-detail-page");
-        //TODO in design Comment Rows right layout do not match with Revert button bottom right. Is it correct or ?
 
 
         reportDetailBreadcrumb = new ReportDetailBreadcrumb();
@@ -86,6 +85,8 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         overviewUpdateBar = new OverviewUpdateBar();
         overviewUpdateBar.setListener(this);
         commentList = new CommentList();
+        //TODO is is correct way to do it ?
+        commentList.setMaxHeight(430, Unit.PIXELS);
 
 
         VerticalLayout innerPanel = new VerticalLayout(reportNameLabel, overviewUpdateBar, commentList);
@@ -97,7 +98,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
 
 
-        VerticalLayout reviewAttachmentParentVerticalLayout = new VerticalLayout();
+
         reviewAttachmentParentVerticalLayout.setClassName("bottom-panel");
         reviewAttachmentParentVerticalLayout.setMargin(false);
 
@@ -122,8 +123,6 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         attachmentUpload = new Upload(attachmentFileMemoryBuffer);
         attachmentUpload.setMaxFileSize( 5 * 1024 * 1024);
         attachmentUpload.setAcceptedFileTypes("image/png", "image/jpeg", "application/pdf");
-        //TODO set accepted file types
-//        upload.setAcceptedFileTypes();
         attachmentLayout.add(attachmentUpload);
 
 
@@ -230,11 +229,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         reportDetailBreadcrumb.setReportNameAndVersionName(report.getSummary(), report.getVersion() != null ? report.getVersion().getVersion() : "No version");
         overviewUpdateBar.setProjectVersions(projectService.getProjectVersions(report.getProject()));
         overviewUpdateBar.setReporters(userService.getUsers());
-        overviewUpdateBar.setStatus(report.getStatus());
-        overviewUpdateBar.setReporter(report.getAssigned());
-        overviewUpdateBar.setType(report.getType());
-        overviewUpdateBar.setPriority(report.getPriority());
-        overviewUpdateBar.setVersion(report.getVersion());
+        overviewUpdateBar.setOverview(report.getPriority(), report.getType(), report.getStatus(), report.getAssigned(), report.getVersion());
 
         reportNameLabel.setText(report.getSummary());
 
@@ -245,9 +240,16 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     public void setParameter(BeforeEvent event, Long reportId) {
         Report report = reportService.getReport(reportId);
         if(report != null){
+            overviewUpdateBar.setVisible(true);
+            reviewAttachmentParentVerticalLayout.setVisible(true);
             setReport(report);
-        }else {
-            //SHOW SOME DESCRIPTION TO USER IF NULL.
+        } else {
+            overviewUpdateBar.setVisible(false);
+            reviewAttachmentParentVerticalLayout.setVisible(false);
+            reportDetailBreadcrumb.setReportNameAndVersionName("Invalid Report", "");
+            Notification invalidReportNotification = new Notification("Please select a valid report to display details");
+            invalidReportNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+            invalidReportNotification.open();
         }
     }
 

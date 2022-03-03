@@ -123,12 +123,10 @@ public class ProjectLayout extends VerticalLayout {
         reportGrid.addItemClickListener((ComponentEventListener<ItemClickEvent<Report>>) event -> {
             reportGrid.getSelectionModel().deselectAll();
             reportGrid.getSelectionModel().select(event.getItem());
-            onSelectedReportsChanged(Collections.singleton(event.getItem()));
         });
         reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
             openReportInNewTab(event.getItem());
         });
-        reportGrid.setDisplayReportInNewTabConsumer(this::openReportInNewTab);
 
         gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);
         gridSplitLayout.setClassName("secondary-hidden");
@@ -199,6 +197,9 @@ public class ProjectLayout extends VerticalLayout {
 
     private void onSelectedReportsChanged(Set<Report> selectedReports){
         this.selectedReports = selectedReports;
+        int lineHeight = 35;
+        int displayRows = reports.size() * lineHeight;
+
         if(selectedReports.isEmpty()){
             gridSplitLayout.setClassName("secondary-hidden");
             gridSplitLayout.setSplitterPosition(100);

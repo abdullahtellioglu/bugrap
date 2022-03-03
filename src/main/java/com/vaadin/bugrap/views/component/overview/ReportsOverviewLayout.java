@@ -12,7 +12,6 @@ import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.router.RouteConfiguration;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
@@ -54,6 +53,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         List<Reporter> users = userService.getUsers();
 
         commentList = new CommentList();
+        commentList.setMaxHeight(400, Unit.PIXELS);
         commentList.setWidth(100, Unit.PERCENTAGE);
 
         setClassName("reports-overview");
@@ -153,19 +153,12 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
             projectVersion = projectVersionSet.iterator().next();
         }
 
-        overviewUpdateBar.setPriority(priority);
-        overviewUpdateBar.setType(type);
-        overviewUpdateBar.setStatus(status);
-        overviewUpdateBar.setReporter(reporter);
-        overviewUpdateBar.setVersion(projectVersion);
+        overviewUpdateBar.setOverview(priority, type, status, reporter, projectVersion);
 
     }
 
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter assigned, ProjectVersion version) {
-        // TODO in mass modification mode type can be null for multiple rows. In that case it throws  NULL not allowed for column "TYPE"; SQL statement: exception.
-        //check binders..
-
         reports.forEach(report -> {
             report.setPriority(priority);
             report.setType(type);

@@ -16,7 +16,7 @@ public class CommentList extends Div {
         commentListVerticalLayout.setPadding(false);
         commentListVerticalLayout.setWidth(100, Unit.PERCENTAGE);
         setWidth(100, Unit.PERCENTAGE);
-
+        //TODO should add scroller here ? Because parent layout has overflow-y: scroll property.
         scroller.setScrollDirection(Scroller.ScrollDirection.VERTICAL);
         scroller.setContent(commentListVerticalLayout);
         add(scroller);

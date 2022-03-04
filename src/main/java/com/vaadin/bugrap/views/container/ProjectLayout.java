@@ -25,6 +25,7 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ProjectLayout extends VerticalLayout {
@@ -58,7 +59,7 @@ public class ProjectLayout extends VerticalLayout {
     public ProjectLayout(Reporter currentUser){
         this.projectService = new ProjectService();
         this.reportService = new ReportService();
-
+        this.currentUser = currentUser;
 
         UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
             if(selectedReports.size() == 1){
@@ -197,17 +198,21 @@ public class ProjectLayout extends VerticalLayout {
 
     private void onSelectedReportsChanged(Set<Report> selectedReports){
         this.selectedReports = selectedReports;
-        int lineHeight = 35;
-        int displayRows = reports.size() * lineHeight;
 
         if(selectedReports.isEmpty()){
             gridSplitLayout.setClassName("secondary-hidden");
             gridSplitLayout.setSplitterPosition(100);
         }else{
-            reportsOverviewLayout.setReports(selectedReports);
+            reportsOverviewLayout.setReportsAndReporter(selectedReports, currentUser);
             gridSplitLayout.removeClassName("secondary-hidden");
-            //TODO set position correctly.
-            gridSplitLayout.setSplitterPosition(70);
+            int heightPercentage;
+            if(selectedReports.size() > 1){
+                heightPercentage = 75;
+            }else{
+                heightPercentage = Math.min(40 + reports.size(), 60);
+            }
+            //TODO is this correct way to implement the row size ?
+            gridSplitLayout.setSplitterPosition(heightPercentage);
         }
     }
 

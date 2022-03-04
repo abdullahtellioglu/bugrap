@@ -4,10 +4,16 @@ import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.services.UserService;
+import com.vaadin.bugrap.views.component.CommentAttachmentLayout;
+import com.vaadin.bugrap.views.model.GroupedComment;
 import com.vaadin.bugrap.views.pages.ReportDetailPage;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -33,12 +39,14 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     boolean massModificationModeOn;
     private final HorizontalLayout reportInfoContainerLayout = new HorizontalLayout();
     private final OverviewUpdateBar overviewUpdateBar = new OverviewUpdateBar();
-    private final Label primaryLabel;
-    private final Label secondaryLabel;
+    private final Span primaryLabel;
+    private final Span secondaryLabel;
     private final Anchor openInNewTabLabel;
     private final CommentList commentList;
-
+    private final CommentAttachmentLayout commentAttachmentLayout;
     private ReportUpdateListener reportUpdateListener;
+
+    private Reporter reporter;
 
     public void setReportUpdateListener(ReportUpdateListener reportUpdateListener) {
         this.reportUpdateListener = reportUpdateListener;
@@ -57,9 +65,9 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         commentList.setWidth(100, Unit.PERCENTAGE);
 
         setClassName("reports-overview");
-        primaryLabel = new Label();
+        primaryLabel = new Span();
         primaryLabel.setClassName("primary-label");
-        secondaryLabel = new Label();
+        secondaryLabel = new Span();
         secondaryLabel.setClassName("secondary-label");
 
 
@@ -67,7 +75,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
         HorizontalLayout labelContainerLayout = new HorizontalLayout(primaryLabel, secondaryLabel);
         reportInfoContainerLayout.add(labelContainerLayout);
-        openInNewTabLabel = new Anchor("aaa", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
+        openInNewTabLabel = new Anchor("", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
         openInNewTabLabel.setTarget("_blank");
 
         reportInfoContainerLayout.add(openInNewTabLabel);
@@ -79,12 +87,25 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         add(overviewUpdateBar);
 
 
-
         add(commentList);
-
+        commentAttachmentLayout = new CommentAttachmentLayout();
+        commentAttachmentLayout.setPadding(false);
+        commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onCommentSave());
+        add(commentAttachmentLayout);
     }
-    public void setReports(Set<Report> reports){
+    private void onCommentSave(){
+        if(!reports.iterator().hasNext() || reports.size() > 1){
+            throw new IllegalStateException("Only 1 report needs to be overviewed.");
+        }
+        Report report = reports.iterator().next();
+        GroupedComment groupedComment = commentAttachmentLayout.getGroupedComment(report, this.reporter);
+        commentService.saveComment(report, groupedComment);
+        commentList.setComments(commentService.getGroupedComments(report));
+        commentAttachmentLayout.clear();
+    }
+    public void setReportsAndReporter(Set<Report> reports, Reporter reporter){
         this.reports = reports;
+        this.reporter = reporter;
         if(!reports.isEmpty()){
             Report next = reports.iterator().next();
             Project project = next.getProject();
@@ -102,8 +123,10 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
             initSingleModificationMode();
         }
     }
+
     private void initSingleModificationMode(){
         massModificationModeOn = false;
+        commentAttachmentLayout.setVisible(true);
         secondaryLabel.addClassName("hidden");
         openInNewTabLabel.removeClassName("hidden");
         Report report = reports.iterator().next();
@@ -116,6 +139,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     }
     private void initMassModificationMode(){
         massModificationModeOn = true;
+        commentAttachmentLayout.setVisible(false);
         commentList.setComments(new ArrayList<>());
         openInNewTabLabel.addClassName("hidden");
         secondaryLabel.removeClassName("hidden");

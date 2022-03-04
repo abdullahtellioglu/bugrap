@@ -37,8 +37,12 @@ public class ProjectToolbarLayout extends HorizontalLayout {
 
 
         this.reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
-        this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
 
+        reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+            Notification.show("Not implemented");
+        });
+        this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
+        this.requestFeatureButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
         HorizontalLayout manageButtonInternalContainer = new HorizontalLayout();
         manageButtonInternalContainer.setClassName("manage-button-container");
         Icon cogIcon = VaadinIcon.COG.create();
@@ -51,13 +55,9 @@ public class ProjectToolbarLayout extends HorizontalLayout {
         manageButtonInternalContainer.add(manageProjectCountSpan);
         this.manageProjectButton = new Button(manageButtonInternalContainer);
         this.manageProjectButton.setThemeName("icon-text-badge-button");
+        this.manageProjectButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
 
 
-
-
-        reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
-            Notification.show("Not implemented yet");
-        });
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.add(reportBugButton);

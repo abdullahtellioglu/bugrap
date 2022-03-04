@@ -1,6 +1,6 @@
 .reports-overview {
     background-color: var(--background-color);
-    overflow-y: hidden;
+    overflow-y: scroll;
 }
 .reports-overview a vaadin-icon {
     padding: 0.25em;

@@ -53,7 +53,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
 
         HorizontalLayout selectContainers = new HorizontalLayout(prioritySelect, typeComboBox, statusComboBox, reporterComboBox, versionComboBox);
 
-
         Button saveChangesButton = new Button("Save Changes");
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button revertButton = new Button("Revert", VaadinIcon.ROTATE_LEFT.create());
@@ -111,26 +110,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
         binder.setBean(overview);
         this.initialOverview = overview.copy();
     }
-//    public void setPriority(Report.Priority priority){
-//        initialPriority = priority;
-//        prioritySelect.setValue(priority);
-//    }
-//    public void setType(Report.Type type){
-//        initialType = type;
-//        typeComboBox.setValue(type);
-//    }
-//    public void setStatus(Report.Status status){
-//        initialStatus = status;
-//        statusComboBox.setValue(status);
-//    }
-//    public void setReporter(Reporter reporter){
-//        initialReporter = reporter;
-//        reporterComboBox.setValue(reporter);
-//    }
-//    public void setVersion(ProjectVersion version){
-//        initialProjectVersion = version;
-//        versionComboBox.setValue(version);
-//    }
+
     private void initPrioritySelect(){
         prioritySelect.setLabel("Priority");
         binder.forField(prioritySelect)

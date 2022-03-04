@@ -31,6 +31,7 @@ public class ReportGrid extends Grid<Report> {
 
                 return;
             }
+
             Set<Report> selectedItems = getSelectionModel().getSelectedItems();
             if(selectedItems.size() > 1){
                 return;

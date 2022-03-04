@@ -1,6 +1,6 @@
 vaadin-notification-card flow-component-renderer .header {
     font-weight: bold;
 }
-vaadin-notification-card flow-component-renderer .description {
+vaadin-notification-card[theme~='error'] flow-component-renderer .description {
     font-size: var(--lumo-font-size-s)
 }

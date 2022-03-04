@@ -72,7 +72,7 @@ public class HomePage extends VerticalLayout {
     }
     private Reporter createDummyUserFromListOrReadFromCookie(Project project){
         String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
-        Reporter user = null;
+        Reporter user;
         if(currentUserName != null){
             user = userService.getUser(currentUserName);
         }else{

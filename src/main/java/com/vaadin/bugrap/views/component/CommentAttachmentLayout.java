@@ -40,6 +40,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
 
     public CommentAttachmentLayout(){
         setMargin(false);
+        setJustifyContentMode(JustifyContentMode.END);
         VerticalLayout attachmentLayout = new VerticalLayout();
         attachmentLayout.setWidth("unset");
         attachmentLayout.setSpacing(false);
@@ -78,6 +79,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
         Button cancelCommentBtn = new Button("Cancel", VaadinIcon.CLOSE.create());
 
         HorizontalLayout buttonContainer = new HorizontalLayout(saveCommentBtn, cancelCommentBtn);
+        buttonContainer.setWidth(100, Unit.PERCENTAGE);
         buttonContainer.setPadding(false);
         buttonContainer.setMargin(false);
         add(buttonContainer);

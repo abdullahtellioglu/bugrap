@@ -12,3 +12,7 @@
 .reports-overview .secondary-label {
     margin: auto;
 }
+.reports-overview .comment-list {
+    overflow-y: scroll;
+    /*max-height: 180px;*/
+}

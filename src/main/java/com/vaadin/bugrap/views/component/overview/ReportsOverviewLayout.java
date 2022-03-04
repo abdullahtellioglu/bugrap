@@ -12,6 +12,7 @@ import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -29,6 +30,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+/**
+ * This container/layout is the summary panel for selected report(s). If multiple report is selected, it switches to mass modification mode.
+ *
+ */
 public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpdateBar.ReportsUpdateListener {
     private final ReportService reportService;
     private final ProjectService projectService;
@@ -39,8 +44,8 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     boolean massModificationModeOn;
     private final HorizontalLayout reportInfoContainerLayout = new HorizontalLayout();
     private final OverviewUpdateBar overviewUpdateBar = new OverviewUpdateBar();
-    private final Span primaryLabel;
-    private final Span secondaryLabel;
+    private final Span primarySpan;
+    private final Span secondarySpan;
     private final Anchor openInNewTabLabel;
     private final CommentList commentList;
     private final CommentAttachmentLayout commentAttachmentLayout;
@@ -58,40 +63,54 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         userService = new UserService();
         commentService = new CommentService();
 
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
         List<Reporter> users = userService.getUsers();
 
-        commentList = new CommentList();
-        commentList.setMaxHeight(400, Unit.PIXELS);
-        commentList.setWidth(100, Unit.PERCENTAGE);
+
+
+
 
         setClassName("reports-overview");
-        primaryLabel = new Span();
-        primaryLabel.setClassName("primary-label");
-        secondaryLabel = new Span();
-        secondaryLabel.setClassName("secondary-label");
-
 
         reportInfoContainerLayout.setWidth(100, Unit.PERCENTAGE);
         reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
-        HorizontalLayout labelContainerLayout = new HorizontalLayout(primaryLabel, secondaryLabel);
+
+        primarySpan = new Span();
+        primarySpan.setClassName("primary-label");
+        secondarySpan = new Span();
+        secondarySpan.setClassName("secondary-label");
+        HorizontalLayout labelContainerLayout = new HorizontalLayout(primarySpan, secondarySpan);
+
         reportInfoContainerLayout.add(labelContainerLayout);
         openInNewTabLabel = new Anchor("", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
         openInNewTabLabel.setTarget("_blank");
 
         reportInfoContainerLayout.add(openInNewTabLabel);
-        add(reportInfoContainerLayout);
-
+//        add(reportInfoContainerLayout);
 
         overviewUpdateBar.setListener(this);
         overviewUpdateBar.setReporters(users);
-        add(overviewUpdateBar);
+//        add(overviewUpdateBar);
+
+        commentList = new CommentList();
+        commentList.setWidth(100, Unit.PERCENTAGE);
+//        add(commentList);
 
 
-        add(commentList);
+        VerticalLayout containerLayout = new VerticalLayout(reportInfoContainerLayout, overviewUpdateBar, commentList);
+        containerLayout.setPadding(false);
+        containerLayout.setMargin(false);
+        containerLayout.setJustifyContentMode(JustifyContentMode.START);
+//        containerLayout.setHeight("auto");
+        add(containerLayout);
+
+
         commentAttachmentLayout = new CommentAttachmentLayout();
         commentAttachmentLayout.setPadding(false);
+        commentAttachmentLayout.setHeight(355, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onCommentSave());
         add(commentAttachmentLayout);
+
     }
     private void onCommentSave(){
         if(!reports.iterator().hasNext() || reports.size() > 1){
@@ -126,11 +145,12 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     private void initSingleModificationMode(){
         massModificationModeOn = false;
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
         commentAttachmentLayout.setVisible(true);
-        secondaryLabel.addClassName("hidden");
+        secondarySpan.addClassName("hidden");
         openInNewTabLabel.removeClassName("hidden");
         Report report = reports.iterator().next();
-        primaryLabel.setText(report.getSummary());
+        primarySpan.setText(report.getSummary());
 
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         String url = routeConfiguration.getUrl(ReportDetailPage.class, report.getId());
@@ -139,12 +159,13 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     }
     private void initMassModificationMode(){
         massModificationModeOn = true;
+        setJustifyContentMode(JustifyContentMode.END);
         commentAttachmentLayout.setVisible(false);
         commentList.setComments(new ArrayList<>());
         openInNewTabLabel.addClassName("hidden");
-        secondaryLabel.removeClassName("hidden");
-        primaryLabel.setText(String.format("%s items selected", reports.size()));
-        secondaryLabel.setText("Select a single report to view contents");
+        secondarySpan.removeClassName("hidden");
+        primarySpan.setText(String.format("%s items selected", reports.size()));
+        secondarySpan.setText("Select a single report to view contents");
     }
     private void setInitialValues(){
         Report.Priority priority = null;

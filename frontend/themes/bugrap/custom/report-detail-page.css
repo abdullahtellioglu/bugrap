@@ -18,3 +18,6 @@
     color: var(--lumo-contrast-30pct);
     font-size: var(--lumo-font-size-s);
 }
+.report-detail-page .comment-list {
+    overflow-y: scroll;
+}

@@ -22,10 +22,13 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.List;
 
+/**
+ *
+ */
 public class OverviewUpdateBar extends HorizontalLayout {
     private ReportsUpdateListener listener;
 
-    private Binder<Overview> binder;
+    private final Binder<Overview> binder;
     //views
     private final Select<Report.Priority> prioritySelect = new Select<>();
     private final ComboBox<Report.Type> typeComboBox = new ComboBox<>();
@@ -43,6 +46,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
         setJustifyContentMode(JustifyContentMode.BETWEEN);
         setAlignItems(Alignment.BASELINE);
         binder = new Binder<>();
+        prioritySelect.addClassName("bordered");
 
         initPrioritySelect();
         initTypeComboBox();
@@ -127,6 +131,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initTypeComboBox(){
         typeComboBox.setLabel("Type");
+        typeComboBox.addThemeName("bordered");
         typeComboBox.setItems(Report.Type.values());
         binder.forField(typeComboBox)
                 .asRequired("Type is required")
@@ -135,6 +140,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initStatusComboBox(){
         statusComboBox.setLabel("Status");
+        statusComboBox.addThemeName("bordered");
         binder.forField(statusComboBox)
                 .asRequired("Status is required")
                 .bind(Overview::getStatus, Overview::setStatus);
@@ -149,6 +155,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initReporterComboBox(){
         reporterComboBox.setLabel("Assignee");
+        reporterComboBox.addThemeName("bordered");
         binder.forField(reporterComboBox)
                 .asRequired("Assignee is required")
                 .bind(Overview::getReporter, Overview::setReporter);
@@ -162,6 +169,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initVersionComboBox(){
         versionComboBox.setLabel("Version");
+        versionComboBox.addThemeName("bordered");
         binder.forField(versionComboBox)
                 .asRequired("Version is required")
                 .bind(Overview::getVersion, Overview::setVersion);

@@ -8,12 +8,13 @@ import com.vaadin.bugrap.views.component.*;
 import com.vaadin.bugrap.views.component.overview.ReportsOverviewLayout;
 import com.vaadin.bugrap.views.pages.ReportDetailPage;
 import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.ItemClickEvent;
 import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.Scroller;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -25,7 +26,6 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ProjectLayout extends VerticalLayout {
@@ -46,7 +46,7 @@ public class ProjectLayout extends VerticalLayout {
     //Views
     private ReportGrid reportGrid;
     private DistributionBar distributionBar;
-    private ProjectVersionSelect projectVersionSelect;
+    private ProjectVersionComboBox projectVersionComboBox;
     private final ProjectToolbarLayout projectToolbarLayout;
     private final SplitLayout gridSplitLayout;
     private final ReportsOverviewLayout reportsOverviewLayout = new ReportsOverviewLayout();
@@ -129,7 +129,10 @@ public class ProjectLayout extends VerticalLayout {
             openReportInNewTab(event.getItem());
         });
 
-        gridSplitLayout = new SplitLayout(reportGrid, reportsOverviewLayout);
+
+
+
+        gridSplitLayout = new SplitLayout(reportGrid, new Scroller(reportsOverviewLayout));
         gridSplitLayout.setClassName("secondary-hidden");
         gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
         gridSplitLayout.setSplitterPosition(100);
@@ -172,8 +175,8 @@ public class ProjectLayout extends VerticalLayout {
         fetchProjectVersions();
         fetchReportCounts();
 
-        projectVersionSelect.setItems(projectVersions);
-        projectVersionSelect.setValue(projectVersion);
+        projectVersionComboBox.setItems(projectVersions);
+        projectVersionComboBox.setValue(projectVersion);
     }
 
     private void fetchProjectVersions(){
@@ -207,7 +210,7 @@ public class ProjectLayout extends VerticalLayout {
             gridSplitLayout.removeClassName("secondary-hidden");
             int heightPercentage;
             if(selectedReports.size() > 1){
-                heightPercentage = 75;
+                heightPercentage = 80;
             }else{
                 heightPercentage = Math.min(40 + reports.size(), 60);
             }
@@ -217,9 +220,9 @@ public class ProjectLayout extends VerticalLayout {
     }
 
     private void initReportVersionsAndDistributionBar(VerticalLayout parentComponent){
-        projectVersionSelect = new ProjectVersionSelect();
+        projectVersionComboBox = new ProjectVersionComboBox();
 
-        projectVersionSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<ProjectVersion>, ProjectVersion>>) event -> {
+        projectVersionComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<ProjectVersion>, ProjectVersion>>) event -> {
             ProjectVersion value = event.getValue();
             if(value == null){
                 return;
@@ -236,7 +239,7 @@ public class ProjectLayout extends VerticalLayout {
         reportDistributionLayout.setWidth(100, Unit.PERCENTAGE);
         reportDistributionLayout.setAlignItems(Alignment.CENTER);
         reportDistributionLayout.setJustifyContentMode(JustifyContentMode.START);
-        reportDistributionLayout.add(projectVersionSelect);
+        reportDistributionLayout.add(projectVersionComboBox);
         reportDistributionLayout.addAndExpand(distributionBar);
 
         parentComponent.add(reportDistributionLayout);

@@ -7,7 +7,7 @@
     z-index: 1;
     min-height: 52px;
 }
-.breadcrumb-label label {
+.breadcrumb-label span {
     margin: auto;
 }
 .breadcrumb-label {

@@ -53,32 +53,37 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         setClassName("report-detail-page");
 
 
+
+        VerticalLayout topLayout = new VerticalLayout();
+        topLayout.setHeight("calc(100% - 440px)");
+        topLayout.setPadding(false);
+        topLayout.setMargin(false);
+
         reportDetailBreadcrumb = new ReportDetailBreadcrumb();
-        add(reportDetailBreadcrumb);
+        topLayout.add(reportDetailBreadcrumb);
 
         reportNameLabel = new Label();
         reportNameLabel.setClassName("report-name");
         overviewUpdateBar = new OverviewUpdateBar();
         overviewUpdateBar.setListener(this);
         commentList = new CommentList();
-        //TODO is is correct way to do it ?
-        //TODO make scrollbar to align top of bottom panel.
-        commentList.setMaxHeight(430, Unit.PIXELS);
 
 
         VerticalLayout innerPanel = new VerticalLayout(reportNameLabel, overviewUpdateBar, commentList);
         innerPanel.setPadding(true);
         innerPanel.setHeight(100, Unit.PERCENTAGE);
         innerPanel.setWidth(100, Unit.PERCENTAGE);
-        add(innerPanel);
+        topLayout.add(innerPanel);
 
 
 
 
         commentAttachmentLayout.setClassName("bottom-panel");
+//        commentAttachmentLayout.setAlignItems(Alignment.END);
+        commentAttachmentLayout.setHeight(380, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
 
-        add(commentAttachmentLayout);
+        add(topLayout, commentAttachmentLayout);
 
     }
     private void onSaveClick() {

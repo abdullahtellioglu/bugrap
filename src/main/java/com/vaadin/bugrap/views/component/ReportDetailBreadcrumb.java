@@ -2,13 +2,13 @@ package com.vaadin.bugrap.views.component;
 
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.html.Div;
-import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class ReportDetailBreadcrumb extends HorizontalLayout {
-    private final Label reportNameLabel;
-    private final Label versionLabel;
+    private final Span reportNameSpan;
+    private final Span versionSpan;
 
     public ReportDetailBreadcrumb(){
         setClassName("report-detail-breadcrumb");
@@ -19,23 +19,23 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
         div.setWidth(50, Unit.PERCENTAGE);
 
         div.setClassName("breadcrumb-label");
-        reportNameLabel = new Label();
+        reportNameSpan = new Span();
 
 
 
-        versionLabel = new Label();
+        versionSpan = new Span();
         VerticalLayout versionLabelLayout = new VerticalLayout();
         versionLabelLayout.setWidth(50, Unit.PERCENTAGE);
         versionLabelLayout.setPadding(true);
         versionLabelLayout.setJustifyContentMode(JustifyContentMode.START);
-        versionLabelLayout.add(versionLabel);
+        versionLabelLayout.add(versionSpan);
 
-        div.add(reportNameLabel);
+        div.add(reportNameSpan);
 
         add(div, versionLabelLayout);
     }
     public void setReportNameAndVersionName(String reportName, String versionName){
-        reportNameLabel.setText(reportName);
-        versionLabel.setText(versionName);
+        reportNameSpan.setText(reportName);
+        versionSpan.setText(versionName);
     }
 }

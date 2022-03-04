@@ -1,6 +1,9 @@
 :host vaadin-input-container {
     background-color: white;
 }
+:host([theme~="bordered"]) vaadin-input-container {
+    border: 1px solid var(--lumo-contrast-20pct);
+}
 :host [part="label"] {
     color: var(--lumo-contrast-60pct);
 }

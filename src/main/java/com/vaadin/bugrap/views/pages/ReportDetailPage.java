@@ -1,5 +1,6 @@
 package com.vaadin.bugrap.views.pages;
 
+import com.vaadin.bugrap.config.ContextWrapper;
 import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
@@ -41,26 +42,13 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     private Report report;
 
 
-    //TODO should display notification if user clicks comment.
     public ReportDetailPage(){
-        projectService = new ProjectService();
-        reportService = new ReportService();
-        userService = new UserService();
-        commentService = new CommentService();
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
-        setSpacing(false);
-        setPadding(false);
-        setClassName("report-detail-page");
-
-
-
-        VerticalLayout topLayout = new VerticalLayout();
-        topLayout.setHeight("calc(100% - 440px)");
-        topLayout.setPadding(false);
-        topLayout.setMargin(false);
+        projectService = ContextWrapper.getBean(ProjectService.class);
+        reportService = ContextWrapper.getBean(ReportService.class);
+        userService = ContextWrapper.getBean(UserService.class);
+        commentService = ContextWrapper.getBean(CommentService.class);
 
         reportDetailBreadcrumb = new ReportDetailBreadcrumb();
-        topLayout.add(reportDetailBreadcrumb);
 
         reportNameLabel = new Label();
         reportNameLabel.setClassName("report-name");
@@ -73,17 +61,22 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         innerPanel.setPadding(true);
         innerPanel.setHeight(100, Unit.PERCENTAGE);
         innerPanel.setWidth(100, Unit.PERCENTAGE);
-        topLayout.add(innerPanel);
 
-
-
+        VerticalLayout topLayout = new VerticalLayout(reportDetailBreadcrumb, innerPanel);
+        topLayout.setHeight("calc(100% - 440px)");
+        topLayout.setPadding(false);
+        topLayout.setMargin(false);
 
         commentAttachmentLayout.setClassName("bottom-panel");
-//        commentAttachmentLayout.setAlignItems(Alignment.END);
         commentAttachmentLayout.setHeight(380, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
 
         add(topLayout, commentAttachmentLayout);
+
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        setSpacing(false);
+        setPadding(false);
+        setClassName("report-detail-page");
 
     }
     private void onSaveClick() {

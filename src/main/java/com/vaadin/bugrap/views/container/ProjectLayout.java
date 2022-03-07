@@ -1,7 +1,10 @@
 package com.vaadin.bugrap.views.container;
 
+import com.vaadin.bugrap.config.ContextWrapper;
+import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
+import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
@@ -49,7 +52,7 @@ public class ProjectLayout extends VerticalLayout {
     private ProjectVersionComboBox projectVersionComboBox;
     private final ProjectToolbarLayout projectToolbarLayout;
     private final SplitLayout gridSplitLayout;
-    private final ReportsOverviewLayout reportsOverviewLayout = new ReportsOverviewLayout();
+    private final ReportsOverviewLayout reportsOverviewLayout;
     private final BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
     private String textSearchQuery;
 
@@ -57,10 +60,11 @@ public class ProjectLayout extends VerticalLayout {
     private Set<Report> selectedReports = new HashSet<>();
 
     public ProjectLayout(Reporter currentUser){
-        this.projectService = new ProjectService();
-        this.reportService = new ReportService();
+        this.projectService = ContextWrapper.getBean(ProjectService.class);
+        this.reportService = ContextWrapper.getBean(ReportService.class);
         this.currentUser = currentUser;
 
+        reportsOverviewLayout = new ReportsOverviewLayout();
         UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
             if(selectedReports.size() == 1){
                 openReportInNewTab(selectedReports.iterator().next());
@@ -71,12 +75,11 @@ public class ProjectLayout extends VerticalLayout {
         query.reportStatuses = Collections.singleton(Report.Status.OPEN);
 
         projectToolbarLayout = new ProjectToolbarLayout();
-
         projectToolbarLayout.setSearchTextChangeListener(textQuery -> {
             textSearchQuery = textQuery;
             onReportQueryChanged();
         });
-        setClassName("project-layout");
+
         add(projectToolbarLayout);
 
         ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
@@ -109,8 +112,6 @@ public class ProjectLayout extends VerticalLayout {
                     reportGrid.getSelectionModel().select(report);
                 });
             });
-
-//            onSelectedReportsChanged(new HashSet<>());
         });
 
 
@@ -131,7 +132,6 @@ public class ProjectLayout extends VerticalLayout {
 
 
 
-
         gridSplitLayout = new SplitLayout(reportGrid, new Scroller(reportsOverviewLayout));
         gridSplitLayout.setClassName("secondary-hidden");
         gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
@@ -142,7 +142,7 @@ public class ProjectLayout extends VerticalLayout {
 
 
         add(gridDistributionContainerLayout);
-
+        setClassName("project-layout");
     }
 
     private void openReportInNewTab(Report report){
@@ -202,11 +202,11 @@ public class ProjectLayout extends VerticalLayout {
     private void onSelectedReportsChanged(Set<Report> selectedReports){
         this.selectedReports = selectedReports;
 
+        reportsOverviewLayout.setReportsAndReporter(selectedReports, currentUser);
         if(selectedReports.isEmpty()){
             gridSplitLayout.setClassName("secondary-hidden");
             gridSplitLayout.setSplitterPosition(100);
         }else{
-            reportsOverviewLayout.setReportsAndReporter(selectedReports, currentUser);
             gridSplitLayout.removeClassName("secondary-hidden");
             int heightPercentage;
             if(selectedReports.size() > 1){
@@ -241,7 +241,6 @@ public class ProjectLayout extends VerticalLayout {
         reportDistributionLayout.setJustifyContentMode(JustifyContentMode.START);
         reportDistributionLayout.add(projectVersionComboBox);
         reportDistributionLayout.addAndExpand(distributionBar);
-
         parentComponent.add(reportDistributionLayout);
     }
 

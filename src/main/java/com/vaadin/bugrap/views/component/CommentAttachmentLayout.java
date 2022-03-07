@@ -1,10 +1,7 @@
 package com.vaadin.bugrap.views.component;
 
 import com.vaadin.bugrap.views.model.GroupedComment;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.HasText;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Span;
@@ -20,6 +17,9 @@ import com.vaadin.flow.component.upload.Upload;
 import com.vaadin.flow.component.upload.receivers.MultiFileMemoryBuffer;
 import elemental.json.Json;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
@@ -76,6 +76,9 @@ public class CommentAttachmentLayout extends VerticalLayout {
 
         saveCommentBtn = new Button("Comment", VaadinIcon.CHECK.create());
         saveCommentBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        saveCommentBtn.setEnabled(false);
+
+
         Button cancelCommentBtn = new Button("Cancel", VaadinIcon.CLOSE.create());
 
         HorizontalLayout buttonContainer = new HorizontalLayout(saveCommentBtn, cancelCommentBtn);
@@ -83,6 +86,31 @@ public class CommentAttachmentLayout extends VerticalLayout {
         buttonContainer.setPadding(false);
         buttonContainer.setMargin(false);
         add(buttonContainer);
+
+
+        commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->
+                saveCommentBtn.setEnabled(StringUtils.isNotEmpty(commentRichTextEditor.getHtmlValue())));
+
+        commentRichTextEditor.addCompositionUpdateListener(new ComponentEventListener<CompositionUpdateEvent>() {
+            @Override
+            public void onComponentEvent(CompositionUpdateEvent event) {
+                String data = event.getData();
+                System.out.println(data);
+            }
+        });
+        commentRichTextEditor.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<RichTextEditor, String>>) event ->{
+            try{
+                Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
+                String text = parse.text();
+                //TODO this is not working. Because \n is not returning empty.
+//                boolean empty = commentRichTextEditor.isEmpty();
+                saveCommentBtn.setEnabled(StringUtils.isNotEmpty(text));
+            }catch (Exception ex){
+                ex.printStackTrace();
+            }
+
+        });
+
 
         cancelCommentBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> clear());
 

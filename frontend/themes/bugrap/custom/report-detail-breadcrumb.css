@@ -14,20 +14,10 @@
     position: relative;
     display: flex;
     color: white;
+    padding-left: 30px;
+    padding-right: 30px;
     justify-content: center;
+    white-space: nowrap;
     background-color: var(--lumo-secondary-color);
-    clip-path: polygon(98% 0, 100% 50%, 98% 100%, 0% 100%, 0% 50%, 0% 0%);
-}
-.breadcrumb-label::after {
-    /*content:"";*/
-    /*border-top:20px solid transparent;*/
-    /*border-bottom:25px solid transparent;*/
-    /*border-left:30px solid var(--lumo-secondary-color);*/
-    /*position:absolute;*/
-
-    /*top: 0;*/
-    /*right: 0;*/
-    /*bottom: 0;*/
-    /*-webkit-transform: translateX(0.667em);*/
-    /*transform: translateX(0.667em);*/
+    clip-path: polygon(calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 0% 50%, 0% 0%);
 }

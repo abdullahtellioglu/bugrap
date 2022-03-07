@@ -1,5 +1,7 @@
 package com.vaadin.bugrap.services;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.ReportStatus;
 import org.vaadin.bugrap.domain.entities.Project;
@@ -9,10 +11,12 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.List;
 
+@Service
 public class ProjectService {
-    private final BugrapRepository bugrapRepository;
-    public ProjectService(){
-        this.bugrapRepository = new BugrapRepository();
+    private BugrapRepository bugrapRepository;
+    @Autowired
+    public void setBugrapRepository(BugrapRepository bugrapRepository){
+        this.bugrapRepository = bugrapRepository;
     }
     public Project getProject(long id){
         return bugrapRepository.getProject(id);

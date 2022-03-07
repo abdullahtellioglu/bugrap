@@ -1,5 +1,6 @@
 package com.vaadin.bugrap.views.component.overview;
 
+import com.vaadin.bugrap.config.ContextWrapper;
 import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
@@ -7,9 +8,7 @@ import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.views.component.CommentAttachmentLayout;
 import com.vaadin.bugrap.views.model.GroupedComment;
 import com.vaadin.bugrap.views.pages.ReportDetailPage;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.Div;
@@ -58,19 +57,15 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     }
 
     public ReportsOverviewLayout(){
-        reportService = new ReportService();
-        projectService = new ProjectService();
-        userService = new UserService();
-        commentService = new CommentService();
-
+        this.projectService = ContextWrapper.getBean(ProjectService.class);
+        this.userService = ContextWrapper.getBean(UserService.class);
+        this.commentService = ContextWrapper.getBean(CommentService.class);
+        this.reportService = ContextWrapper.getBean(ReportService.class);
         setJustifyContentMode(JustifyContentMode.BETWEEN);
-        List<Reporter> users = userService.getUsers();
-
-
-
-
-
         setClassName("reports-overview");
+        List<Reporter> users = userService.getUsers();
+        overviewUpdateBar.setListener(this);
+        overviewUpdateBar.setReporters(users);
 
         reportInfoContainerLayout.setWidth(100, Unit.PERCENTAGE);
         reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
@@ -79,36 +74,27 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         primarySpan.setClassName("primary-label");
         secondarySpan = new Span();
         secondarySpan.setClassName("secondary-label");
-        HorizontalLayout labelContainerLayout = new HorizontalLayout(primarySpan, secondarySpan);
-
-        reportInfoContainerLayout.add(labelContainerLayout);
         openInNewTabLabel = new Anchor("", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
         openInNewTabLabel.setTarget("_blank");
 
+        HorizontalLayout labelContainerLayout = new HorizontalLayout(primarySpan, secondarySpan);
+        reportInfoContainerLayout.add(labelContainerLayout);
         reportInfoContainerLayout.add(openInNewTabLabel);
-//        add(reportInfoContainerLayout);
-
-        overviewUpdateBar.setListener(this);
-        overviewUpdateBar.setReporters(users);
-//        add(overviewUpdateBar);
 
         commentList = new CommentList();
         commentList.setWidth(100, Unit.PERCENTAGE);
-//        add(commentList);
-
 
         VerticalLayout containerLayout = new VerticalLayout(reportInfoContainerLayout, overviewUpdateBar, commentList);
         containerLayout.setPadding(false);
         containerLayout.setMargin(false);
         containerLayout.setJustifyContentMode(JustifyContentMode.START);
-//        containerLayout.setHeight("auto");
-        add(containerLayout);
-
 
         commentAttachmentLayout = new CommentAttachmentLayout();
         commentAttachmentLayout.setPadding(false);
         commentAttachmentLayout.setHeight(355, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onCommentSave());
+
+        add(containerLayout);
         add(commentAttachmentLayout);
 
     }
@@ -125,12 +111,15 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
     public void setReportsAndReporter(Set<Report> reports, Reporter reporter){
         this.reports = reports;
         this.reporter = reporter;
-        if(!reports.isEmpty()){
-            Report next = reports.iterator().next();
-            Project project = next.getProject();
-            List<ProjectVersion> projectVersions = projectService.getProjectVersions(project);
-            this.overviewUpdateBar.setProjectVersions(projectVersions);
+        if(reports.isEmpty()){
+            this.overviewUpdateBar.clearOverview();
+            return;
         }
+        Report next = reports.iterator().next();
+        Project project = next.getProject();
+        List<ProjectVersion> projectVersions = projectService.getProjectVersions(project);
+        this.overviewUpdateBar.setProjectVersions(projectVersions);
+
         initLayout();
         setInitialValues();
     }

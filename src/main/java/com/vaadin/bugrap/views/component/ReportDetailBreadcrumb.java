@@ -16,7 +16,6 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
         setWidth(100, Unit.PERCENTAGE);
         setPadding(false);
         Div div = new Div();
-        div.setWidth(50, Unit.PERCENTAGE);
 
         div.setClassName("breadcrumb-label");
         reportNameSpan = new Span();
@@ -25,7 +24,7 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
 
         versionSpan = new Span();
         VerticalLayout versionLabelLayout = new VerticalLayout();
-        versionLabelLayout.setWidth(50, Unit.PERCENTAGE);
+
         versionLabelLayout.setPadding(true);
         versionLabelLayout.setJustifyContentMode(JustifyContentMode.START);
         versionLabelLayout.add(versionSpan);

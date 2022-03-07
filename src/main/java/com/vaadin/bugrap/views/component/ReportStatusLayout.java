@@ -4,10 +4,10 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.contextmenu.SubMenu;
 import com.vaadin.flow.component.html.Label;
-import com.vaadin.flow.component.menubar.MenuBar;
 import com.vaadin.flow.component.menubar.MenuBarVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.vaadin.bugrap.domain.entities.Report;
@@ -20,8 +20,8 @@ public class ReportStatusLayout extends HorizontalLayout {
     private Button everyoneButton;
     private Button openStatusBtn;
     private Button allKindsStatusBtn;
-    private MenuBar customStatusMenuBar;
-    private MenuItem customStatusMenuItem;
+    private Button customStatusBtn;
+    private ContextMenu customContextMenu;
 
     private AssigneeChangeListener assigneeChangeListener;
     private StatusChangeListener statusChangeListener;
@@ -48,6 +48,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         setClassName("report-status");
         Label assigneesLabel = new Label("Assignees");
         add(assigneesLabel);
+
         //Change - Tabs instead of buttons.
         onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -112,16 +113,25 @@ public class ReportStatusLayout extends HorizontalLayout {
 
 
 
-        customStatusMenuBar = new MenuBar();
-        customStatusMenuItem = customStatusMenuBar.addItem("Custom...");
-        SubMenu customItemsSubMenu = customStatusMenuItem.getSubMenu();
+        customStatusBtn = new Button();
+        customStatusBtn.setText("Custom...");
+        customContextMenu = new ContextMenu(customStatusBtn);
+        customContextMenu.setOpenOnClick(true);
+        customContextMenu.close();
+        //TODO how to disable hide on click
+//        customContextMenu.getElement().setProperty("close-on", "vaadin-overlay-outside-click");
+//        customContextMenu.getElement().setProperty("closeOn", "vaadin-overlay-outside-click");
+
         Report.Status[] statuses = Report.Status.values();
         for (Report.Status status : statuses) {
-            MenuItem statusMenuItem = customItemsSubMenu.addItem(status.toString());
+
+            MenuItem statusMenuItem = customContextMenu.addItem(status.toString());
+//            statusMenuItem.getElement().setAttribute("onclick", "event.stopPropagation()");
             statusMenuItem.addClickListener(statusMenuItemItemClickListener);
             statusMenuItem.setId(status.name());
             statusMenuItem.setCheckable(true);
             statusMenuItem.setChecked(selectedStatusSet.contains(status));
+
         }
 
 
@@ -130,7 +140,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusButtonContainer.setPadding(false);
         statusButtonContainer.setMargin(false);
         statusButtonContainer.setSpacing(false);
-        statusButtonContainer.add(openStatusBtn, allKindsStatusBtn, customStatusMenuBar);
+        statusButtonContainer.add(openStatusBtn, allKindsStatusBtn, customStatusBtn);
         add(statusButtonContainer);
     }
     private ComponentEventListener<ClickEvent<MenuItem>> statusMenuItemItemClickListener = event -> {
@@ -138,6 +148,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         if(idOptional.isEmpty()){
            return;
         }
+
         String statusId = idOptional.get();
         Optional<Report.Status> optionalStatus = Arrays.stream(Report.Status.values()).filter(f -> f.name().equals(statusId)).findFirst();
         if(optionalStatus.isEmpty()){
@@ -150,10 +161,11 @@ public class ReportStatusLayout extends HorizontalLayout {
             selectedStatusSet.add(checkedStatus);
         }
 
-        setThemeVariables();
+
         if(statusChangeListener != null){
             statusChangeListener.onChange(selectedStatusSet.isEmpty() ? null : selectedStatusSet);
         }
+        setThemeVariables();
 
         //use context menu for buttons
     };
@@ -161,18 +173,18 @@ public class ReportStatusLayout extends HorizontalLayout {
         if(selectedStatusSet.isEmpty()){
             openStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            customStatusMenuBar.removeThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+            customStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
         }else if(selectedStatusSet.size() == 1 && selectedStatusSet.iterator().next().equals(Report.Status.OPEN)){
             openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            customStatusMenuBar.removeThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+            customStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
         }else{
             openStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            customStatusMenuBar.addThemeVariants(MenuBarVariant.LUMO_PRIMARY);
+            customStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         }
-        SubMenu subMenu = customStatusMenuItem.getSubMenu();
-        subMenu.getItems().forEach(subMenuItem -> {
+
+        customContextMenu.getItems().forEach(subMenuItem -> {
             Optional<String> idOptional = subMenuItem.getId();
             if(idOptional.isEmpty()){
                 return;
@@ -184,7 +196,9 @@ public class ReportStatusLayout extends HorizontalLayout {
             }
             Report.Status checkedStatus = optionalStatus.get();
             subMenuItem.setChecked(selectedStatusSet.contains(checkedStatus));
+
         });
+
     }
 
 

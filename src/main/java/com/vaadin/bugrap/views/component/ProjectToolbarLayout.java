@@ -4,16 +4,12 @@ import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.charts.model.style.Color;
-import com.vaadin.flow.component.charts.model.style.Theme;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.function.Consumer;
@@ -30,11 +26,6 @@ public class ProjectToolbarLayout extends HorizontalLayout {
     private Consumer<String> searchTextChangeListener;
 
     public ProjectToolbarLayout() {
-        setClassName("project-toolbar");
-        setWidth(100, Unit.PERCENTAGE);
-        this.setJustifyContentMode(JustifyContentMode.BETWEEN);
-
-
 
         this.reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
 
@@ -79,6 +70,12 @@ public class ProjectToolbarLayout extends HorizontalLayout {
             }
         });
         this.add(searchTextField);
+
+
+
+        setClassName("project-toolbar");
+        setWidth(100, Unit.PERCENTAGE);
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
     }
 
     public void setSearchTextChangeListener(Consumer<String> searchTextChangeListener) {

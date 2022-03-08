@@ -19,5 +19,5 @@
     justify-content: center;
     white-space: nowrap;
     background-color: var(--lumo-secondary-color);
-    clip-path: polygon(calc(100% - 15px) 0, 100% 50%, calc(100% - 15px) 100%, 0% 100%, 0% 50%, 0% 0%);
+    clip-path: polygon(calc(100% - 10px) 0, 100% 50%, calc(100% - 10px) 100%, 0% 100%, 0% 50%, 0% 0%);
 }

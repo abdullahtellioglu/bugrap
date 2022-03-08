@@ -11,27 +11,25 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
     private final Span versionSpan;
 
     public ReportDetailBreadcrumb(){
-        setClassName("report-detail-breadcrumb");
-        setJustifyContentMode(JustifyContentMode.START);
-        setWidth(100, Unit.PERCENTAGE);
-        setPadding(false);
-        Div div = new Div();
 
-        div.setClassName("breadcrumb-label");
         reportNameSpan = new Span();
-
-
 
         versionSpan = new Span();
         VerticalLayout versionLabelLayout = new VerticalLayout();
-
         versionLabelLayout.setPadding(true);
         versionLabelLayout.setJustifyContentMode(JustifyContentMode.START);
         versionLabelLayout.add(versionSpan);
 
+        Div div = new Div();
+        div.setClassName("breadcrumb-label");
         div.add(reportNameSpan);
 
         add(div, versionLabelLayout);
+
+        setClassName("report-detail-breadcrumb");
+        setJustifyContentMode(JustifyContentMode.START);
+        setWidth(100, Unit.PERCENTAGE);
+        setPadding(false);
     }
     public void setReportNameAndVersionName(String reportName, String versionName){
         reportNameSpan.setText(reportName);

@@ -12,7 +12,11 @@
 .reports-overview .secondary-label {
     margin: auto;
 }
-.reports-overview .comment-list {
-    overflow-y: scroll;
-    max-height: 180px;
+.reports-overview .attachment-label-header {
+    font-weight: 500;
+    color: var(--lumo-contrast-50pct)
+}
+.reports-overview .attachment-description-label {
+    color: var(--lumo-contrast-30pct);
+    font-size: var(--lumo-font-size-s);
 }

@@ -21,7 +21,7 @@ public class ReportGrid extends Grid<Report> {
 
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
-
+        setMultiSort(true);
         //below listener is a listener for move between rows.
         addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
             if(event.getColumn().isEmpty()){
@@ -100,7 +100,9 @@ public class ReportGrid extends Grid<Report> {
         }
         GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priorityColumn, SortDirection.DESCENDING);
         sortOrderList.add(priorityOrder);
+        updateSelectionModeOnClient();
         sort(sortOrderList);
+        //TODO Bug if column visibility set to false, sort indicator remains the same.
     }
 
     private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){

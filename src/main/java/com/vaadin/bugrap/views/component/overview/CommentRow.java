@@ -40,43 +40,29 @@ public class CommentRow extends HorizontalLayout {
         setPadding(true);
         setWidth(100, Unit.PERCENTAGE);
 
-        description = new Span();
-
-
-        description.setWidth(80, Unit.PERCENTAGE);
-
-
-
         userDisplayNameLabel = new Label();
         userDisplayNameLabel.setClassName("user-label");
         timeDisplayLabel = new Label();
         timeDisplayLabel.setClassName("time-label");
 
 
-        VerticalLayout nameAndTimeContainer = new VerticalLayout();
+        VerticalLayout nameAndTimeContainer = new VerticalLayout(userDisplayNameLabel, timeDisplayLabel);
         nameAndTimeContainer.setPadding(false);
         nameAndTimeContainer.setSpacing(false);
-        nameAndTimeContainer.add(userDisplayNameLabel);
-        nameAndTimeContainer.add(timeDisplayLabel);
 
         avatar = new Avatar();
 
-
-        HorizontalLayout avatarContainerLayout = new HorizontalLayout();
+        HorizontalLayout avatarContainerLayout = new HorizontalLayout(avatar, nameAndTimeContainer);
         avatarContainerLayout.setAlignItems(Alignment.CENTER);
-        avatarContainerLayout.add(avatar);
-        avatarContainerLayout.add(nameAndTimeContainer);
 
-
-        metaDataLayout = new VerticalLayout();
-        metaDataLayout.setPadding(false);
-        metaDataLayout.add(avatarContainerLayout);
+        description = new Span();
+        description.setWidth(80, Unit.PERCENTAGE);
 
         attachmentLabel = new Label("Attachments");
         attachmentLabel.setClassName("attachment-label");
-        metaDataLayout.add(attachmentLabel);
 
-
+        metaDataLayout = new VerticalLayout(avatarContainerLayout, attachmentLabel);
+        metaDataLayout.setPadding(false);
         metaDataLayout.setWidth(20, Unit.PERCENTAGE);
         add(description, metaDataLayout);
 

@@ -16,50 +16,30 @@ import java.util.function.Consumer;
 
 public class ProjectToolbarLayout extends HorizontalLayout {
 
-    private final Button reportBugButton;
-    private final Button requestFeatureButton;
-    private final Button manageProjectButton;
-    private final TextField searchTextField;
-
     private final Span manageProjectCountSpan;
 
     private Consumer<String> searchTextChangeListener;
 
     public ProjectToolbarLayout() {
 
-        this.reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
-
+        Button reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
         reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             Notification.show("Not implemented");
         });
-        this.requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
-        this.requestFeatureButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
-        HorizontalLayout manageButtonInternalContainer = new HorizontalLayout();
-        manageButtonInternalContainer.setClassName("manage-button-container");
+        Button requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
+        requestFeatureButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
+
         Icon cogIcon = VaadinIcon.COG.create();
-
-        manageButtonInternalContainer.add(cogIcon);
         Label manageProjectLabel = new Label("Manage project");
-        manageButtonInternalContainer.add(manageProjectLabel);
-
         manageProjectCountSpan = new Span("10");
-        manageButtonInternalContainer.add(manageProjectCountSpan);
-        this.manageProjectButton = new Button(manageButtonInternalContainer);
-        this.manageProjectButton.setThemeName("icon-text-badge-button");
-        this.manageProjectButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
+        HorizontalLayout manageButtonInternalContainer = new HorizontalLayout(cogIcon, manageProjectLabel, manageProjectCountSpan);
+        manageButtonInternalContainer.setClassName("manage-button-container");
 
+        Button manageProjectButton = new Button(manageButtonInternalContainer);
+        manageProjectButton.setThemeName("icon-text-badge-button");
+        manageProjectButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
 
-
-        HorizontalLayout horizontalLayout = new HorizontalLayout();
-        horizontalLayout.add(reportBugButton);
-        horizontalLayout.add(requestFeatureButton);
-        horizontalLayout.add(manageProjectButton);
-
-
-
-        this.add(horizontalLayout);
-
-        this.searchTextField = new TextField();
+        TextField searchTextField = new TextField();
         searchTextField.setPlaceholder("Search");
         searchTextField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchTextField.setClearButtonVisible(true);
@@ -69,8 +49,9 @@ public class ProjectToolbarLayout extends HorizontalLayout {
                 searchTextChangeListener.accept(value);
             }
         });
-        this.add(searchTextField);
 
+        add(new HorizontalLayout(reportBugButton, requestFeatureButton, manageProjectButton));
+        add(searchTextField);
 
 
         setClassName("project-toolbar");

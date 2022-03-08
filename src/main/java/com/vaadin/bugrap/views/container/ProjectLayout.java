@@ -40,7 +40,7 @@ public class ProjectLayout extends VerticalLayout {
     private List<ProjectVersion> projectVersions;
     private ProjectVersion projectVersion;
     private List<Report> reports = new ArrayList<>();
-    private Reporter currentUser;
+    private final Reporter currentUser;
 
     long closedReportCount = 0;
     long openedReportCount = 0;
@@ -64,33 +64,10 @@ public class ProjectLayout extends VerticalLayout {
         this.reportService = ContextWrapper.getBean(ReportService.class);
         this.currentUser = currentUser;
 
-        reportsOverviewLayout = new ReportsOverviewLayout();
-        UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
-            if(selectedReports.size() == 1){
-                openReportInNewTab(selectedReports.iterator().next());
-            }
-        }, Key.ENTER, KeyModifier.CONTROL);
-
         query.reportAssignee = currentUser;
         query.reportStatuses = Collections.singleton(Report.Status.OPEN);
-
+        reportsOverviewLayout = new ReportsOverviewLayout();
         projectToolbarLayout = new ProjectToolbarLayout();
-        projectToolbarLayout.setSearchTextChangeListener(textQuery -> {
-            textSearchQuery = textQuery;
-            onReportQueryChanged();
-        });
-
-        add(projectToolbarLayout);
-
-        ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
-        reportStatusLayout.setAssigneeChangeListener(reporter -> {
-            query.reportAssignee = reporter;
-            onReportQueryChanged();
-        });
-        reportStatusLayout.setStatusChangeListener(statuses -> {
-            query.reportStatuses = statuses;
-            onReportQueryChanged();
-        });
 
 
         VerticalLayout gridDistributionContainerLayout = new VerticalLayout();
@@ -101,24 +78,44 @@ public class ProjectLayout extends VerticalLayout {
 
         initReportVersionsAndDistributionBar(gridDistributionContainerLayout);
 
-
+        ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
         gridDistributionContainerLayout.add(reportStatusLayout);
-
-        reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
-            onReportQueryChanged();
-
-            reports.forEach(report -> {
-                updatedReports.stream().filter(updatedReport -> report.getId() == updatedReport.getId()).findFirst().ifPresent(u -> {
-                    reportGrid.getSelectionModel().select(report);
-                });
-            });
-        });
-
-
 
         reportGrid = new ReportGrid();
         reportGrid.createGridColumns(projectVersion == null|| projectVersion.getId() == -1);
         reportGrid.setItems(reports);
+
+        gridSplitLayout = new SplitLayout(reportGrid, new Scroller(reportsOverviewLayout));
+        gridSplitLayout.setClassName("secondary-hidden");
+        gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
+        gridSplitLayout.setSplitterPosition(100);
+        gridSplitLayout.setOrientation(SplitLayout.Orientation.VERTICAL);
+        gridDistributionContainerLayout.add(gridSplitLayout);
+
+        add(projectToolbarLayout);
+        add(gridDistributionContainerLayout);
+        setClassName("project-layout");
+
+        initializeEvents(reportStatusLayout);
+
+    }
+    private void initializeEvents(ReportStatusLayout reportStatusLayout){
+        //events
+        UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
+            if(selectedReports.size() == 1){
+                openReportInNewTab(selectedReports.iterator().next());
+            }
+        }, Key.ENTER, KeyModifier.CONTROL);
+
+        reportStatusLayout.setAssigneeChangeListener(reporter -> {
+            query.reportAssignee = reporter;
+            onReportQueryChanged();
+        });
+        reportStatusLayout.setStatusChangeListener(statuses -> {
+            query.reportStatuses = statuses;
+            onReportQueryChanged();
+        });
+
         reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
             onSelectedReportsChanged(event.getAllSelectedItems());
         });
@@ -129,20 +126,19 @@ public class ProjectLayout extends VerticalLayout {
         reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
             openReportInNewTab(event.getItem());
         });
+        reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
+            onReportQueryChanged();
 
-
-
-        gridSplitLayout = new SplitLayout(reportGrid, new Scroller(reportsOverviewLayout));
-        gridSplitLayout.setClassName("secondary-hidden");
-        gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
-        gridSplitLayout.setSplitterPosition(100);
-        gridSplitLayout.setOrientation(SplitLayout.Orientation.VERTICAL);
-        gridDistributionContainerLayout.add(gridSplitLayout);
-
-
-
-        add(gridDistributionContainerLayout);
-        setClassName("project-layout");
+            reports.forEach(report -> {
+                updatedReports.stream().filter(updatedReport -> report.getId() == updatedReport.getId()).findFirst().ifPresent(u -> {
+                    reportGrid.getSelectionModel().select(report);
+                });
+            });
+        });
+        projectToolbarLayout.setSearchTextChangeListener(textQuery -> {
+            textSearchQuery = textQuery;
+            onReportQueryChanged();
+        });
     }
 
     private void openReportInNewTab(Report report){
@@ -219,6 +215,10 @@ public class ProjectLayout extends VerticalLayout {
         }
     }
 
+    /**
+     * initialize and add project versions and distribution bar to given parent component.
+     * @param parentComponent Parent component to add
+     */
     private void initReportVersionsAndDistributionBar(VerticalLayout parentComponent){
         projectVersionComboBox = new ProjectVersionComboBox();
 
@@ -231,7 +231,6 @@ public class ProjectLayout extends VerticalLayout {
             fetchReportCounts();
             onProjectVersionChange(value);
         });
-
 
         distributionBar = new DistributionBar(closedReportCount, openedReportCount, unAssignedReportCount);
 

@@ -37,8 +37,8 @@ public class ProjectSelector extends HorizontalLayout {
         managerLabel.setClassName("manager-label");
         closeButton = new Button(VaadinIcon.POWER_OFF.create());
 
-        HorizontalLayout rightContainer = new HorizontalLayout(managerLabel, closeButton);
         projectSelect = new Select<>();
+        HorizontalLayout rightContainer = new HorizontalLayout(managerLabel, closeButton);
         add(projectSelect);
         add(rightContainer);
         projectSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<Project>, Project>>) event -> {

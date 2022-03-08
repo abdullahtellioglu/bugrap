@@ -102,7 +102,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         reportDetailBreadcrumb.setReportNameAndVersionName(report.getSummary(), report.getVersion() != null ? report.getVersion().getVersion() : "No version");
         overviewUpdateBar.setProjectVersions(projectService.getProjectVersions(report.getProject()));
         overviewUpdateBar.setReporters(userService.getUsers());
-        overviewUpdateBar.setOverview(report.getPriority(), report.getType(), report.getStatus(), report.getAssigned(), report.getVersion());
+        overviewUpdateBar.setOverview(report.getPriority(), report.getType(), report.getStatus(), report.getAssigned(), report.getVersion(), false);
 
         reportNameLabel.setText(report.getSummary());
 

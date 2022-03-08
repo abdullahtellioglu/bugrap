@@ -1,5 +1,6 @@
 package com.vaadin.bugrap.views.component;
 
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
@@ -116,17 +117,24 @@ public class ReportStatusLayout extends HorizontalLayout {
         customStatusBtn = new Button();
         customStatusBtn.setText("Custom...");
         customContextMenu = new ContextMenu(customStatusBtn);
+
+        customContextMenu.addAttachListener(new ComponentEventListener<AttachEvent>() {
+            @Override
+            public void onComponentEvent(AttachEvent event) {
+                customContextMenu.getElement().setAttribute("onclick", "event.preventDefault()");
+//                customContextMenu.getElement().setProperty("closeOn", "vaadin-overlay-outside-click");
+            }
+        });
         customContextMenu.setOpenOnClick(true);
-        customContextMenu.close();
-        //TODO how to disable hide on click
 //        customContextMenu.getElement().setProperty("close-on", "vaadin-overlay-outside-click");
-//        customContextMenu.getElement().setProperty("closeOn", "vaadin-overlay-outside-click");
 
         Report.Status[] statuses = Report.Status.values();
         for (Report.Status status : statuses) {
 
             MenuItem statusMenuItem = customContextMenu.addItem(status.toString());
-//            statusMenuItem.getElement().setAttribute("onclick", "event.stopPropagation()");
+
+            statusMenuItem.getElement().setAttribute("onclick", "event.stopPropagation()");
+
             statusMenuItem.addClickListener(statusMenuItemItemClickListener);
             statusMenuItem.setId(status.name());
             statusMenuItem.setCheckable(true);
@@ -157,15 +165,20 @@ public class ReportStatusLayout extends HorizontalLayout {
         Report.Status checkedStatus = optionalStatus.get();
         if(selectedStatusSet.contains(checkedStatus)){
             selectedStatusSet.remove(checkedStatus);
+//            event.getSource().getElement().removeProperty("menu-item-checked");
         }else{
             selectedStatusSet.add(checkedStatus);
+//            event.getSource().getElement().setProperty("menu-item-checked", "true");
         }
+
 
 
         if(statusChangeListener != null){
             statusChangeListener.onChange(selectedStatusSet.isEmpty() ? null : selectedStatusSet);
         }
+
         setThemeVariables();
+        customContextMenu.getElement().executeJs("this.requestContentUpdate($0)", true);
 
         //use context menu for buttons
     };

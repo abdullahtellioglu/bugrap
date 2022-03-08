@@ -16,6 +16,7 @@ import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouteConfiguration;
@@ -187,22 +188,32 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
             projectVersion = projectVersionSet.iterator().next();
         }
 
-        overviewUpdateBar.setOverview(priority, type, status, reporter, projectVersion);
+        overviewUpdateBar.setOverview(priority, type, status, reporter, projectVersion, massModificationModeOn);
 
     }
 
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter assigned, ProjectVersion version) {
         reports.forEach(report -> {
-            report.setPriority(priority);
-            report.setType(type);
-            report.setStatus(status);
-            report.setAssigned(assigned);
-            report.setVersion(version);
+            if(priority != null){
+                report.setPriority(priority);
+            }
+            if(type != null){
+                report.setType(type);
+            }
+            if(status != null){
+                report.setStatus(status);
+            }
+            if(assigned != null){
+                report.setAssigned(assigned);
+            }
+            if(version != null){
+                report.setVersion(version);
+            }
             reportService.save(report);
         });
         reportUpdateListener.onUpdated(reports);
-        Notification.show("Reports updated successfully!");
+        Notification.show("Reports updated successfully!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 
     public interface ReportUpdateListener {

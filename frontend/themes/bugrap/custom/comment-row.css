@@ -6,6 +6,9 @@
     overflow: visible;
     border-radius: 4px;
 }
+.comment-row span {
+    font-size: var(--lumo-font-size-s);
+}
 .comment-row .user-label {
     font-weight: bold;
 }

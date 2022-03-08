@@ -3,11 +3,20 @@
     height: 100vh;
 }
 .project-layout vaadin-split-layout {
+    /*max-height: 100% !important;*/
+    /*min-height: 100% !important;*/
+    /*height: 100% !important;*/
     height: 100%;
+    clear: both;
 }
 .project-layout #selectAllCheckbox {
     display: none;
 }
 .inner-panel {
     background-color: white;
+    max-height: 100%;
+    /*overflow-y: scroll;*/
+    /*max-height: 100% !important;*/
+    /*min-height: 100% !important;*/
+    /*height: 100% !important;*/
 }

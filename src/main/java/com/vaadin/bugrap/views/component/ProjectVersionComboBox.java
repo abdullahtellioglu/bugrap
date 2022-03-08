@@ -12,16 +12,13 @@ import java.util.List;
 public class ProjectVersionComboBox extends HorizontalLayout {
     private final ComboBox<ProjectVersion> versionComboBox;
     public ProjectVersionComboBox() {
+        versionComboBox = new ComboBox<>();
+        Label label = new Label("Reports for");
+        add(versionComboBox);
+        add(label);
 
         setClassName("version-combo-container");
         setJustifyContentMode(JustifyContentMode.CENTER);
-        versionComboBox = new ComboBox<>();
-        add(versionComboBox);
-        Label label = new Label("Reports for");
-        add(label);
-
-
-
     }
     public void setItems(List<ProjectVersion> projectVersions){
         this.versionComboBox.setItems(projectVersions);

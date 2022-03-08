@@ -1,10 +1,7 @@
 package com.vaadin.bugrap.views.component.overview;
 
 import com.vaadin.bugrap.views.component.PriorityBar;
-import com.vaadin.flow.component.ClickEvent;
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Unit;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -28,7 +25,7 @@ import java.util.List;
 public class OverviewUpdateBar extends HorizontalLayout {
     private ReportsUpdateListener listener;
 
-    private final Binder<Overview> binder;
+    private Binder<Overview> binder;
     //views
     private final Select<Report.Priority> prioritySelect = new Select<>();
     private final ComboBox<Report.Type> typeComboBox = new ComboBox<>();
@@ -60,12 +57,36 @@ public class OverviewUpdateBar extends HorizontalLayout {
         Button saveChangesButton = new Button("Save Changes");
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button revertButton = new Button("Revert", VaadinIcon.ROTATE_LEFT.create());
-        HorizontalLayout buttonContainers = new HorizontalLayout(saveChangesButton, revertButton);
+
+
+        add(selectContainers);
+        add(new HorizontalLayout(saveChangesButton, revertButton));
 
         revertButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             binder.readBean(initialOverview.copy());
         });
 
+
+        addAttachListener((ComponentEventListener<AttachEvent>) attachEvent -> attachEvent.getUI().addShortcutListener((ShortcutEventListener) event -> {
+            if(initialOverview == null){
+                return;
+            }
+            BinderValidationStatus<Overview> validationResult = binder.validate();
+            if(!validationResult.isOk()){
+                return;
+            }
+            Overview overview = binder.getBean();
+            if(listener != null){
+                listener.onUpdate(
+                        overview.getPriority(),
+                        overview.getType(),
+                        overview.getStatus(),
+                        overview.getReporter(),
+                        overview.getVersion());
+            }
+
+
+        }, Key.KEY_S, KeyModifier.CONTROL));
 
         saveChangesButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             BinderValidationStatus<Overview> validationResult = binder.validate();
@@ -84,8 +105,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
             }
         });
 
-        add(selectContainers);
-        add(buttonContainers);
 
 
     }
@@ -103,7 +122,10 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
 
 
-    public void setOverview(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion projectVersion){
+    public void clearOverview(){
+        this.initialOverview = null;
+    }
+    public void setOverview(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion projectVersion, boolean massModificationMode){
         Overview overview = new Overview();
         overview.setPriority(priority);
         overview.setType(type);
@@ -111,15 +133,47 @@ public class OverviewUpdateBar extends HorizontalLayout {
         overview.setReporter(reporter);
         overview.setVersion(projectVersion);
 
+        binder = new Binder<>();
+        initializeBinder(massModificationMode);
+
         binder.setBean(overview);
         this.initialOverview = overview.copy();
+    }
+    private void initializeBinder(boolean massModificationMode){
+        Binder.BindingBuilder<Overview, Report.Priority> overviewPriorityBindingBuilder = binder.forField(prioritySelect);
+        if(!massModificationMode){
+            overviewPriorityBindingBuilder.asRequired("Priority is required");
+        }
+        overviewPriorityBindingBuilder.bind(Overview::getPriority, Overview::setPriority);
+
+        Binder.BindingBuilder<Overview, Report.Type> overviewTypeBindingBuilder = binder.forField(typeComboBox);
+        if(!massModificationMode){
+            overviewTypeBindingBuilder.asRequired("Type is required");
+        }
+        overviewTypeBindingBuilder.bind(Overview::getType, Overview::setType);
+
+        Binder.BindingBuilder<Overview, Report.Status> overviewStatusBindingBuilder = binder.forField(statusComboBox);
+        if(!massModificationMode){
+            overviewStatusBindingBuilder.asRequired("Status is required");
+        }
+        overviewStatusBindingBuilder.bind(Overview::getStatus, Overview::setStatus);
+
+        Binder.BindingBuilder<Overview, Reporter> overviewReporterBindingBuilder = binder.forField(reporterComboBox);
+        if(!massModificationMode){
+            overviewReporterBindingBuilder.asRequired("Assignee is required");
+        }
+        overviewReporterBindingBuilder.bind(Overview::getReporter, Overview::setReporter);
+
+        Binder.BindingBuilder<Overview, ProjectVersion> overviewProjectVersionBindingBuilder = binder.forField(versionComboBox);
+        if(!massModificationMode){
+            overviewProjectVersionBindingBuilder.asRequired("Version is required");
+        }
+        overviewProjectVersionBindingBuilder.bind(Overview::getVersion, Overview::setVersion);
+
     }
 
     private void initPrioritySelect(){
         prioritySelect.setLabel("Priority");
-        binder.forField(prioritySelect)
-                .asRequired("Priority is required")
-                .bind(Overview::getPriority, Overview::setPriority);
 
         prioritySelect.setItems(Report.Priority.values());
         prioritySelect.setRenderer(new ComponentRenderer<>((SerializableFunction<Report.Priority, Component>) priority -> {
@@ -133,17 +187,11 @@ public class OverviewUpdateBar extends HorizontalLayout {
         typeComboBox.setLabel("Type");
         typeComboBox.addThemeName("bordered");
         typeComboBox.setItems(Report.Type.values());
-        binder.forField(typeComboBox)
-                .asRequired("Type is required")
-                .bind(Overview::getType, Overview::setType);
 
     }
     private void initStatusComboBox(){
         statusComboBox.setLabel("Status");
         statusComboBox.addThemeName("bordered");
-        binder.forField(statusComboBox)
-                .asRequired("Status is required")
-                .bind(Overview::getStatus, Overview::setStatus);
         statusComboBox.setItems(Report.Status.values());
 
         statusComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Report.Status, Component>) status -> {
@@ -156,10 +204,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
     private void initReporterComboBox(){
         reporterComboBox.setLabel("Assignee");
         reporterComboBox.addThemeName("bordered");
-        binder.forField(reporterComboBox)
-                .asRequired("Assignee is required")
-                .bind(Overview::getReporter, Overview::setReporter);
-
         reporterComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Reporter, Component>) reporter -> {
             if(reporter != null){
                 return new Span(reporter.getName());
@@ -170,9 +214,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
     private void initVersionComboBox(){
         versionComboBox.setLabel("Version");
         versionComboBox.addThemeName("bordered");
-        binder.forField(versionComboBox)
-                .asRequired("Version is required")
-                .bind(Overview::getVersion, Overview::setVersion);
 
         versionComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<ProjectVersion, Component>) projectVersion -> {
             if(projectVersion != null){

@@ -15,6 +15,9 @@
 }
 .project-selector .manager-label {
     border:unset;
+    box-shadow: unset;
+    -moz-box-shadow: unset;
+    -webkit-box-shadow: unset;
 }
 .project-selector vaadin-icon {
     margin:auto;

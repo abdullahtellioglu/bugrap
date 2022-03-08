@@ -7,19 +7,15 @@ import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.ProjectSelector;
 import com.vaadin.bugrap.views.container.ProjectLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import org.checkerframework.common.util.report.qual.ReportUse;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,21 +23,19 @@ import java.util.Optional;
 @Route(value = "projects")
 @RouteAlias(value = "")
 public class HomePage extends VerticalLayout {
-    private final ProjectService projectService;
     private final ReportService reportService;
     private final ProjectSelector projectSelector;
     private final UserService userService;
-    private ProjectLayout projectLayout;
-    public HomePage(){
-        this.projectService = new ProjectService();
-        this.reportService = new ReportService();
-        userService = new UserService();
-        setClassName("home-page");
-        setSpacing(false);
-        setPadding(false);
+    private final ProjectLayout projectLayout;
+
+
+    public HomePage(ReportService reportService, ProjectService projectService, UserService userService){
+        this.reportService = reportService;
+        this.userService = userService;
+
         projectSelector = new ProjectSelector();
         List<Project> activeProjects = projectService.getActiveProjects();
-        add(projectSelector);
+
         // we dont have login screen. That's why we need to find the current user from assignees if it is first run, otherwise read username from cookie
         Reporter currentUser = createDummyUserFromListOrReadFromCookie(activeProjects.get(0));
         projectLayout = new ProjectLayout(currentUser);
@@ -51,10 +45,13 @@ public class HomePage extends VerticalLayout {
             projectLayout.setProject(project);
             projectSelector.setManagerName(project.getManager().getName());
         });
+        add(projectSelector);
         add(projectLayout);
-
-
         projectSelector.setActiveProjects(activeProjects);
+
+        setClassName("home-page");
+        setSpacing(false);
+        setPadding(false);
     }
     private Reporter getDummyUserFromProject(Project project){
         BugrapRepository.ReportsQuery reportsQuery = new BugrapRepository.ReportsQuery();

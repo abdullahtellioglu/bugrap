@@ -41,43 +41,32 @@ public class CommentAttachmentLayout extends VerticalLayout {
     public CommentAttachmentLayout(){
         setMargin(false);
         setJustifyContentMode(JustifyContentMode.END);
-        VerticalLayout attachmentLayout = new VerticalLayout();
-        attachmentLayout.setWidth("unset");
-        attachmentLayout.setSpacing(false);
-        attachmentLayout.setPadding(false);
 
         Span attachmentsLabel = new Span("Attachments");
         attachmentsLabel.setClassName("attachment-label-header");
-        attachmentLayout.add(attachmentsLabel);
+
         Span attachmentDescriptionLabel = new Span("Only PDF, PNG and JPG files are allowed. \nMax file size is 5 MB.");
         attachmentDescriptionLabel.setClassName("attachment-description-label");
         attachmentDescriptionLabel.setWhiteSpace(HasText.WhiteSpace.BREAK_SPACES);
-        attachmentLayout.add(attachmentDescriptionLabel);
-
 
         attachmentFileMemoryBuffer = new MultiFileMemoryBuffer();
         attachmentUpload = new Upload(attachmentFileMemoryBuffer);
         attachmentUpload.setMaxFileSize( 5 * 1024 * 1024);
         attachmentUpload.setAcceptedFileTypes("image/png", "image/jpeg", "application/pdf");
-        attachmentLayout.add(attachmentUpload);
 
+        VerticalLayout attachmentLayout = new VerticalLayout(attachmentsLabel, attachmentDescriptionLabel, attachmentUpload);
+        attachmentLayout.setWidth("unset");
+        attachmentLayout.setSpacing(false);
+        attachmentLayout.setPadding(false);
 
         commentRichTextEditor = new RichTextEditor();
-
-
-        HorizontalLayout reviewAttachmentHorizontalLayout = new HorizontalLayout();
-
+        HorizontalLayout reviewAttachmentHorizontalLayout = new HorizontalLayout(commentRichTextEditor, attachmentLayout);
         reviewAttachmentHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
-        reviewAttachmentHorizontalLayout.add(commentRichTextEditor);
-        reviewAttachmentHorizontalLayout.add(attachmentLayout);
         add(reviewAttachmentHorizontalLayout);
-
-
 
         saveCommentBtn = new Button("Comment", VaadinIcon.CHECK.create());
         saveCommentBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         saveCommentBtn.setEnabled(false);
-
 
         Button cancelCommentBtn = new Button("Cancel", VaadinIcon.CLOSE.create());
 
@@ -87,17 +76,9 @@ public class CommentAttachmentLayout extends VerticalLayout {
         buttonContainer.setMargin(false);
         add(buttonContainer);
 
-
         commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->
                 saveCommentBtn.setEnabled(StringUtils.isNotEmpty(commentRichTextEditor.getHtmlValue())));
 
-        commentRichTextEditor.addCompositionUpdateListener(new ComponentEventListener<CompositionUpdateEvent>() {
-            @Override
-            public void onComponentEvent(CompositionUpdateEvent event) {
-                String data = event.getData();
-                System.out.println(data);
-            }
-        });
         commentRichTextEditor.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<RichTextEditor, String>>) event ->{
             try{
                 Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
@@ -108,7 +89,6 @@ public class CommentAttachmentLayout extends VerticalLayout {
             }catch (Exception ex){
                 ex.printStackTrace();
             }
-
         });
 
 
@@ -144,6 +124,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
         commentRichTextEditor.clear();
         attachmentUpload.getElement().setPropertyJson("files", Json.createArray());
         fileMap.clear();
+        saveCommentBtn.setEnabled(false);
     }
 
 

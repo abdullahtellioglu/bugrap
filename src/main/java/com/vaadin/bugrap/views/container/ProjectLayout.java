@@ -1,14 +1,13 @@
 package com.vaadin.bugrap.views.container;
 
 import com.vaadin.bugrap.config.ContextWrapper;
-import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
-import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.utils.CookieUtils;
 import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.*;
 import com.vaadin.bugrap.views.component.overview.ReportsOverviewLayout;
+import com.vaadin.bugrap.views.model.GridColumn;
 import com.vaadin.bugrap.views.pages.ReportDetailPage;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -32,6 +31,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class ProjectLayout extends VerticalLayout {
+    private static final String SPLITTER_HIDDEN_CLASS = "secondary-hidden";
     //services
     private final ProjectService projectService;
     private final ReportService reportService;
@@ -47,7 +47,7 @@ public class ProjectLayout extends VerticalLayout {
     long unAssignedReportCount = 0;
 
     //Views
-    private ReportGrid reportGrid;
+    private final ReportGrid reportGrid;
     private DistributionBar distributionBar;
     private ProjectVersionComboBox projectVersionComboBox;
     private final ProjectToolbarLayout projectToolbarLayout;
@@ -56,6 +56,7 @@ public class ProjectLayout extends VerticalLayout {
     private final BugrapRepository.ReportsQuery query = new BugrapRepository.ReportsQuery();
     private String textSearchQuery;
 
+    private final Set<GridColumn> gridColumnSet = new HashSet<>();
 
     private Set<Report> selectedReports = new HashSet<>();
 
@@ -80,13 +81,21 @@ public class ProjectLayout extends VerticalLayout {
 
         ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
         gridDistributionContainerLayout.add(reportStatusLayout);
+        reportStatusLayout.setSelectedGridColumns(gridColumnSet);
+
+        Arrays.stream(GridColumn.values()).forEach(gridColumn -> {
+            if(gridColumn.isInitialVisible()){
+                gridColumnSet.add(gridColumn);
+            }
+        });
+        reportStatusLayout.updateGridColumns();
 
         reportGrid = new ReportGrid();
         reportGrid.createGridColumns(projectVersion == null|| projectVersion.getId() == -1);
         reportGrid.setItems(reports);
 
         gridSplitLayout = new SplitLayout(reportGrid, new Scroller(reportsOverviewLayout));
-        gridSplitLayout.setClassName("secondary-hidden");
+        gridSplitLayout.setClassName(SPLITTER_HIDDEN_CLASS);
         gridSplitLayout.setWidth(100, Unit.PERCENTAGE);
         gridSplitLayout.setSplitterPosition(100);
         gridSplitLayout.setOrientation(SplitLayout.Orientation.VERTICAL);
@@ -97,6 +106,8 @@ public class ProjectLayout extends VerticalLayout {
         setClassName("project-layout");
 
         initializeEvents(reportStatusLayout);
+
+
 
     }
     private void initializeEvents(ReportStatusLayout reportStatusLayout){
@@ -116,28 +127,33 @@ public class ProjectLayout extends VerticalLayout {
             onReportQueryChanged();
         });
 
-        reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> {
-            onSelectedReportsChanged(event.getAllSelectedItems());
-        });
+        reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> onSelectedReportsChanged(event.getAllSelectedItems()));
         reportGrid.addItemClickListener((ComponentEventListener<ItemClickEvent<Report>>) event -> {
             reportGrid.getSelectionModel().deselectAll();
             reportGrid.getSelectionModel().select(event.getItem());
         });
-        reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> {
-            openReportInNewTab(event.getItem());
-        });
+        reportGrid.addItemDoubleClickListener((ComponentEventListener<ItemDoubleClickEvent<Report>>) event -> openReportInNewTab(event.getItem()));
         reportsOverviewLayout.setReportUpdateListener(updatedReports -> {
             onReportQueryChanged();
 
-            reports.forEach(report -> {
-                updatedReports.stream().filter(updatedReport -> report.getId() == updatedReport.getId()).findFirst().ifPresent(u -> {
-                    reportGrid.getSelectionModel().select(report);
-                });
-            });
+            reports.forEach(report -> updatedReports.stream().filter(updatedReport -> report.getId() == updatedReport.getId()).findFirst()
+                    .ifPresent(u -> reportGrid.getSelectionModel().select(report)));
         });
         projectToolbarLayout.setSearchTextChangeListener(textQuery -> {
             textSearchQuery = textQuery;
             onReportQueryChanged();
+        });
+
+
+        reportStatusLayout.setGridColumnChangeListener(gridColumn -> {
+            if(gridColumnSet.contains(gridColumn)){
+                gridColumnSet.remove(gridColumn);
+            }else{
+                gridColumnSet.add(gridColumn);
+            }
+            reportStatusLayout.updateGridColumns();
+            reportGrid.setColumns(gridColumnSet);
+
         });
     }
 
@@ -153,14 +169,14 @@ public class ProjectLayout extends VerticalLayout {
      * Fill the grid with selected items.
      */
     private void onReportQueryChanged(){
-        List<Report> reports = reportService.findReports(query);
+        List<Report> foundReports = reportService.findReports(query);
         if(StringUtils.isNotEmpty(textSearchQuery)){
-            reports = reports.stream().filter(report ->
+            foundReports = foundReports.stream().filter(report ->
                     StringUtils.containsIgnoreCase(report.getSummary(), textSearchQuery) ||
                             StringUtils.containsIgnoreCase(report.getDescription(), textSearchQuery)).collect(Collectors.toList());
         }
-        this.reports = reports;
-        reportGrid.setItems(reports);
+        this.reports = foundReports;
+        reportGrid.setItems(foundReports);
     }
 
     public void setProject(Project project){
@@ -200,10 +216,10 @@ public class ProjectLayout extends VerticalLayout {
 
         reportsOverviewLayout.setReportsAndReporter(selectedReports, currentUser);
         if(selectedReports.isEmpty()){
-            gridSplitLayout.setClassName("secondary-hidden");
+            gridSplitLayout.setClassName(SPLITTER_HIDDEN_CLASS);
             gridSplitLayout.setSplitterPosition(100);
         }else{
-            gridSplitLayout.removeClassName("secondary-hidden");
+            gridSplitLayout.removeClassName(SPLITTER_HIDDEN_CLASS);
             int heightPercentage;
             if(selectedReports.size() > 1){
                 heightPercentage = 80;

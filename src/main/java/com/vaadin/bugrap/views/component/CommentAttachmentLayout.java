@@ -60,7 +60,10 @@ public class CommentAttachmentLayout extends VerticalLayout {
         attachmentLayout.setPadding(false);
 
         commentRichTextEditor = new RichTextEditor();
+        commentRichTextEditor.getElement()
+                .executeJs("this._editor.root.setAttribute('placeholder', $0)", "Write a new comment...");
         HorizontalLayout reviewAttachmentHorizontalLayout = new HorizontalLayout(commentRichTextEditor, attachmentLayout);
+        reviewAttachmentHorizontalLayout.setHeight(100, Unit.PERCENTAGE);
         reviewAttachmentHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
         add(reviewAttachmentHorizontalLayout);
 
@@ -84,7 +87,6 @@ public class CommentAttachmentLayout extends VerticalLayout {
                 Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
                 String text = parse.text();
                 //TODO this is not working. Because \n is not returning empty.
-//                boolean empty = commentRichTextEditor.isEmpty();
                 saveCommentBtn.setEnabled(StringUtils.isNotEmpty(text));
             }catch (Exception ex){
                 ex.printStackTrace();

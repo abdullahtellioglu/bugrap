@@ -1,6 +1,7 @@
 package com.vaadin.bugrap.views.component;
 
 import com.vaadin.bugrap.utils.DateUtils;
+import com.vaadin.bugrap.views.model.GridColumn;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.grid.CellFocusEvent;
@@ -48,12 +49,21 @@ public class ReportGrid extends Grid<Report> {
         });
 
         initializeColumns();
-
-
+    }
+    public void setColumns(Set<GridColumn> gridColumns){
+        getColumns().forEach(column -> {
+            column.getId().ifPresent(columnId -> {
+                GridColumn foundGridColumn = GridColumn.find(columnId);
+                if(foundGridColumn != null && foundGridColumn.isChangeable()){
+                    column.setVisible(gridColumns.contains(foundGridColumn));
+                }
+            });
+        });
     }
 
     private void initializeColumns(){
-        versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader("Version");
+        versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader(GridColumn.VERSION.getLabel());
+        versionColumn.setId(GridColumn.VERSION.name());
         versionColumn.setComparator((o1, o2) -> {
             if(o1.getVersion() == null && o2.getVersion() != null){
                 return 1;
@@ -67,13 +77,26 @@ public class ReportGrid extends Grid<Report> {
             return 0;
         });
 
-        priorityColumn = addColumn(createPriorityComponentRenderer()).setHeader("Priority");
+        priorityColumn = addColumn(createPriorityComponentRenderer()).setHeader(GridColumn.PRIORITY.getLabel());
+        priorityColumn.setId(GridColumn.PRIORITY.name());
         priorityColumn.setComparator(Comparator.comparing(Report::getPriority));
 
 
-        addColumn(Report::getType).setHeader("Type").setComparator(Comparator.comparing(Report::getType));
-        addColumn(Report::getSummary).setHeader("Summary").setComparator(Comparator.comparing(Report::getSummary));
-        addColumn(createAssigneeComponentRenderer()).setHeader("Assigned to").setComparator((o1, o2) -> {
+        Column<Report> type = addColumn(Report::getType).setHeader(GridColumn.TYPE.getLabel());
+        type.setId(GridColumn.TYPE.name());
+        type.setComparator(Comparator.comparing(Report::getType));
+
+        Column<Report> statusColumn = addColumn(Report::getStatus).setHeader(GridColumn.STATUS.getLabel());
+        statusColumn.setId(GridColumn.STATUS.name());
+        statusColumn.setComparator(Comparator.comparing(Report::getStatus));
+
+        Column<Report> reportColumn = addColumn(Report::getSummary).setHeader(GridColumn.SUMMARY.getLabel());
+        reportColumn.setId(GridColumn.SUMMARY.name());
+        reportColumn.setComparator(Comparator.comparing(Report::getSummary));
+
+        Column<Report> assignedToColumn = addColumn(createAssigneeComponentRenderer()).setHeader(GridColumn.ASSIGNED_TO.getLabel());
+        assignedToColumn.setId(GridColumn.ASSIGNED_TO.name());
+        assignedToColumn.setComparator((o1, o2) -> {
             if(o1.getAssigned() == null && o2.getAssigned() != null){
                 return 1;
             }
@@ -85,9 +108,21 @@ public class ReportGrid extends Grid<Report> {
             }
             return 0;
         });
-        addColumn(createReportLastModifiedComponentRenderer()).setHeader("Last modified").setComparator(Comparator.comparing(Report::getTimestamp));
-        addColumn(createReportTimeStampComponentRenderer()).setHeader("Reported").setComparator(Comparator.comparing(Report::getReportedTimestamp));
 
+        Column<Report> lastModifiedColumn = addColumn(createReportLastModifiedComponentRenderer()).setHeader(GridColumn.LAST_MODIFIED.getLabel());
+        lastModifiedColumn.setId(GridColumn.LAST_MODIFIED.name());
+        lastModifiedColumn.setComparator(Comparator.comparing(Report::getTimestamp));
+
+
+        Column<Report> reportedColumn = addColumn(createReportTimeStampComponentRenderer()).setHeader(GridColumn.REPORTED.getLabel());
+        reportedColumn.setId(GridColumn.REPORTED.name());
+        reportedColumn.setComparator(Comparator.comparing(Report::getReportedTimestamp));
+
+        //set visibility of columns initially.
+        getColumns().forEach(column -> column.getId().ifPresent(columnId -> {
+            GridColumn foundCol = GridColumn.find(columnId);
+            column.setVisible(foundCol.isInitialVisible());
+        }));
     }
     public void createGridColumns(boolean allVersionSelected){
         List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();

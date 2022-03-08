@@ -63,12 +63,12 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         innerPanel.setWidth(100, Unit.PERCENTAGE);
 
         VerticalLayout topLayout = new VerticalLayout(reportDetailBreadcrumb, innerPanel);
-        topLayout.setHeight("calc(100% - 440px)");
+        topLayout.setHeight("calc(100% - 500px)");
         topLayout.setPadding(false);
         topLayout.setMargin(false);
 
         commentAttachmentLayout.setClassName("bottom-panel");
-        commentAttachmentLayout.setHeight(380, Unit.PIXELS);
+        commentAttachmentLayout.setHeight(440, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
 
         add(topLayout, commentAttachmentLayout);

@@ -7,7 +7,7 @@
     border-radius: 4px;
 }
 .comment-row span {
-    font-size: var(--lumo-font-size-s);
+    font-size: var(--lumo-font-size-m);
 }
 .comment-row .user-label {
     font-weight: bold;

@@ -8,3 +8,16 @@
     flex: 1;
     background-color: white;
 }
+:host [part="content"] > .ql-editor {
+    line-height: var(--lumo-line-height-xs);
+    max-height: 292px;
+    overflow: scroll;
+}
+:host [part="content"] > .ql-editor.ql-blank[placeholder]::before {
+    color: var(--lumo-contrast-50pct);
+    content: attr(placeholder);
+    font-style: italic;
+    pointer-events: none;
+    position: absolute;
+    top: var(--lumo-space-s);
+}

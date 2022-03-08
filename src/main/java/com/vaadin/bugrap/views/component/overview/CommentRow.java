@@ -71,6 +71,17 @@ public class CommentRow extends HorizontalLayout {
         attachmentContainerLayout.setMargin(false);
         metaDataLayout.add(attachmentContainerLayout);
     }
+
+    @Override
+    public void setMargin(boolean margin) {
+        super.setMargin(margin);
+        if(margin){
+            setWidth("calc(100% - var(--lumo-space-m) * 2)");
+        }else{
+            setWidth(100, Unit.PERCENTAGE);
+        }
+    }
+
     public void setComment(GroupedComment comment){
         attachmentContainerLayout.removeAll();
         description.getElement().setProperty("innerHTML",comment.getComment());

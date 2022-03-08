@@ -84,6 +84,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
         commentList = new CommentList();
         commentList.setWidth(100, Unit.PERCENTAGE);
+        commentList.setCommentRowPadding(true);
 
         VerticalLayout containerLayout = new VerticalLayout(reportInfoContainerLayout, overviewUpdateBar, commentList);
         containerLayout.setPadding(false);

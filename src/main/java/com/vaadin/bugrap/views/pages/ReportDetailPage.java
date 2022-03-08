@@ -52,18 +52,25 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
         reportNameLabel = new Label();
         reportNameLabel.setClassName("report-name");
+
+
         overviewUpdateBar = new OverviewUpdateBar();
         overviewUpdateBar.setListener(this);
+
+        VerticalLayout reportNameContainer = new VerticalLayout(reportNameLabel, overviewUpdateBar);
+        reportNameContainer.setPadding(true);
+
         commentList = new CommentList();
+        commentList.setCommentRowPadding(true);
+        commentList.setCommentRowMargin(true);
 
-
-        VerticalLayout innerPanel = new VerticalLayout(reportNameLabel, overviewUpdateBar, commentList);
-        innerPanel.setPadding(true);
+        VerticalLayout innerPanel = new VerticalLayout(reportNameContainer, commentList);
+        innerPanel.setPadding(false);
         innerPanel.setHeight(100, Unit.PERCENTAGE);
         innerPanel.setWidth(100, Unit.PERCENTAGE);
 
         VerticalLayout topLayout = new VerticalLayout(reportDetailBreadcrumb, innerPanel);
-        topLayout.setHeight("calc(100% - 500px)");
+        topLayout.setHeight("calc(100% - 520px)");
         topLayout.setPadding(false);
         topLayout.setMargin(false);
 

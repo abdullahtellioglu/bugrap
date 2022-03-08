@@ -224,7 +224,7 @@ public class ProjectLayout extends VerticalLayout {
             if(selectedReports.size() > 1){
                 heightPercentage = 80;
             }else{
-                heightPercentage = Math.min(40 + reports.size(), 60);
+                heightPercentage = Math.min(40 + reports.size(), 50);
             }
             //TODO is this correct way to implement the row size ?
             gridSplitLayout.setSplitterPosition(heightPercentage);

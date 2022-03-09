@@ -7,12 +7,12 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class ReportDetailBreadcrumb extends HorizontalLayout {
-    private final Span reportNameSpan;
+    private final Span projectNameSpan;
     private final Span versionSpan;
 
     public ReportDetailBreadcrumb(){
 
-        reportNameSpan = new Span();
+        projectNameSpan = new Span();
 
         versionSpan = new Span();
         VerticalLayout versionLabelLayout = new VerticalLayout();
@@ -22,7 +22,7 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
 
         Div div = new Div();
         div.setClassName("breadcrumb-label");
-        div.add(reportNameSpan);
+        div.add(projectNameSpan);
 
         add(div, versionLabelLayout);
 
@@ -31,8 +31,10 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
         setWidth(100, Unit.PERCENTAGE);
         setPadding(false);
     }
-    public void setReportNameAndVersionName(String reportName, String versionName){
-        reportNameSpan.setText(reportName);
+    public void setProjectName(String projectName){
+        projectNameSpan.setText(projectName);
+    }
+    public void setVersionName(String versionName){
         versionSpan.setText(versionName);
     }
 }

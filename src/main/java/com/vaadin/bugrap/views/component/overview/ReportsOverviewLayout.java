@@ -62,7 +62,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         this.userService = ContextWrapper.getBean(UserService.class);
         this.commentService = ContextWrapper.getBean(CommentService.class);
         this.reportService = ContextWrapper.getBean(ReportService.class);
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        setJustifyContentMode(JustifyContentMode.START);
         setClassName("reports-overview");
         List<Reporter> users = userService.getUsers();
         overviewUpdateBar.setListener(this);
@@ -86,18 +86,13 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         commentList.setWidth(100, Unit.PERCENTAGE);
         commentList.setCommentRowPadding(true);
 
-        VerticalLayout containerLayout = new VerticalLayout(reportInfoContainerLayout, overviewUpdateBar, commentList);
-        containerLayout.setPadding(false);
-        containerLayout.setMargin(false);
-        containerLayout.setJustifyContentMode(JustifyContentMode.START);
 
         commentAttachmentLayout = new CommentAttachmentLayout();
         commentAttachmentLayout.setPadding(false);
         commentAttachmentLayout.setHeight(355, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onCommentSave());
 
-        add(containerLayout);
-        add(commentAttachmentLayout);
+        add(reportInfoContainerLayout, overviewUpdateBar, commentList, commentAttachmentLayout);
 
     }
     private void onCommentSave(){

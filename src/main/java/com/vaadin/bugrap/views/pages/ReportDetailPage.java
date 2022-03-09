@@ -21,6 +21,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
@@ -106,7 +107,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
     private void setReport(Report report){
         this.report = report;
-        reportDetailBreadcrumb.setReportNameAndVersionName(report.getSummary(), report.getVersion() != null ? report.getVersion().getVersion() : "No version");
+        reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version");
         overviewUpdateBar.setProjectVersions(projectService.getProjectVersions(report.getProject()));
         overviewUpdateBar.setReporters(userService.getUsers());
         overviewUpdateBar.setOverview(report.getPriority(), report.getType(), report.getStatus(), report.getAssigned(), report.getVersion(), false);
@@ -119,14 +120,21 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     @Override
     public void setParameter(BeforeEvent event, Long reportId) {
         Report report = reportService.getReport(reportId);
+
         if(report != null){
+            Project project = report.getProject();
+            if(project != null){
+                reportDetailBreadcrumb.setProjectName(project.getName());
+            }else{
+                reportDetailBreadcrumb.setProjectName("Invalid Project");
+            }
             overviewUpdateBar.setVisible(true);
             commentAttachmentLayout.setVisible(true);
             setReport(report);
         } else {
             overviewUpdateBar.setVisible(false);
             commentAttachmentLayout.setVisible(false);
-            reportDetailBreadcrumb.setReportNameAndVersionName("Invalid Report", "");
+
 
             Notification invalidReportNotification = new Notification("Please select a valid report to display details");
             invalidReportNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -142,7 +150,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         report.setAssigned(reporter);
         report.setVersion(version);
         this.report =  reportService.save(report);
-        reportDetailBreadcrumb.setReportNameAndVersionName(report.getSummary(),report.getVersion() != null ? report.getVersion().getVersion() : "No version" );
+        reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version" );
         Notification.show("Report updated successfully");
     }
 }

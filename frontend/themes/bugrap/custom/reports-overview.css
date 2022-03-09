@@ -1,6 +1,7 @@
 .reports-overview {
     background-color: var(--background-color);
-    overflow-y: scroll;
+    overflow-y: auto;
+    max-height: 600px;
 }
 .reports-overview a vaadin-icon {
     padding: 0.25em;

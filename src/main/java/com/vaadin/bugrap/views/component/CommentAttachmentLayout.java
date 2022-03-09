@@ -65,7 +65,6 @@ public class CommentAttachmentLayout extends VerticalLayout {
         HorizontalLayout reviewAttachmentHorizontalLayout = new HorizontalLayout(commentRichTextEditor, attachmentLayout);
         reviewAttachmentHorizontalLayout.setHeight(100, Unit.PERCENTAGE);
         reviewAttachmentHorizontalLayout.setWidth(100, Unit.PERCENTAGE);
-        add(reviewAttachmentHorizontalLayout);
 
         saveCommentBtn = new Button("Comment", VaadinIcon.CHECK.create());
         saveCommentBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -77,6 +76,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
         buttonContainer.setWidth(100, Unit.PERCENTAGE);
         buttonContainer.setPadding(false);
         buttonContainer.setMargin(false);
+        add(reviewAttachmentHorizontalLayout);
         add(buttonContainer);
 
         commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->

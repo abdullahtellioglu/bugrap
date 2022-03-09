@@ -4,13 +4,17 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.vaadin.bugrap.domain.entities.Report;
 
+/**
+ * Creates a kinda progress bar for given priority. It creates progress count based on {@link Report.Priority}'s ordinal.
+ */
 public class PriorityBar extends HorizontalLayout {
     public PriorityBar(Report.Priority priority){
         setClassName("priority-bar");
-        setPriority(priority);
         setSpacing(false);
         setPadding(false);
         setMargin(false);
+
+        setPriority(priority);
     }
     public void setPriority(Report.Priority priority){
         removeAll();

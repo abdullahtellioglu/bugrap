@@ -14,6 +14,12 @@ import com.vaadin.flow.component.textfield.TextField;
 
 import java.util.function.Consumer;
 
+/**
+ * Project toolbar is a component that has report bug button, request feature button, manage project button and a search field for text search.<br/>
+ * If user searches some text from text field, it invokes {@link ProjectToolbarLayout#searchTextChangeListener}. <br/<br/>
+ * <b>ReportBug, RequestFeature, ManageProject buttons are displaying but events are not implemented</b><br/>
+ *
+ */
 public class ProjectToolbarLayout extends HorizontalLayout {
 
     private final Span manageProjectCountSpan;

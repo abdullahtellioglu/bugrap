@@ -7,6 +7,13 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * GroupedComment a wrapper class for multiple comment class. In a single {@link Comment} model, there is only one attachment or only one comment.<br/>
+ * Therefore comments needs to be grouped to contain multiple attachments and one comment. <br/>
+ * See also: <br/>
+ * {@link com.vaadin.bugrap.services.CommentService#getGroupedComments}<br/>
+ * {@link com.vaadin.bugrap.services.CommentService#saveComment}
+ */
 public class GroupedComment {
     private List<Comment> groupedComments;
     private Reporter author;

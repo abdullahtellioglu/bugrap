@@ -2,6 +2,23 @@ package com.vaadin.bugrap.views.model;
 
 import java.util.Arrays;
 
+/**
+ * Represent columns in Report Grid. Enum's name is used for ID for given column.
+ * <table>
+ *     <tr>
+ *         <td>Label</td>
+ *         <td>Column name</td>
+ *     </tr>
+ *     <tr>
+ *         <td>Initially visible</td>
+ *         <td>If set true, user can see column on page load.</td>
+ *     </tr>
+ *     <tr>
+ *         <td>Changeable</td>
+ *         <td>If set true, user can column show/hide. {@link com.vaadin.bugrap.views.component.ReportStatusLayout} {@link com.vaadin.bugrap.views.component.ReportGrid} </td>
+ *     </tr>
+ * </table>
+ */
 public enum GridColumn {
     VERSION("Version",true, false),
     PRIORITY("Priority",true, false),
@@ -32,6 +49,12 @@ public enum GridColumn {
     public String getLabel() {
         return label;
     }
+
+    /**
+     * Finds the grid column based on enum's name
+     * @param name {@link GridColumn#name()}
+     * @return GridColumn or null if not found.
+     */
     public static GridColumn find(String name){
         return Arrays.stream(GridColumn.values()).filter(gridColumn -> gridColumn.name().equals(name)).findFirst().orElse(null);
     }

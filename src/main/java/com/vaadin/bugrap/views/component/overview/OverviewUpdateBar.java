@@ -23,6 +23,7 @@ import java.util.List;
  *
  */
 public class OverviewUpdateBar extends HorizontalLayout {
+    private static final String BORDERED_THEME_NAME = "bordered";
     private ReportsUpdateListener listener;
 
     private Binder<Overview> binder;
@@ -43,7 +44,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
         setJustifyContentMode(JustifyContentMode.BETWEEN);
         setAlignItems(Alignment.BASELINE);
         binder = new Binder<>();
-        prioritySelect.addClassName("bordered");
+        prioritySelect.addClassName(BORDERED_THEME_NAME);
 
         initPrioritySelect();
         initTypeComboBox();
@@ -185,13 +186,13 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initTypeComboBox(){
         typeComboBox.setLabel("Type");
-        typeComboBox.addThemeName("bordered");
+        typeComboBox.addThemeName(BORDERED_THEME_NAME);
         typeComboBox.setItems(Report.Type.values());
 
     }
     private void initStatusComboBox(){
         statusComboBox.setLabel("Status");
-        statusComboBox.addThemeName("bordered");
+        statusComboBox.addThemeName(BORDERED_THEME_NAME);
         statusComboBox.setItems(Report.Status.values());
 
         statusComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Report.Status, Component>) status -> {
@@ -203,7 +204,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initReporterComboBox(){
         reporterComboBox.setLabel("Assignee");
-        reporterComboBox.addThemeName("bordered");
+        reporterComboBox.addThemeName(BORDERED_THEME_NAME);
         reporterComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<Reporter, Component>) reporter -> {
             if(reporter != null){
                 return new Span(reporter.getName());
@@ -213,7 +214,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
     private void initVersionComboBox(){
         versionComboBox.setLabel("Version");
-        versionComboBox.addThemeName("bordered");
+        versionComboBox.addThemeName(BORDERED_THEME_NAME);
 
         versionComboBox.setRenderer(new ComponentRenderer<>((SerializableFunction<ProjectVersion, Component>) projectVersion -> {
             if(projectVersion != null){
@@ -225,6 +226,10 @@ public class OverviewUpdateBar extends HorizontalLayout {
     public interface ReportsUpdateListener {
         void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion version);
     }
+
+    /**
+     * Model is used for binding inputs.
+     */
     public static class Overview {
         private Report.Priority priority;
         private Report.Type type;

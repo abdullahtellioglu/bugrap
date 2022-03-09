@@ -15,6 +15,10 @@ import org.vaadin.bugrap.domain.entities.Project;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * Project selector is a component that user can display active projects and select one of them to display. <br/>
+ *
+ */
 public class ProjectSelector extends HorizontalLayout {
     private final Select<Project> projectSelect;
     private final Button managerLabel;
@@ -48,9 +52,19 @@ public class ProjectSelector extends HorizontalLayout {
             }
         });
     }
+
+    /**
+     * Updates the manager label
+     * @param name manager label
+     */
     public void setManagerName(String name){
         this.managerLabel.setText(name);
     }
+
+    /**
+     * Updates active projects in Select. If there is none selected currently, first project selection event is triggered.
+     * @param projects List of projects.
+     */
     public void setActiveProjects(List<Project> projects){
         projectSelect.setItems(projects);
         if(projectSelect.getValue() == null && !projects.isEmpty() && listener != null){

@@ -11,10 +11,9 @@ public class ReportDetailBreadcrumb extends HorizontalLayout {
     private final Span versionSpan;
 
     public ReportDetailBreadcrumb(){
-
         projectNameSpan = new Span();
-
         versionSpan = new Span();
+
         VerticalLayout versionLabelLayout = new VerticalLayout();
         versionLabelLayout.setPadding(true);
         versionLabelLayout.setJustifyContentMode(JustifyContentMode.START);

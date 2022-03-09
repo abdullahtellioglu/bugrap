@@ -27,7 +27,6 @@ public class ReportGrid extends Grid<Report> {
         addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
             if(event.getColumn().isEmpty()){
                 //for selection checkboxes
-
                 return;
             }
 
@@ -35,7 +34,6 @@ public class ReportGrid extends Grid<Report> {
             if(selectedItems.size() > 1){
                 return;
             }
-
             event.getItem().ifPresent(report -> {
                 if(selectedItems.iterator().hasNext()){
                     Report current = selectedItems.iterator().next();
@@ -51,14 +49,12 @@ public class ReportGrid extends Grid<Report> {
         initializeColumns();
     }
     public void setColumns(Set<GridColumn> gridColumns){
-        getColumns().forEach(column -> {
-            column.getId().ifPresent(columnId -> {
-                GridColumn foundGridColumn = GridColumn.find(columnId);
-                if(foundGridColumn != null && foundGridColumn.isChangeable()){
-                    column.setVisible(gridColumns.contains(foundGridColumn));
-                }
-            });
-        });
+        getColumns().forEach(column -> column.getId().ifPresent(columnId -> {
+            GridColumn foundGridColumn = GridColumn.find(columnId);
+            if(foundGridColumn != null && foundGridColumn.isChangeable()){
+                column.setVisible(gridColumns.contains(foundGridColumn));
+            }
+        }));
     }
 
     private void initializeColumns(){

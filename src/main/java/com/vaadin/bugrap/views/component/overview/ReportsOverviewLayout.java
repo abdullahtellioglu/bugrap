@@ -8,10 +8,11 @@ import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.views.component.CommentAttachmentLayout;
 import com.vaadin.bugrap.views.model.GroupedComment;
 import com.vaadin.bugrap.views.pages.ReportDetailPage;
-import com.vaadin.flow.component.*;
+import com.vaadin.flow.component.ClickEvent;
+import com.vaadin.flow.component.ComponentEventListener;
+import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -31,8 +32,9 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * This container/layout is the summary panel for selected report(s). If multiple report is selected, it switches to mass modification mode.
- *
+ * ReportOverviewLayout is the summary panel for selected report(s). <br/>
+ * Comment can be added, report information can be updated based if report is single selected otherwise layout switches to mass modification mode.<br/>
+ * In mass modification mode, user can update multiple documents
  */
 public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpdateBar.ReportsUpdateListener {
     private final ReportService reportService;
@@ -42,7 +44,6 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     private Set<Report> reports;
     boolean massModificationModeOn;
-    private final HorizontalLayout reportInfoContainerLayout = new HorizontalLayout();
     private final OverviewUpdateBar overviewUpdateBar = new OverviewUpdateBar();
     private final Span primarySpan;
     private final Span secondarySpan;
@@ -53,6 +54,10 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     private Reporter reporter;
 
+    /**
+     * Event listener if report(s) informations are updated.
+     * @param reportUpdateListener
+     */
     public void setReportUpdateListener(ReportUpdateListener reportUpdateListener) {
         this.reportUpdateListener = reportUpdateListener;
     }
@@ -68,24 +73,22 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         overviewUpdateBar.setListener(this);
         overviewUpdateBar.setReporters(users);
 
-        reportInfoContainerLayout.setWidth(100, Unit.PERCENTAGE);
-        reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
         primarySpan = new Span();
         primarySpan.setClassName("primary-label");
         secondarySpan = new Span();
         secondarySpan.setClassName("secondary-label");
+
         openInNewTabLabel = new Anchor("", VaadinIcon.EXTERNAL_LINK.create(), new Label("Open"));
         openInNewTabLabel.setTarget("_blank");
 
-        HorizontalLayout labelContainerLayout = new HorizontalLayout(primarySpan, secondarySpan);
-        reportInfoContainerLayout.add(labelContainerLayout);
-        reportInfoContainerLayout.add(openInNewTabLabel);
+        HorizontalLayout reportInfoContainerLayout = new HorizontalLayout(new HorizontalLayout(primarySpan, secondarySpan), openInNewTabLabel);
+        reportInfoContainerLayout.setWidth(100, Unit.PERCENTAGE);
+        reportInfoContainerLayout.setJustifyContentMode(JustifyContentMode.BETWEEN);
 
         commentList = new CommentList();
         commentList.setWidth(100, Unit.PERCENTAGE);
         commentList.setCommentRowPadding(true);
-
 
         commentAttachmentLayout = new CommentAttachmentLayout();
         commentAttachmentLayout.setPadding(false);
@@ -105,6 +108,12 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         commentList.setComments(commentService.getGroupedComments(report));
         commentAttachmentLayout.clear();
     }
+
+    /**
+     * Initialize layout based on given report(count).
+     * @param reports Selected reports
+     * @param reporter The reporter user that is used to save comment's reporter.
+     */
     public void setReportsAndReporter(Set<Report> reports, Reporter reporter){
         this.reports = reports;
         this.reporter = reporter;
@@ -133,8 +142,8 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         massModificationModeOn = false;
         setJustifyContentMode(JustifyContentMode.BETWEEN);
         commentAttachmentLayout.setVisible(true);
-        secondarySpan.addClassName("hidden");
-        openInNewTabLabel.removeClassName("hidden");
+        secondarySpan.setVisible(false);
+        openInNewTabLabel.setVisible(true);
         Report report = reports.iterator().next();
         primarySpan.setText(report.getSummary());
 
@@ -148,8 +157,8 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
         setJustifyContentMode(JustifyContentMode.END);
         commentAttachmentLayout.setVisible(false);
         commentList.setComments(new ArrayList<>());
-        openInNewTabLabel.addClassName("hidden");
-        secondarySpan.removeClassName("hidden");
+        openInNewTabLabel.setVisible(false);
+        secondarySpan.setVisible(true);
         primarySpan.setText(String.format("%s items selected", reports.size()));
         secondarySpan.setText("Select a single report to view contents");
     }
@@ -188,6 +197,14 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     }
 
+    /**
+     * Updates document information with non-null values.
+     * @param priority Selected priority, might be null.
+     * @param type Selected type, might be null.
+     * @param status Selected status, might be null
+     * @param assigned Selected assignee-reporter, might be null
+     * @param version Selected version, might be null
+     */
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter assigned, ProjectVersion version) {
         reports.forEach(report -> {

@@ -129,11 +129,15 @@ public class ReportGrid extends Grid<Report> {
         }else{
             versionColumn.setVisible(false);
         }
+
         GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priorityColumn, SortDirection.DESCENDING);
         sortOrderList.add(priorityOrder);
-        updateSelectionModeOnClient();
+
         sort(sortOrderList);
-        //TODO Bug if column visibility set to false, sort indicator remains the same.
+        //TODO Grid class grid.updateClientSideSorterIndicators(); is private method. even though it does not update it. I think there is a bug in grid.
+        //TODO I invoked setHeader to updateClientSideSorterIndicators but it has nothing to do.
+        versionColumn.setHeader(GridColumn.VERSION.getLabel());
+
     }
 
     private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){

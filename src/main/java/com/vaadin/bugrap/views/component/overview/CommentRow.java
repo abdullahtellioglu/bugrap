@@ -25,16 +25,10 @@ public class CommentRow extends HorizontalLayout {
     private final Label timeDisplayLabel;
     private final Label attachmentLabel;
     public CommentRow(){
-        setClassName("comment-row");
-        setPadding(true);
-        setWidth(100, Unit.PERCENTAGE);
-
         userDisplayNameLabel = new Label();
         userDisplayNameLabel.setClassName("user-label");
         timeDisplayLabel = new Label();
         timeDisplayLabel.setClassName("time-label");
-
-
         VerticalLayout nameAndTimeContainer = new VerticalLayout(userDisplayNameLabel, timeDisplayLabel);
         nameAndTimeContainer.setPadding(false);
         nameAndTimeContainer.setSpacing(false);
@@ -53,12 +47,17 @@ public class CommentRow extends HorizontalLayout {
         VerticalLayout metaDataLayout = new VerticalLayout(avatarContainerLayout, attachmentLabel);
         metaDataLayout.setPadding(false);
         metaDataLayout.setWidth(20, Unit.PERCENTAGE);
-        add(description, metaDataLayout);
 
         attachmentContainerLayout = new VerticalLayout();
         attachmentContainerLayout.setPadding(false);
         attachmentContainerLayout.setMargin(false);
         metaDataLayout.add(attachmentContainerLayout);
+
+        add(description, metaDataLayout);
+
+        setClassName("comment-row");
+        setPadding(true);
+        setWidth(100, Unit.PERCENTAGE);
     }
 
     @Override

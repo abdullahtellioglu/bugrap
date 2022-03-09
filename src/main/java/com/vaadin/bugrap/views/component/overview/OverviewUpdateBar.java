@@ -17,6 +17,7 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -24,6 +25,8 @@ import java.util.List;
  */
 public class OverviewUpdateBar extends HorizontalLayout {
     private static final String BORDERED_THEME_NAME = "bordered";
+    private static final String REQUIRED_PROPERTY = "required";
+
     private ReportsUpdateListener listener;
 
     private Binder<Overview> binder;
@@ -40,9 +43,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
 
 
     public OverviewUpdateBar() {
-        setWidth(100, Unit.PERCENTAGE);
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
-        setAlignItems(Alignment.BASELINE);
         binder = new Binder<>();
         prioritySelect.addClassName(BORDERED_THEME_NAME);
 
@@ -62,6 +62,17 @@ public class OverviewUpdateBar extends HorizontalLayout {
 
         add(selectContainers);
         add(new HorizontalLayout(saveChangesButton, revertButton));
+
+        initializeEvents(revertButton, saveChangesButton);
+
+
+        setWidth(100, Unit.PERCENTAGE);
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        setAlignItems(Alignment.BASELINE);
+
+    }
+
+    private void initializeEvents(Button revertButton, Button saveChangesButton){
 
         revertButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             binder.readBean(initialOverview.copy());
@@ -105,9 +116,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
                         overview.getVersion());
             }
         });
-
-
-
     }
 
 
@@ -141,6 +149,19 @@ public class OverviewUpdateBar extends HorizontalLayout {
         this.initialOverview = overview.copy();
     }
     private void initializeBinder(boolean massModificationMode){
+        if(!massModificationMode){
+            prioritySelect.getElement().setProperty(REQUIRED_PROPERTY, true);
+            typeComboBox.getElement().setProperty(REQUIRED_PROPERTY, true);
+            statusComboBox.getElement().setProperty(REQUIRED_PROPERTY, true);
+            reporterComboBox.getElement().setProperty(REQUIRED_PROPERTY, true);
+            versionComboBox.getElement().setProperty(REQUIRED_PROPERTY, true);
+        }else{
+            prioritySelect.getElement().setProperty(REQUIRED_PROPERTY, false);
+            typeComboBox.getElement().setProperty(REQUIRED_PROPERTY, false);
+            statusComboBox.getElement().setProperty(REQUIRED_PROPERTY, false);
+            reporterComboBox.getElement().setProperty(REQUIRED_PROPERTY, false);
+            versionComboBox.getElement().setProperty(REQUIRED_PROPERTY, false);
+        }
         Binder.BindingBuilder<Overview, Report.Priority> overviewPriorityBindingBuilder = binder.forField(prioritySelect);
         if(!massModificationMode){
             overviewPriorityBindingBuilder.asRequired("Priority is required");
@@ -230,7 +251,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
     /**
      * Model is used for binding inputs.
      */
-    public static class Overview {
+    public static class Overview implements Serializable {
         private Report.Priority priority;
         private Report.Type type;
         private Report.Status status;

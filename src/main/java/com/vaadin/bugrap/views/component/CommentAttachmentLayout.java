@@ -86,6 +86,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
             try{
                 Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
                 String text = parse.text();
+                //TODO solve this.
                 //TODO this is not working. Because \n is not returning empty.
                 saveCommentBtn.setEnabled(StringUtils.isNotEmpty(text));
             }catch (Exception ex){

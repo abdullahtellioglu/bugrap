@@ -10,7 +10,9 @@ import org.vaadin.bugrap.domain.entities.Report;
 import java.util.List;
 
 
-
+/**
+ * Data access layer for reports. {@link Report}
+ */
 @Service
 public class ReportService {
     private BugrapRepository bugrapRepository;
@@ -20,9 +22,6 @@ public class ReportService {
         this.bugrapRepository = bugrapRepository;
     }
 
-    public List<Report> getReports(ProjectVersion version){
-        return bugrapRepository.getReportsForVersion(version);
-    }
 
     public long getCountClosedReports(Project project){
         return bugrapRepository.countClosedReports(project);
@@ -39,9 +38,7 @@ public class ReportService {
     }
     public long getCountUnAssignedReports(Project project){
         List<ProjectVersion> projectVersions = bugrapRepository.getProjectVersions(project);
-        long total = projectVersions.stream().mapToLong(bugrapRepository::countUnassignedReports).sum();
-//        return bugrapRepository.countUnassignedReports(project);
-        return total;
+        return projectVersions.stream().mapToLong(bugrapRepository::countUnassignedReports).sum();
     }
     public long getCountUnAssignedReports(ProjectVersion projectVersion){
         return bugrapRepository.countUnassignedReports(projectVersion);

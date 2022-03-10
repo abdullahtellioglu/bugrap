@@ -5,10 +5,11 @@ import org.springframework.stereotype.Service;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
+/**
+ * Data access layer for users. {@link Reporter}
+ */
 @Service
 public class UserService {
     private BugrapRepository bugrapRepository;

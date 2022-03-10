@@ -53,8 +53,6 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
         reportNameLabel = new Label();
         reportNameLabel.setClassName("report-name");
-
-
         overviewUpdateBar = new OverviewUpdateBar();
         overviewUpdateBar.setListener(this);
 
@@ -76,7 +74,6 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         topLayout.setMargin(false);
 
         commentAttachmentLayout.setClassName("bottom-panel");
-        commentAttachmentLayout.setHeight(440, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
 
         add(topLayout, commentAttachmentLayout);
@@ -126,12 +123,13 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
             if(project != null){
                 reportDetailBreadcrumb.setProjectName(project.getName());
             }else{
-                reportDetailBreadcrumb.setProjectName("Invalid Project");
+                reportDetailBreadcrumb.setVisible(false);
             }
             overviewUpdateBar.setVisible(true);
             commentAttachmentLayout.setVisible(true);
             setReport(report);
         } else {
+            reportDetailBreadcrumb.setVisible(false);
             overviewUpdateBar.setVisible(false);
             commentAttachmentLayout.setVisible(false);
 
@@ -151,6 +149,6 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         report.setVersion(version);
         this.report =  reportService.save(report);
         reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version" );
-        Notification.show("Report updated successfully");
+        Notification.show("Report updated successfully").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

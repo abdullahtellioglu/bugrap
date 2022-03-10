@@ -6,6 +6,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 
+/**
+ * ContextWrapper is a spring component that is used to access Application Context or Bean statically.
+ */
 @Component
 public class ContextWrapper implements ApplicationContextAware {
 

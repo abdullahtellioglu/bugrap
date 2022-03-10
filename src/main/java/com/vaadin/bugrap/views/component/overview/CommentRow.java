@@ -17,6 +17,9 @@ import org.springframework.util.CollectionUtils;
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
+/**
+ * Comment card. Attachment and comments are displaying in this component.
+ */
 public class CommentRow extends HorizontalLayout {
     private final Span description;
     private final VerticalLayout attachmentContainerLayout;
@@ -34,25 +37,22 @@ public class CommentRow extends HorizontalLayout {
         nameAndTimeContainer.setSpacing(false);
 
         avatar = new Avatar();
-
         HorizontalLayout avatarContainerLayout = new HorizontalLayout(avatar, nameAndTimeContainer);
         avatarContainerLayout.setAlignItems(Alignment.CENTER);
-
-        description = new Span();
-        description.setWidth(80, Unit.PERCENTAGE);
 
         attachmentLabel = new Label("Attachments");
         attachmentLabel.setClassName("attachment-label");
 
-        VerticalLayout metaDataLayout = new VerticalLayout(avatarContainerLayout, attachmentLabel);
-        metaDataLayout.setPadding(false);
-        metaDataLayout.setWidth(20, Unit.PERCENTAGE);
-
         attachmentContainerLayout = new VerticalLayout();
         attachmentContainerLayout.setPadding(false);
         attachmentContainerLayout.setMargin(false);
-        metaDataLayout.add(attachmentContainerLayout);
 
+        VerticalLayout metaDataLayout = new VerticalLayout(avatarContainerLayout, attachmentLabel, attachmentContainerLayout);
+        metaDataLayout.setPadding(false);
+        metaDataLayout.setWidth(20, Unit.PERCENTAGE);
+
+        description = new Span();
+        description.setWidth(80, Unit.PERCENTAGE);
         add(description, metaDataLayout);
 
         setClassName("comment-row");
@@ -60,6 +60,10 @@ public class CommentRow extends HorizontalLayout {
         setWidth(100, Unit.PERCENTAGE);
     }
 
+    /**
+     * Customized margin method. Sets width based on margin.
+     * @param margin
+     */
     @Override
     public void setMargin(boolean margin) {
         super.setMargin(margin);
@@ -70,6 +74,9 @@ public class CommentRow extends HorizontalLayout {
         }
     }
 
+    /**
+     * Set values of the elements with given comment.
+     */
     public void setComment(GroupedComment comment){
         attachmentContainerLayout.removeAll();
         description.getElement().setProperty("innerHTML",comment.getComment());

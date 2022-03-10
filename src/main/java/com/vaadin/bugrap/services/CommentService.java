@@ -1,6 +1,5 @@
 package com.vaadin.bugrap.services;
 
-import ch.qos.logback.core.util.StringCollectionUtil;
 import com.vaadin.bugrap.views.model.GroupedComment;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.vaadin.bugrap.domain.BugrapRepository;
 import org.vaadin.bugrap.domain.entities.Comment;
 import org.vaadin.bugrap.domain.entities.Report;
-import org.vaadin.bugrap.domain.entities.Reporter;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -17,6 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+/**
+ *  Data access layer for comments. {@link Comment}
+ */
 @Service
 public class CommentService {
     private BugrapRepository bugrapRepository;

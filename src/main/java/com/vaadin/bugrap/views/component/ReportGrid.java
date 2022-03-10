@@ -134,7 +134,7 @@ public class ReportGrid extends Grid<Report> {
         sortOrderList.add(priorityOrder);
 
         sort(sortOrderList);
-        //TODO Grid class grid.updateClientSideSorterIndicators(); is private method. even though it does not update it. I think there is a bug in grid.
+        //TODO Grid class grid.updateClientSideSorterIndicators(); is private method. even though it does not update indicators. I think there is a bug in grid.
         //TODO I invoked setHeader to updateClientSideSorterIndicators but it has nothing to do.
         versionColumn.setHeader(GridColumn.VERSION.getLabel());
 

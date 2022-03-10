@@ -41,6 +41,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
     public CommentAttachmentLayout(){
         setMargin(false);
         setJustifyContentMode(JustifyContentMode.END);
+        setHeight(440, Unit.PIXELS);
 
         Span attachmentsLabel = new Span("Attachments");
         attachmentsLabel.setClassName("attachment-label-header");
@@ -79,6 +80,8 @@ public class CommentAttachmentLayout extends VerticalLayout {
         add(reviewAttachmentHorizontalLayout);
         add(buttonContainer);
 
+
+        //TODO backspace is not working for keypress event.
         commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->
                 saveCommentBtn.setEnabled(StringUtils.isNotEmpty(commentRichTextEditor.getHtmlValue())));
 

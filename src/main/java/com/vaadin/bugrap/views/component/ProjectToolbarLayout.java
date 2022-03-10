@@ -21,7 +21,7 @@ import java.util.function.Consumer;
  *
  */
 public class ProjectToolbarLayout extends HorizontalLayout {
-
+    private static final String NOT_IMPLEMENTED = "Not implemented";
     private final Span manageProjectCountSpan;
 
     private Consumer<String> searchTextChangeListener;
@@ -29,32 +29,20 @@ public class ProjectToolbarLayout extends HorizontalLayout {
     public ProjectToolbarLayout() {
 
         Button reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
-        reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
-            Notification.show("Not implemented");
-        });
         Button requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
-        requestFeatureButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
 
         Icon cogIcon = VaadinIcon.COG.create();
         Label manageProjectLabel = new Label("Manage project");
         manageProjectCountSpan = new Span("10");
         HorizontalLayout manageButtonInternalContainer = new HorizontalLayout(cogIcon, manageProjectLabel, manageProjectCountSpan);
         manageButtonInternalContainer.setClassName("manage-button-container");
-
         Button manageProjectButton = new Button(manageButtonInternalContainer);
         manageProjectButton.setThemeName("icon-text-badge-button");
-        manageProjectButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show("Not implemented"));
 
         TextField searchTextField = new TextField();
         searchTextField.setPlaceholder("Search");
         searchTextField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchTextField.setClearButtonVisible(true);
-        searchTextField.addValueChangeListener(e -> {
-            String value =  e.getValue();
-            if(searchTextChangeListener != null){
-                searchTextChangeListener.accept(value);
-            }
-        });
 
         add(new HorizontalLayout(reportBugButton, requestFeatureButton, manageProjectButton));
         add(searchTextField);
@@ -63,6 +51,19 @@ public class ProjectToolbarLayout extends HorizontalLayout {
         setClassName("project-toolbar");
         setWidth(100, Unit.PERCENTAGE);
         setJustifyContentMode(JustifyContentMode.BETWEEN);
+
+        initializeEvents(reportBugButton, requestFeatureButton, manageProjectButton, searchTextField);
+    }
+    private void initializeEvents(Button reportBugButton, Button requestFeatureButton, Button manageProjectButton, TextField searchTextField){
+        reportBugButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show(NOT_IMPLEMENTED));
+        requestFeatureButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show(NOT_IMPLEMENTED));
+        manageProjectButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> Notification.show(NOT_IMPLEMENTED));
+        searchTextField.addValueChangeListener(e -> {
+            String value =  e.getValue();
+            if(searchTextChangeListener != null){
+                searchTextChangeListener.accept(value);
+            }
+        });
     }
 
     public void setSearchTextChangeListener(Consumer<String> searchTextChangeListener) {

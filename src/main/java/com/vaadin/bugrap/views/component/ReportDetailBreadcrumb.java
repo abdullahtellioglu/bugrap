@@ -7,12 +7,10 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
 public class ReportDetailBreadcrumb extends HorizontalLayout {
-    private final Span projectNameSpan;
-    private final Span versionSpan;
+    private final Span projectNameSpan = new Span();;
+    private final Span versionSpan = new Span();;
 
     public ReportDetailBreadcrumb(){
-        projectNameSpan = new Span();
-        versionSpan = new Span();
 
         VerticalLayout versionLabelLayout = new VerticalLayout();
         versionLabelLayout.setPadding(true);

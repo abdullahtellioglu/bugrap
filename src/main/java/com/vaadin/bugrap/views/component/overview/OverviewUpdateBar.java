@@ -21,7 +21,9 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- *
+ * Overview Update Bar is a component which has priority, type, status, reporter and version selects. <br/>
+ * In mass modification mode, requirements are removed, otherwise all fields are required. <br/><br/>
+ * If user clicks on save changes button {@link OverviewUpdateBar#listener} is invoked.
  */
 public class OverviewUpdateBar extends HorizontalLayout {
     private static final String BORDERED_THEME_NAME = "bordered";
@@ -37,8 +39,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
     private final ComboBox<Reporter> reporterComboBox = new ComboBox<>();
     private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();
 
-
-
     private Overview initialOverview;
 
 
@@ -52,20 +52,16 @@ public class OverviewUpdateBar extends HorizontalLayout {
         initReporterComboBox();
         initVersionComboBox();
 
-
         HorizontalLayout selectContainers = new HorizontalLayout(prioritySelect, typeComboBox, statusComboBox, reporterComboBox, versionComboBox);
 
         Button saveChangesButton = new Button("Save Changes");
         saveChangesButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         Button revertButton = new Button("Revert", VaadinIcon.ROTATE_LEFT.create());
 
-
         add(selectContainers);
         add(new HorizontalLayout(saveChangesButton, revertButton));
 
         initializeEvents(revertButton, saveChangesButton);
-
-
         setWidth(100, Unit.PERCENTAGE);
         setJustifyContentMode(JustifyContentMode.BETWEEN);
         setAlignItems(Alignment.BASELINE);
@@ -73,7 +69,6 @@ public class OverviewUpdateBar extends HorizontalLayout {
     }
 
     private void initializeEvents(Button revertButton, Button saveChangesButton){
-
         revertButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             binder.readBean(initialOverview.copy());
         });
@@ -118,22 +113,47 @@ public class OverviewUpdateBar extends HorizontalLayout {
         });
     }
 
-
+    /**
+     * Listener for save changes button.
+     * @param listener
+     */
     public void setListener(ReportsUpdateListener listener) {
         this.listener = listener;
     }
 
+    /**
+     * Project version items.
+     * @param versions
+     */
     public void setProjectVersions(List<ProjectVersion> versions){
         this.versionComboBox.setItems(versions);
     }
+
+    /**
+     * Reporter combobox items.
+     * @param reporters list of users
+     */
     public void setReporters(List<Reporter> reporters){
         this.reporterComboBox.setItems(reporters);
     }
 
-
+    /**
+     * Clears the select boxes.
+     */
     public void clearOverview(){
         this.initialOverview = null;
     }
+
+    /**
+     * Initialize component with given parameter.
+     *
+     * @param priority Priority
+     * @param type Type
+     * @param status Status
+     * @param reporter Reporter user
+     * @param projectVersion Report's project version
+     * @param massModificationMode Initialize the binder. If true, all fields are not required otherwise all fields are required.
+     */
     public void setOverview(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion projectVersion, boolean massModificationMode){
         Overview overview = new Overview();
         overview.setPriority(priority);
@@ -149,6 +169,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
         this.initialOverview = overview.copy();
     }
     private void initializeBinder(boolean massModificationMode){
+        //TODO CHECK VALIDATION
         if(!massModificationMode){
             prioritySelect.getElement().setProperty(REQUIRED_PROPERTY, true);
             typeComboBox.getElement().setProperty(REQUIRED_PROPERTY, true);
@@ -244,7 +265,7 @@ public class OverviewUpdateBar extends HorizontalLayout {
             return new Span();
         }));
     }
-    public interface ReportsUpdateListener {
+    public interface ReportsUpdateListener extends Serializable {
         void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion version);
     }
 

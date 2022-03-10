@@ -18,6 +18,14 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 import java.util.*;
 import java.util.function.Consumer;
 
+/**
+ * Report status component contains assignee, status and column selection buttons. <br/>
+ * User changes filters of table in this component. <br/>
+ * If assignee changes it invokes event {@link ReportStatusLayout#assigneeChangeListener} <br/>
+ * If status changes it invokes event {@link ReportStatusLayout#statusChangeListener} <br/>
+ * If column changes it invokes event {@link ReportStatusLayout#gridColumnChangeListener} <br/>
+ * <b>If user selects all kinds status, it invokes statusChangeListener with null value instead of empty set</b>
+ */
 public class ReportStatusLayout extends HorizontalLayout {
     private static final String MIN_BUTTON_WIDTH = "calc(var(--lumo-button-size) * 3)";
     private final Button onlyMeButton;
@@ -28,8 +36,8 @@ public class ReportStatusLayout extends HorizontalLayout {
     private final ContextMenu customContextMenu;
     private final ContextMenu columnsContextMenu;
 
-    private AssigneeChangeListener assigneeChangeListener;
-    private StatusChangeListener statusChangeListener;
+    private Consumer<Reporter> assigneeChangeListener;
+    private Consumer<Set<Report.Status>> statusChangeListener;
     private Consumer<GridColumn> gridColumnChangeListener;
     private Reporter currentUser;
 
@@ -39,14 +47,18 @@ public class ReportStatusLayout extends HorizontalLayout {
     public void setSelectedGridColumns(Set<GridColumn> gridColumns){
         selectedGridColumns = gridColumns;
     }
+    /**
+     * Updates grid columns based on {@link ReportStatusLayout#selectedGridColumns} also {@link com.vaadin.bugrap.views.container.ProjectLayout#gridColumnSet}
+     */
     public void updateGridColumns(){
         setCheckedStatusesGridColumns();
     }
+
     public void setGridColumnChangeListener(Consumer<GridColumn> gridColumnChangeListener) {
         this.gridColumnChangeListener = gridColumnChangeListener;
     }
 
-    public void setAssigneeChangeListener(AssigneeChangeListener assigneeChangeListener) {
+    public void setAssigneeChangeListener(Consumer<Reporter> assigneeChangeListener) {
         this.assigneeChangeListener = assigneeChangeListener;
     }
 
@@ -54,15 +66,11 @@ public class ReportStatusLayout extends HorizontalLayout {
         this.currentUser = currentUser;
     }
 
-    public void setStatusChangeListener(StatusChangeListener statusChangeListener) {
+    public void setStatusChangeListener(Consumer<Set<Report.Status>> statusChangeListener) {
         this.statusChangeListener = statusChangeListener;
     }
 
     public ReportStatusLayout() {
-        setWidth(100, Unit.PERCENTAGE);
-        setJustifyContentMode(JustifyContentMode.BETWEEN);
-        selectedStatusSet.add(Report.Status.OPEN);
-        setClassName("report-status");
 
         onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -102,14 +110,16 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusButtonContainer.setMargin(false);
         statusButtonContainer.setSpacing(false);
 
-
-        HorizontalLayout assigneeStatusContainer = new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer,statusLabel, statusButtonContainer);
-
-        add(assigneeStatusContainer, editColumnsBtn);
+        add(new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer,statusLabel, statusButtonContainer), editColumnsBtn);
 
         initializeStatusContextMenu();
         initializeEvents();
         initializeColumnsContextMenu();
+
+        setWidth(100, Unit.PERCENTAGE);
+        setJustifyContentMode(JustifyContentMode.BETWEEN);
+        selectedStatusSet.add(Report.Status.OPEN);
+        setClassName("report-status");
     }
 
 
@@ -119,14 +129,14 @@ public class ReportStatusLayout extends HorizontalLayout {
             selectedStatusSet.add(Report.Status.OPEN);
             setThemeVariables();
             if(statusChangeListener != null){
-                statusChangeListener.onChange(Collections.singleton(Report.Status.OPEN));
+                statusChangeListener.accept(Collections.singleton(Report.Status.OPEN));
             }
         });
         allKindsStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             setThemeVariables();
             if(statusChangeListener != null){
-                statusChangeListener.onChange(null);
+                statusChangeListener.accept(null);
             }
         });
 
@@ -134,14 +144,14 @@ public class ReportStatusLayout extends HorizontalLayout {
             onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             everyoneButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             if(assigneeChangeListener != null){
-                assigneeChangeListener.onChange(currentUser);
+                assigneeChangeListener.accept(currentUser);
             }
         });
         everyoneButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             onlyMeButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             everyoneButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             if(assigneeChangeListener != null){
-                assigneeChangeListener.onChange(null);
+                assigneeChangeListener.accept(null);
             }
         });
     }
@@ -199,7 +209,7 @@ public class ReportStatusLayout extends HorizontalLayout {
                     selectedStatusSet.add(checkedStatus);
                 }
                 if (statusChangeListener != null) {
-                    statusChangeListener.onChange(selectedStatusSet.isEmpty() ? null : selectedStatusSet);
+                    statusChangeListener.accept(selectedStatusSet.isEmpty() ? null : selectedStatusSet);
                 }
                 setThemeVariables();
                 customContextMenu.getElement().executeJs("this.requestContentUpdate($0)", true);
@@ -241,13 +251,5 @@ public class ReportStatusLayout extends HorizontalLayout {
 
         });
 
-    }
-
-
-    public interface AssigneeChangeListener {
-        void onChange(Reporter reporter);
-    }
-    public interface StatusChangeListener {
-        void onChange(Set<Report.Status> statuses);
     }
 }

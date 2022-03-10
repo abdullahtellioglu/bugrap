@@ -10,9 +10,8 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import java.util.List;
 
 public class ProjectVersionComboBox extends HorizontalLayout {
-    private final ComboBox<ProjectVersion> versionComboBox;
+    private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();;
     public ProjectVersionComboBox() {
-        versionComboBox = new ComboBox<>();
         Label label = new Label("Reports for");
         add(versionComboBox);
         add(label);

@@ -92,7 +92,6 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
         commentAttachmentLayout = new CommentAttachmentLayout();
         commentAttachmentLayout.setPadding(false);
-        commentAttachmentLayout.setHeight(355, Unit.PIXELS);
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onCommentSave());
 
         add(reportInfoContainerLayout, overviewUpdateBar, commentList, commentAttachmentLayout);

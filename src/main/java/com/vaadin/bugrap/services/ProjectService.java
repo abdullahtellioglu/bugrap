@@ -3,15 +3,13 @@ package com.vaadin.bugrap.services;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.vaadin.bugrap.domain.BugrapRepository;
-import org.vaadin.bugrap.domain.ReportStatus;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
-import org.vaadin.bugrap.domain.entities.Report;
-import org.vaadin.bugrap.domain.entities.Reporter;
 
-import java.io.Serializable;
 import java.util.List;
-
+/**
+ * Data access layer for projects. {@link Project}
+ */
 @Service
 public class ProjectService {
     private BugrapRepository bugrapRepository;

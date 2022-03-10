@@ -10,6 +10,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.contextmenu.ContextMenu;
 import com.vaadin.flow.component.contextmenu.MenuItem;
 import com.vaadin.flow.component.html.Label;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import org.vaadin.bugrap.domain.entities.Report;
@@ -39,44 +40,29 @@ public class ReportStatusLayout extends HorizontalLayout {
     private Consumer<Reporter> assigneeChangeListener;
     private Consumer<Set<Report.Status>> statusChangeListener;
     private Consumer<GridColumn> gridColumnChangeListener;
+    private Runnable gridSelectionClearClickListener;
+    private Runnable gridSortingClearClickListener;
     private Reporter currentUser;
 
     private final Set<Report.Status> selectedStatusSet = new HashSet<>();
     private Set<GridColumn> selectedGridColumns;
 
-    public void setSelectedGridColumns(Set<GridColumn> gridColumns){
-        selectedGridColumns = gridColumns;
-    }
-    /**
-     * Updates grid columns based on {@link ReportStatusLayout#selectedGridColumns} also {@link com.vaadin.bugrap.views.container.ProjectLayout#gridColumnSet}
-     */
-    public void updateGridColumns(){
-        setCheckedStatusesGridColumns();
-    }
-
-    public void setGridColumnChangeListener(Consumer<GridColumn> gridColumnChangeListener) {
-        this.gridColumnChangeListener = gridColumnChangeListener;
-    }
-
-    public void setAssigneeChangeListener(Consumer<Reporter> assigneeChangeListener) {
-        this.assigneeChangeListener = assigneeChangeListener;
-    }
-
-    public void setCurrentUser(Reporter currentUser) {
-        this.currentUser = currentUser;
-    }
-
-    public void setStatusChangeListener(Consumer<Set<Report.Status>> statusChangeListener) {
-        this.statusChangeListener = statusChangeListener;
-    }
-
     public ReportStatusLayout() {
-
         onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         onlyMeButton.setWidth(MIN_BUTTON_WIDTH);
         everyoneButton = new Button("Everyone");
         everyoneButton.setMinWidth(MIN_BUTTON_WIDTH);
+
+        HorizontalLayout assigneeButtonContainer = new HorizontalLayout(onlyMeButton, everyoneButton);
+        assigneeButtonContainer.setClassName("assignee-container");
+        assigneeButtonContainer.setPadding(false);
+        assigneeButtonContainer.setMargin(false);
+        assigneeButtonContainer.setSpacing(false);
+
+        Label statusLabel = new Label("Status");
+        statusLabel.setClassName("status-label");
+
         openStatusBtn = new Button("Open");
         openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         openStatusBtn.setMinWidth(MIN_BUTTON_WIDTH);
@@ -89,31 +75,29 @@ public class ReportStatusLayout extends HorizontalLayout {
                 customContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
         customContextMenu.setOpenOnClick(true);
 
-        Button editColumnsBtn = new Button(VaadinIcon.PENCIL.create());
-        columnsContextMenu = new ContextMenu(editColumnsBtn);
-        columnsContextMenu.setOpenOnClick(true);
-        columnsContextMenu.addAttachListener((ComponentEventListener<AttachEvent>) event ->
-                columnsContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
-
-        HorizontalLayout assigneeButtonContainer = new HorizontalLayout(onlyMeButton, everyoneButton);
-        assigneeButtonContainer.setClassName("assignee-container");
-        assigneeButtonContainer.setPadding(false);
-        assigneeButtonContainer.setMargin(false);
-        assigneeButtonContainer.setSpacing(false);
-
-        Label statusLabel = new Label("Status");
-        statusLabel.setClassName("status-label");
-
         HorizontalLayout statusButtonContainer = new HorizontalLayout(openStatusBtn, allKindsStatusBtn, customStatusBtn);
         statusButtonContainer.setClassName("status-button-container");
         statusButtonContainer.setPadding(false);
         statusButtonContainer.setMargin(false);
         statusButtonContainer.setSpacing(false);
 
-        add(new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer,statusLabel, statusButtonContainer), editColumnsBtn);
+        Button editColumnsBtn = new Button(VaadinIcon.PENCIL.create());
+        columnsContextMenu = new ContextMenu(editColumnsBtn);
+        columnsContextMenu.setOpenOnClick(true);
+        columnsContextMenu.addAttachListener((ComponentEventListener<AttachEvent>) event ->
+                columnsContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
+        Button clearSelectionBtn = new Button(VaadinIcon.CLOSE_CIRCLE.create());
+        clearSelectionBtn.getElement().setProperty("title", "Clear selections");
+        Button clearSortBtn = new Button(new Icon("lumo", "unordered-list"));
+        clearSortBtn.getElement().setProperty("title", "Clear sorting");
+
+        HorizontalLayout gridOptionBtnContainer = new HorizontalLayout(editColumnsBtn, clearSelectionBtn, clearSortBtn);
+        gridOptionBtnContainer.setPadding(false);
+        gridOptionBtnContainer.setSpacing(false);
+        add(new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer,statusLabel, statusButtonContainer), gridOptionBtnContainer);
 
         initializeStatusContextMenu();
-        initializeEvents();
+        initializeEvents(clearSelectionBtn, clearSortBtn);
         initializeColumnsContextMenu();
 
         setWidth(100, Unit.PERCENTAGE);
@@ -123,7 +107,7 @@ public class ReportStatusLayout extends HorizontalLayout {
     }
 
 
-    private void initializeEvents(){
+    private void initializeEvents(Button clearSelectionBtn, Button clearSortingBtn){
         openStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             selectedStatusSet.add(Report.Status.OPEN);
@@ -154,6 +138,16 @@ public class ReportStatusLayout extends HorizontalLayout {
                 assigneeChangeListener.accept(null);
             }
         });
+        clearSelectionBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+            if (gridSelectionClearClickListener != null) {
+                gridSelectionClearClickListener.run();
+            }
+        });
+        clearSortingBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+            if(gridSortingClearClickListener != null){
+                gridSortingClearClickListener.run();
+            }
+        });
     }
 
     private void initializeColumnsContextMenu(){
@@ -181,6 +175,40 @@ public class ReportStatusLayout extends HorizontalLayout {
             });
         });
         columnsContextMenu.getElement().executeJs("this.requestContentUpdate($0)", true);
+    }
+
+
+    public void setGridSortingClearClickListener(Runnable gridSortingClearClickListener){
+        this.gridSortingClearClickListener = gridSortingClearClickListener;
+    }
+    public void setGridSelectionClearClickListener(Runnable gridSelectionClearClickListener) {
+        this.gridSelectionClearClickListener = gridSelectionClearClickListener;
+    }
+
+    public void setSelectedGridColumns(Set<GridColumn> gridColumns){
+        selectedGridColumns = gridColumns;
+    }
+    /**
+     * Updates grid columns based on {@link ReportStatusLayout#selectedGridColumns} also {@link com.vaadin.bugrap.views.container.ProjectLayout}
+     */
+    public void updateGridColumns(){
+        setCheckedStatusesGridColumns();
+    }
+
+    public void setGridColumnChangeListener(Consumer<GridColumn> gridColumnChangeListener) {
+        this.gridColumnChangeListener = gridColumnChangeListener;
+    }
+
+    public void setAssigneeChangeListener(Consumer<Reporter> assigneeChangeListener) {
+        this.assigneeChangeListener = assigneeChangeListener;
+    }
+
+    public void setCurrentUser(Reporter currentUser) {
+        this.currentUser = currentUser;
+    }
+
+    public void setStatusChangeListener(Consumer<Set<Report.Status>> statusChangeListener) {
+        this.statusChangeListener = statusChangeListener;
     }
 
     private void initializeStatusContextMenu(){

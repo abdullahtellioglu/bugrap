@@ -8,6 +8,8 @@ import com.vaadin.flow.component.grid.CellFocusEvent;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridSortOrder;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.data.event.SortEvent;
+import com.vaadin.flow.data.provider.QuerySortOrder;
 import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
@@ -46,6 +48,7 @@ public class ReportGrid extends Grid<Report> {
 
         });
 
+
         initializeColumns();
     }
     public void setColumns(Set<GridColumn> gridColumns){
@@ -55,6 +58,13 @@ public class ReportGrid extends Grid<Report> {
                 column.setVisible(gridColumns.contains(foundGridColumn));
             }
         }));
+        boolean updateRequired = getSortOrder().stream().anyMatch(sortedColumn -> !sortedColumn.getSorted().isVisible());
+        if(updateRequired){
+            List<GridSortOrder<Report>> previousSortOrder = getSortOrder();
+            List<GridSortOrder<Report>> currentSortOrder = new ArrayList<>(previousSortOrder);
+            currentSortOrder.removeIf(reportGridSortOrder -> !reportGridSortOrder.getSorted().isVisible());
+            updateSorting(currentSortOrder);
+        }
     }
 
     private void initializeColumns(){
@@ -120,6 +130,11 @@ public class ReportGrid extends Grid<Report> {
             column.setVisible(foundCol.isInitialVisible());
         }));
     }
+
+    /**
+     * If any version is selected or all version is selected, this method show/hide the version column and re-order all sorting operations.
+     * @param allVersionSelected true if all version is selected to display otherwise false
+     */
     public void createGridColumns(boolean allVersionSelected){
         List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();
         if(allVersionSelected){
@@ -133,10 +148,19 @@ public class ReportGrid extends Grid<Report> {
         GridSortOrder<Report> priorityOrder = new GridSortOrder<>(priorityColumn, SortDirection.DESCENDING);
         sortOrderList.add(priorityOrder);
 
+        updateSorting(sortOrderList);
+    }
+    private void updateSorting(List<GridSortOrder<Report>> sortOrderList){
+        clearSorting();
+        List<QuerySortOrder> sortProperties = new ArrayList<>();
+        sortOrderList.stream().map(
+                order -> order.getSorted().getSortOrder(order.getDirection()))
+                .forEach(s -> s.forEach(sortProperties::add));
+        getDataCommunicator().setBackEndSorting(sortProperties);
+
+        fireEvent(new SortEvent<>(this, new ArrayList<>(sortOrderList),
+                false));
         sort(sortOrderList);
-        //TODO Grid class grid.updateClientSideSorterIndicators(); is private method. even though it does not update indicators. I think there is a bug in grid.
-        //TODO I invoked setHeader to updateClientSideSorterIndicators but it has nothing to do.
-        versionColumn.setHeader(GridColumn.VERSION.getLabel());
 
     }
 
@@ -180,5 +204,12 @@ public class ReportGrid extends Grid<Report> {
             return null;
 
         });
+    }
+
+    /**
+     * Clears the current sorting.
+     */
+    public void clearSorting() {
+        sort(new ArrayList<>());
     }
 }

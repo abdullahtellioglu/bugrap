@@ -4,6 +4,7 @@ import com.vaadin.bugrap.views.model.GroupedComment;
 import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.confirmdialog.ConfirmDialog;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -34,7 +35,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
     private final MultiFileMemoryBuffer attachmentFileMemoryBuffer;
     private final Upload attachmentUpload;
     private final Button saveCommentBtn;
-
+    private ConfirmDialog emptyTextConfirmDialog;
 
     private final Map<String, byte[]> fileMap = new HashMap<>();
 
@@ -81,22 +82,23 @@ public class CommentAttachmentLayout extends VerticalLayout {
         add(buttonContainer);
 
 
-        //TODO backspace is not working for keypress event.
+        initializeEvents(cancelCommentBtn);
+        initializeConfirmDialog();
+    }
+
+    private void initializeConfirmDialog(){
+        emptyTextConfirmDialog = new ConfirmDialog();
+        emptyTextConfirmDialog.setHeader("Save failed");
+        emptyTextConfirmDialog.setText("Comment should not be empty.");
+        emptyTextConfirmDialog.setConfirmText("OK");
+    }
+
+    private void initializeEvents(Button cancelCommentBtn){
         commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->
                 saveCommentBtn.setEnabled(StringUtils.isNotEmpty(commentRichTextEditor.getHtmlValue())));
 
-        commentRichTextEditor.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<RichTextEditor, String>>) event ->{
-            try{
-                Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
-                String text = parse.text();
-                //TODO solve this.
-                //TODO this is not working. Because \n is not returning empty.
-                saveCommentBtn.setEnabled(StringUtils.isNotEmpty(text));
-            }catch (Exception ex){
-                ex.printStackTrace();
-            }
-        });
-
+        commentRichTextEditor.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<RichTextEditor, String>>)
+                event -> saveCommentBtn.setEnabled(isCommentValid()));
 
         cancelCommentBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> clear());
 
@@ -126,6 +128,9 @@ public class CommentAttachmentLayout extends VerticalLayout {
         });
     }
 
+    /**
+     * Clears comment area, attachments and disable the save button.
+     */
     public void clear(){
         commentRichTextEditor.clear();
         attachmentUpload.getElement().setPropertyJson("files", Json.createArray());
@@ -134,15 +139,33 @@ public class CommentAttachmentLayout extends VerticalLayout {
     }
 
 
+    private boolean isCommentValid(){
+        try{
+            Document parse = Jsoup.parse(commentRichTextEditor.getHtmlValue());
+            String text = parse.text();
+            return StringUtils.isNotEmpty(text) && !commentRichTextEditor.isEmpty();
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
+        return false;
+    }
+
+    /**
+     * Returns the grouped comment. Also check {@link GroupedComment}
+     *
+     * @param report Report to save comment
+     * @param user Current user to saving comment
+     * @return the comment.
+     */
     public GroupedComment getGroupedComment(Report report, Reporter user){
         GroupedComment groupedComment = new GroupedComment();
         groupedComment.setAttachments(new ArrayList<>());
-        groupedComment.setComment(getCommentText());
+        groupedComment.setComment(commentRichTextEditor.getHtmlValue());
         groupedComment.setTimestamp(new Date());
         groupedComment.setReport(report);
         groupedComment.setAuthor(user);
 
-        getFileMap().forEach((fileName, data) -> {
+        fileMap.forEach((fileName, data) -> {
             GroupedComment.Attachment attachment = new GroupedComment.Attachment();
             attachment.setData(data);
             attachment.setName(fileName);
@@ -151,15 +174,13 @@ public class CommentAttachmentLayout extends VerticalLayout {
         return groupedComment;
     }
 
-    public Map<String, byte[]> getFileMap() {
-        return fileMap;
-    }
-
-    public String getCommentText(){
-        return commentRichTextEditor.getHtmlValue();
-    }
-
     public void setSaveClickListener(ComponentEventListener<ClickEvent<Button>> clickEventComponentEventListener) {
-        saveCommentBtn.addClickListener(clickEventComponentEventListener);
+        saveCommentBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
+            if(!isCommentValid()){
+                emptyTextConfirmDialog.open();
+            }else{
+                clickEventComponentEventListener.onComponentEvent(event);
+            }
+        });
     }
 }

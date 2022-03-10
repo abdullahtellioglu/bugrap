@@ -17,6 +17,7 @@ import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
+import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.RouteConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -27,6 +28,7 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -73,12 +75,12 @@ public class ProjectLayout extends VerticalLayout {
 
         projectVersionComboBox = new ProjectVersionComboBox();
         distributionBar = new DistributionBar(closedReportCount, openedReportCount, unAssignedReportCount);
+
         HorizontalLayout reportDistributionLayout = new HorizontalLayout(projectVersionComboBox);
         reportDistributionLayout.setWidth(100, Unit.PERCENTAGE);
         reportDistributionLayout.setAlignItems(Alignment.CENTER);
         reportDistributionLayout.setJustifyContentMode(JustifyContentMode.START);
         reportDistributionLayout.addAndExpand(distributionBar);
-
 
         VerticalLayout gridDistributionContainerLayout = new VerticalLayout(reportDistributionLayout);
         gridDistributionContainerLayout.setClassName("inner-panel");
@@ -87,6 +89,8 @@ public class ProjectLayout extends VerticalLayout {
         gridDistributionContainerLayout.setMargin(false);
 
         ReportStatusLayout reportStatusLayout = new ReportStatusLayout();
+        //Data provider instead of items
+        //Play with data provider.
         reportGrid = new ReportGrid();
         reportGrid.createGridColumns(projectVersion == null|| projectVersion.getId() == -1);
         reportGrid.setItems(reports);
@@ -102,9 +106,8 @@ public class ProjectLayout extends VerticalLayout {
         add(projectToolbarLayout);
         add(gridDistributionContainerLayout);
         setClassName("project-layout");
+
         initializeEvents(reportStatusLayout);
-
-
         reportStatusLayout.setCurrentUser(currentUser);
         reportStatusLayout.setSelectedGridColumns(gridSelectedColumnSet);
         Arrays.stream(GridColumn.values()).forEach(gridColumn -> {
@@ -126,7 +129,6 @@ public class ProjectLayout extends VerticalLayout {
                 openReportInNewTab(selectedReports.iterator().next());
             }
         }, Key.ENTER, KeyModifier.CONTROL);
-
         reportStatusLayout.setAssigneeChangeListener(reporter -> {
             query.reportAssignee = reporter;
             onReportQueryChanged();
@@ -135,7 +137,6 @@ public class ProjectLayout extends VerticalLayout {
             query.reportStatuses = statuses;
             onReportQueryChanged();
         });
-
         reportGrid.addSelectionListener((SelectionListener<Grid<Report>, Report>) event -> onSelectedReportsChanged(event.getAllSelectedItems()));
         reportGrid.addItemClickListener((ComponentEventListener<ItemClickEvent<Report>>) event -> {
             reportGrid.getSelectionModel().deselectAll();
@@ -152,8 +153,6 @@ public class ProjectLayout extends VerticalLayout {
             textSearchQuery = textQuery;
             onReportQueryChanged();
         });
-
-
         reportStatusLayout.setGridColumnChangeListener(gridColumn -> {
             if(gridSelectedColumnSet.contains(gridColumn)){
                 gridSelectedColumnSet.remove(gridColumn);
@@ -162,10 +161,7 @@ public class ProjectLayout extends VerticalLayout {
             }
             reportStatusLayout.updateGridColumns();
             reportGrid.setColumns(gridSelectedColumnSet);
-
         });
-
-
         projectVersionComboBox.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<ProjectVersion>, ProjectVersion>>) event -> {
             ProjectVersion value = event.getValue();
             if(value == null){
@@ -175,6 +171,8 @@ public class ProjectLayout extends VerticalLayout {
             fetchReportCounts();
             onProjectVersionChange(value);
         });
+        reportStatusLayout.setGridSelectionClearClickListener(reportGrid::deselectAll);
+        reportStatusLayout.setGridSortingClearClickListener(reportGrid::clearSorting);
     }
 
     private void openReportInNewTab(Report report){
@@ -237,7 +235,7 @@ public class ProjectLayout extends VerticalLayout {
     /**
      * If user changes selected rows from grid, this method will be invoked. <br/>
      * It displays/hide the overview layout and updates overview values.
-     * @param selectedReports
+     * @param selectedReports Selected reports in grid.
      */
     private void onSelectedReportsChanged(Set<Report> selectedReports){
         this.selectedReports = selectedReports;

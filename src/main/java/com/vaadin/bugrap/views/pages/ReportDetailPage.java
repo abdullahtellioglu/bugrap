@@ -27,6 +27,9 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
+/**
+ * Displaying report detail page. User can add comment, download attachments and change status of given report.
+ */
 @PageTitle("Report Detail")
 @Route(value = "/report")
 @RouteAlias(value = "/report")
@@ -75,7 +78,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         topLayout.setMargin(false);
 
         commentAttachmentLayout.setClassName("bottom-panel");
-        commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
+        commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveCommentClick());
 
         add(topLayout, commentAttachmentLayout);
         notFoundLayout.setVisible(false);
@@ -86,7 +89,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         setClassName("report-detail-page");
 
     }
-    private void onSaveClick() {
+    private void onSaveCommentClick() {
         String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
         Reporter user = null;
         if(currentUserName != null){
@@ -137,12 +140,18 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
             commentAttachmentLayout.setVisible(false);
             notFoundLayout.setVisible(true);
 
-            Notification invalidReportNotification = new Notification("Please select a valid report to display details");
-            invalidReportNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-            invalidReportNotification.open();
+            Notification.show("Please select a valid report to display details").addThemeVariants(NotificationVariant.LUMO_ERROR);
         }
     }
 
+    /**
+     *
+     * @param priority
+     * @param type
+     * @param status
+     * @param reporter
+     * @param version
+     */
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion version) {
         report.setPriority(priority);

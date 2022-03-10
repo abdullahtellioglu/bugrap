@@ -19,6 +19,12 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Home page is the initial page when user opens the application. <br/>
+ * The page divided into two components, one of them is header in the top of the page {@link ProjectSelector}.
+ * Second one is the {@link ProjectLayout} that contains meaningful data of selected report.<br/><br/>
+ * We are creating a dummy user if it is the first run, otherwise we read user information from cookie.
+ */
 @PageTitle("Projects")
 @Route(value = "projects")
 @RouteAlias(value = "")
@@ -53,20 +59,13 @@ public class HomePage extends VerticalLayout {
         setSpacing(false);
         setPadding(false);
     }
-    private Reporter getDummyUserFromProject(Project project){
-        BugrapRepository.ReportsQuery reportsQuery = new BugrapRepository.ReportsQuery();
-        reportsQuery.project = project;
-        List<Report> reports = this.reportService.findReports(reportsQuery);
 
-        String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
-        if(currentUserName == null){
-            Optional<Report> foundNotUnAssignedReport = reports.stream().filter(f -> f.getAssigned() != null).findFirst();
-            if(foundNotUnAssignedReport.isPresent()){
-                return foundNotUnAssignedReport.get().getAssigned();
-            }
-        }
-        return null;
-    }
+    /**
+     * In this method a dummy user is created from a given project. Because there is no authentication process(login page or any authentication provider)
+     * a user needs to be created. In this process we select all reports in the first project and find the first assigned report in them.
+     * @param project
+     * @return User or null.
+     */
     private Reporter createDummyUserFromListOrReadFromCookie(Project project){
         String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
         Reporter user;
@@ -82,6 +81,20 @@ public class HomePage extends VerticalLayout {
         }
         return user;
 
+    }
+    private Reporter getDummyUserFromProject(Project project){
+        BugrapRepository.ReportsQuery reportsQuery = new BugrapRepository.ReportsQuery();
+        reportsQuery.project = project;
+        List<Report> reports = this.reportService.findReports(reportsQuery);
+
+        String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
+        if(currentUserName == null){
+            Optional<Report> foundNotUnAssignedReport = reports.stream().filter(f -> f.getAssigned() != null).findFirst();
+            if(foundNotUnAssignedReport.isPresent()){
+                return foundNotUnAssignedReport.get().getAssigned();
+            }
+        }
+        return null;
     }
 
 }

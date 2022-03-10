@@ -30,6 +30,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This component used to save comment and add attachments.
+ */
 public class CommentAttachmentLayout extends VerticalLayout {
     private final RichTextEditor commentRichTextEditor;
     private final MultiFileMemoryBuffer attachmentFileMemoryBuffer;
@@ -174,6 +177,10 @@ public class CommentAttachmentLayout extends VerticalLayout {
         return groupedComment;
     }
 
+    /**
+     * Save button click listener. If comment is empty display a dialog otherwise invoke the given event.
+     * @param clickEventComponentEventListener consumer
+     */
     public void setSaveClickListener(ComponentEventListener<ClickEvent<Button>> clickEventComponentEventListener) {
         saveCommentBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             if(!isCommentValid()){

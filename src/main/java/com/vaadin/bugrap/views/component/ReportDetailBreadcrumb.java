@@ -6,12 +6,14 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 
+/**
+ * ReportDetailBreadcrumb displays the Project name and version in the {@link com.vaadin.bugrap.views.pages.ReportDetailPage} page.
+ */
 public class ReportDetailBreadcrumb extends HorizontalLayout {
     private final Span projectNameSpan = new Span();;
     private final Span versionSpan = new Span();;
 
     public ReportDetailBreadcrumb(){
-
         VerticalLayout versionLabelLayout = new VerticalLayout();
         versionLabelLayout.setPadding(true);
         versionLabelLayout.setJustifyContentMode(JustifyContentMode.START);

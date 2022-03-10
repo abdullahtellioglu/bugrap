@@ -119,6 +119,11 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         commentList.setComments(commentService.getGroupedComments(report));
     }
 
+    /**
+     * Query parameter initializer for report Id. If report or project is not found hides all elements and shows the {@link NotFoundLayout}
+     * @param event Internal event
+     * @param reportId Report Id
+     */
     @Override
     public void setParameter(BeforeEvent event, Long reportId) {
         Report report = reportService.getReport(reportId);
@@ -145,12 +150,15 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     }
 
     /**
+     * Overview panel save changes listener implementation. <br/>
+     * Saving report into database.<b> In this step all fields needs to be passed requirements, null checks to save.</b> <br/>
+     * If version is changed, it updates the breadcrumb version as well.
      *
-     * @param priority
-     * @param type
-     * @param status
-     * @param reporter
-     * @param version
+     * @param priority Report priority
+     * @param type Report type
+     * @param status Report status
+     * @param reporter Reporter
+     * @param version Project version.
      */
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion version) {

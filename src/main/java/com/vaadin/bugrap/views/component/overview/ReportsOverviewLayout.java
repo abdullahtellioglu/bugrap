@@ -198,6 +198,7 @@ public class ReportsOverviewLayout extends VerticalLayout implements OverviewUpd
 
     /**
      * Updates document information with non-null values.
+     *
      * @param priority Selected priority, might be null.
      * @param type Selected type, might be null.
      * @param status Selected status, might be null

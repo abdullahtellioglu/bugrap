@@ -17,6 +17,11 @@ import org.vaadin.bugrap.domain.entities.Report;
 
 import java.util.*;
 
+/**
+ * ReportGrid is a component to display Reports. All columns are defined in {@link GridColumn}, and columns visibility can be changed in {@link ReportStatusLayout}.<br/>
+ * If user selects All Versions <i>the Version column</i> is shown otherwise it is hidden.<br/>
+ *
+ */
 public class ReportGrid extends Grid<Report> {
 
     private Column<Report> versionColumn;
@@ -25,13 +30,11 @@ public class ReportGrid extends Grid<Report> {
     public ReportGrid(){
         setSelectionMode(SelectionMode.MULTI);
         setMultiSort(true);
-        //below listener is a listener for move between rows.
         addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
             if(event.getColumn().isEmpty()){
                 //for selection checkboxes
                 return;
             }
-
             Set<Report> selectedItems = getSelectionModel().getSelectedItems();
             if(selectedItems.size() > 1){
                 return;
@@ -150,6 +153,11 @@ public class ReportGrid extends Grid<Report> {
 
         updateSorting(sortOrderList);
     }
+
+    /**
+     * Updating the indicators
+     * @param sortOrderList
+     */
     private void updateSorting(List<GridSortOrder<Report>> sortOrderList){
         clearSorting();
         List<QuerySortOrder> sortProperties = new ArrayList<>();

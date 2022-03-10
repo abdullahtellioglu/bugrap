@@ -17,7 +17,6 @@ import com.vaadin.flow.component.grid.ItemDoubleClickEvent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
-import com.vaadin.flow.data.provider.DataProvider;
 import com.vaadin.flow.data.selection.SelectionListener;
 import com.vaadin.flow.router.RouteConfiguration;
 import org.apache.commons.lang3.StringUtils;
@@ -28,7 +27,6 @@ import org.vaadin.bugrap.domain.entities.Report;
 import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -175,6 +173,10 @@ public class ProjectLayout extends VerticalLayout {
         reportStatusLayout.setGridSortingClearClickListener(reportGrid::clearSorting);
     }
 
+    /**
+     * Opening report detail page given report.
+     * @param report Report to display details
+     */
     private void openReportInNewTab(Report report){
         RouteConfiguration routeConfiguration = RouteConfiguration.forSessionScope();
         String url = routeConfiguration.getUrl(ReportDetailPage.class, report.getId());
@@ -212,6 +214,9 @@ public class ProjectLayout extends VerticalLayout {
         projectVersionComboBox.setValue(projectVersion);
     }
 
+    /**
+     * Queries database for Project Versions of selected project. If this project is opened before and any version is selected, that version is selected by default via Cookie.
+     */
     private void fetchProjectVersions(){
         projectVersions = projectService.getProjectVersions(project);
         if(projectVersions.size() > 1){

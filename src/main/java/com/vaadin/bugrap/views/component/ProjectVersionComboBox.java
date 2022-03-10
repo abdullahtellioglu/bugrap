@@ -9,6 +9,9 @@ import org.vaadin.bugrap.domain.entities.ProjectVersion;
 
 import java.util.List;
 
+/**
+ * Project Version is a wrapper component to display label in the left of combobox instead of displaying on top
+ */
 public class ProjectVersionComboBox extends HorizontalLayout {
     private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();;
     public ProjectVersionComboBox() {

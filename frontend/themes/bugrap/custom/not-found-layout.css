@@ -4,10 +4,10 @@
 }
 .not-found-layout .header {
     font-weight: bold;
-    font-size: var(--lumo-font-size-xl);
+    font-size: var(--lumo-font-size-xxl);
 }
 .not-found-layout .description {
     font-weight: bold;
-    color: var(--lumo-contrast-30pct);
+    color: var(--lumo-contrast-60pct);
     font-size: var(--lumo-font-size-l);
 }

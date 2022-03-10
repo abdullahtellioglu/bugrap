@@ -29,6 +29,10 @@ import org.vaadin.bugrap.domain.entities.Reporter;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ * Main layout for Home Page. Project Layout contains {@link ReportGrid}, {@link ReportsOverviewLayout} , {@link ProjectToolbarLayout} <br/>
+ * After user selects a project from {@link ProjectSelector} it triggers {@link ProjectLayout#setProject(Project)} method.
+ */
 public class ProjectLayout extends VerticalLayout {
     private static final String SPLITTER_HIDDEN_CLASS = "secondary-hidden";
     //services
@@ -47,8 +51,8 @@ public class ProjectLayout extends VerticalLayout {
 
     //Views
     private final ReportGrid reportGrid;
-    private DistributionBar distributionBar;
-    private ProjectVersionComboBox projectVersionComboBox;
+    private final DistributionBar distributionBar;
+    private final ProjectVersionComboBox projectVersionComboBox;
 
     private final SplitLayout gridSplitLayout;
     private final ProjectToolbarLayout projectToolbarLayout = new ProjectToolbarLayout();
@@ -111,6 +115,10 @@ public class ProjectLayout extends VerticalLayout {
         reportStatusLayout.updateGridColumns();
 
     }
+
+    /**
+     * Initializing all events
+     */
     private void initializeEvents(ReportStatusLayout reportStatusLayout){
         //events
         UI.getCurrent().addShortcutListener((ShortcutEventListener) event -> {
@@ -189,6 +197,11 @@ public class ProjectLayout extends VerticalLayout {
         this.reports = foundReports;
         reportGrid.setItems(foundReports);
     }
+
+    /**
+     * This invoked when project is changed. When invoked, it queries the database to select reports, and fetch counts for distribution bar.
+     * @param project Project entity.
+     */
     public void setProject(Project project){
         this.project = project;
         query.project = project;

@@ -1,7 +1,6 @@
 package com.vaadin.bugrap.views.container;
 
 import com.vaadin.bugrap.views.pages.HomePage;
-import com.vaadin.bugrap.views.pages.ReportDetailPage;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.UI;
@@ -9,13 +8,13 @@ import com.vaadin.flow.component.Unit;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Label;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.RouteConfiguration;
-import com.vaadin.flow.server.StreamResource;
-import org.apache.catalina.webresources.FileResource;
 
+/**
+ * Full screen not found report layout.
+ */
 public class NotFoundLayout extends VerticalLayout {
     public NotFoundLayout(){
 
@@ -24,7 +23,6 @@ public class NotFoundLayout extends VerticalLayout {
         setWidth(100, Unit.PERCENTAGE);
         setHeight(100, Unit.PERCENTAGE);
         setClassName("not-found-layout");
-
 
         Image image = new Image("images/not-found-illustrator.jpeg", "Not found");
         image.setWidth(300, Unit.PIXELS);

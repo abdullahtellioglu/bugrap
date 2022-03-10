@@ -14,6 +14,7 @@ import org.vaadin.bugrap.domain.entities.Project;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Project selector is a component that user can display active projects and select one of them to display. <br/>
@@ -23,11 +24,8 @@ public class ProjectSelector extends HorizontalLayout {
     private final Select<Project> projectSelect;
     private final Button managerLabel;
     private final Button closeButton;
-    public void setProjectSelectListener(ProjectSelectListener listener){
-        this.listener = listener;
-    }
 
-    private ProjectSelectListener listener;
+    private Consumer<Project> listener;
 
     public ProjectSelector() {
         super();
@@ -48,11 +46,13 @@ public class ProjectSelector extends HorizontalLayout {
         projectSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<Project>, Project>>) event -> {
             Project value = event.getValue();
             if(listener != null){
-                listener.onSelect(value);
+                listener.accept(value);
             }
         });
     }
-
+    public void setProjectSelectListener(Consumer<Project> listener){
+        this.listener = listener;
+    }
     /**
      * Updates the manager label
      * @param name manager label
@@ -69,12 +69,8 @@ public class ProjectSelector extends HorizontalLayout {
         projectSelect.setItems(projects);
         if(projectSelect.getValue() == null && !projects.isEmpty() && listener != null){
             projectSelect.setValue(projects.get(0));
-            listener.onSelect(projects.get(0));
+            listener.accept(projects.get(0));
         }
-    }
-
-    public interface ProjectSelectListener {
-        void onSelect(Project project);
     }
 
 }

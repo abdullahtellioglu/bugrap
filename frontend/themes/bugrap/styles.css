@@ -12,6 +12,7 @@
 @import url('./custom/report-detail-breadcrumb.css');
 @import url('./custom/report-detail-page.css');
 @import url('./custom/vaadin-notification-wrapper.css');
+@import url('./custom/not-found-layout.css');
 
 html {
     --_lumo-button-background-color: white;

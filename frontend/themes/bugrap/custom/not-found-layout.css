@@ -1,0 +1,13 @@
+.not-found-layout {
+    position: absolute;
+    margin:auto;
+}
+.not-found-layout .header {
+    font-weight: bold;
+    font-size: var(--lumo-font-size-xl);
+}
+.not-found-layout .description {
+    font-weight: bold;
+    color: var(--lumo-contrast-30pct);
+    font-size: var(--lumo-font-size-l);
+}

@@ -11,6 +11,7 @@ import com.vaadin.bugrap.views.component.CommentAttachmentLayout;
 import com.vaadin.bugrap.views.component.ReportDetailBreadcrumb;
 import com.vaadin.bugrap.views.component.overview.CommentList;
 import com.vaadin.bugrap.views.component.overview.OverviewUpdateBar;
+import com.vaadin.bugrap.views.container.NotFoundLayout;
 import com.vaadin.bugrap.views.model.GroupedComment;
 import com.vaadin.flow.component.ClickEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -39,7 +40,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     private final OverviewUpdateBar overviewUpdateBar;
     private final CommentList commentList;
     private final CommentAttachmentLayout commentAttachmentLayout = new CommentAttachmentLayout();
-
+    private final NotFoundLayout notFoundLayout = new NotFoundLayout();
     private Report report;
 
 
@@ -77,7 +78,8 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         commentAttachmentLayout.setSaveClickListener((ComponentEventListener<ClickEvent<Button>>) event -> onSaveClick());
 
         add(topLayout, commentAttachmentLayout);
-
+        notFoundLayout.setVisible(false);
+        add(notFoundLayout);
         setJustifyContentMode(JustifyContentMode.BETWEEN);
         setSpacing(false);
         setPadding(false);
@@ -124,6 +126,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
                 reportDetailBreadcrumb.setProjectName(project.getName());
             }else{
                 reportDetailBreadcrumb.setVisible(false);
+                notFoundLayout.setVisible(true);
             }
             overviewUpdateBar.setVisible(true);
             commentAttachmentLayout.setVisible(true);
@@ -132,7 +135,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
             reportDetailBreadcrumb.setVisible(false);
             overviewUpdateBar.setVisible(false);
             commentAttachmentLayout.setVisible(false);
-
+            notFoundLayout.setVisible(true);
 
             Notification invalidReportNotification = new Notification("Please select a valid report to display details");
             invalidReportNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);

@@ -36,21 +36,20 @@ public class ReportStatusLayout extends HorizontalLayout {
     private final Button customStatusBtn;
     private final ContextMenu customContextMenu;
     private final ContextMenu columnsContextMenu;
-
+    private final Set<Report.Status> selectedStatusSet = new HashSet<>();
     private Consumer<Reporter> assigneeChangeListener;
     private Consumer<Set<Report.Status>> statusChangeListener;
     private Consumer<GridColumn> gridColumnChangeListener;
     private Runnable gridSelectionClearClickListener;
     private Runnable gridSortingClearClickListener;
     private Reporter currentUser;
-
-    private final Set<Report.Status> selectedStatusSet = new HashSet<>();
     private Set<GridColumn> selectedGridColumns;
 
     public ReportStatusLayout() {
         onlyMeButton = new Button("Only me");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         onlyMeButton.setWidth(MIN_BUTTON_WIDTH);
+
         everyoneButton = new Button("Everyone");
         everyoneButton.setMinWidth(MIN_BUTTON_WIDTH);
 
@@ -66,11 +65,14 @@ public class ReportStatusLayout extends HorizontalLayout {
         openStatusBtn = new Button("Open");
         openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         openStatusBtn.setMinWidth(MIN_BUTTON_WIDTH);
+
         allKindsStatusBtn = new Button("All kinds");
         allKindsStatusBtn.setMinWidth(MIN_BUTTON_WIDTH);
+
         customStatusBtn = new Button();
         customStatusBtn.setText("Custom...");
         customContextMenu = new ContextMenu(customStatusBtn);
+
         customContextMenu.addAttachListener((ComponentEventListener<AttachEvent>) event ->
                 customContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
         customContextMenu.setOpenOnClick(true);
@@ -82,19 +84,22 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusButtonContainer.setSpacing(false);
 
         Button editColumnsBtn = new Button(VaadinIcon.PENCIL.create());
+
         columnsContextMenu = new ContextMenu(editColumnsBtn);
         columnsContextMenu.setOpenOnClick(true);
         columnsContextMenu.addAttachListener((ComponentEventListener<AttachEvent>) event ->
                 columnsContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
+
         Button clearSelectionBtn = new Button(VaadinIcon.CLOSE_CIRCLE.create());
         clearSelectionBtn.getElement().setProperty("title", "Clear selections");
+
         Button clearSortBtn = new Button(new Icon("lumo", "unordered-list"));
         clearSortBtn.getElement().setProperty("title", "Clear sorting");
 
         HorizontalLayout gridOptionBtnContainer = new HorizontalLayout(editColumnsBtn, clearSelectionBtn, clearSortBtn);
         gridOptionBtnContainer.setPadding(false);
         gridOptionBtnContainer.setSpacing(false);
-        add(new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer,statusLabel, statusButtonContainer), gridOptionBtnContainer);
+        add(new HorizontalLayout(new Label("Assignees"), assigneeButtonContainer, statusLabel, statusButtonContainer), gridOptionBtnContainer);
 
         initializeStatusContextMenu();
         initializeEvents(clearSelectionBtn, clearSortBtn);
@@ -102,24 +107,25 @@ public class ReportStatusLayout extends HorizontalLayout {
 
         setWidth(100, Unit.PERCENTAGE);
         setJustifyContentMode(JustifyContentMode.BETWEEN);
-        selectedStatusSet.add(Report.Status.OPEN);
         setClassName("report-status");
+
+        selectedStatusSet.add(Report.Status.OPEN);
     }
 
 
-    private void initializeEvents(Button clearSelectionBtn, Button clearSortingBtn){
+    private void initializeEvents(Button clearSelectionBtn, Button clearSortingBtn) {
         openStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             selectedStatusSet.add(Report.Status.OPEN);
             setThemeVariables();
-            if(statusChangeListener != null){
+            if (statusChangeListener != null) {
                 statusChangeListener.accept(Collections.singleton(Report.Status.OPEN));
             }
         });
         allKindsStatusBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             selectedStatusSet.clear();
             setThemeVariables();
-            if(statusChangeListener != null){
+            if (statusChangeListener != null) {
                 statusChangeListener.accept(null);
             }
         });
@@ -127,14 +133,14 @@ public class ReportStatusLayout extends HorizontalLayout {
         onlyMeButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             everyoneButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            if(assigneeChangeListener != null){
+            if (assigneeChangeListener != null) {
                 assigneeChangeListener.accept(currentUser);
             }
         });
         everyoneButton.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
             onlyMeButton.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             everyoneButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-            if(assigneeChangeListener != null){
+            if (assigneeChangeListener != null) {
                 assigneeChangeListener.accept(null);
             }
         });
@@ -144,13 +150,13 @@ public class ReportStatusLayout extends HorizontalLayout {
             }
         });
         clearSortingBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
-            if(gridSortingClearClickListener != null){
+            if (gridSortingClearClickListener != null) {
                 gridSortingClearClickListener.run();
             }
         });
     }
 
-    private void initializeColumnsContextMenu(){
+    private void initializeColumnsContextMenu() {
         GridColumn[] columns = GridColumn.values();
         for (GridColumn column : columns) {
             MenuItem menuItem = columnsContextMenu.addItem(column.getLabel());
@@ -161,12 +167,13 @@ public class ReportStatusLayout extends HorizontalLayout {
             menuItem.getElement().setAttribute("onclick", "event.stopPropagation()");
             menuItem.addClickListener((ComponentEventListener<ClickEvent<MenuItem>>) event -> event.getSource().getId().
                     flatMap(id -> Arrays.stream(columns).filter(f -> f.name().equals(id)).findFirst()).ifPresent(foundColumn -> {
-                        gridColumnChangeListener.accept(foundColumn);
+                gridColumnChangeListener.accept(foundColumn);
 
-                    }));
+            }));
         }
     }
-    private void setCheckedStatusesGridColumns(){
+
+    private void setCheckedStatusesGridColumns() {
         List<MenuItem> menuItems = columnsContextMenu.getItems();
         menuItems.forEach(menuItem -> {
             menuItem.getId().ifPresent(id -> {
@@ -178,20 +185,22 @@ public class ReportStatusLayout extends HorizontalLayout {
     }
 
 
-    public void setGridSortingClearClickListener(Runnable gridSortingClearClickListener){
+    public void setGridSortingClearClickListener(Runnable gridSortingClearClickListener) {
         this.gridSortingClearClickListener = gridSortingClearClickListener;
     }
+
     public void setGridSelectionClearClickListener(Runnable gridSelectionClearClickListener) {
         this.gridSelectionClearClickListener = gridSelectionClearClickListener;
     }
 
-    public void setSelectedGridColumns(Set<GridColumn> gridColumns){
+    public void setSelectedGridColumns(Set<GridColumn> gridColumns) {
         selectedGridColumns = gridColumns;
     }
+
     /**
      * Updates grid columns based on {@link ReportStatusLayout#selectedGridColumns} also {@link com.vaadin.bugrap.views.container.ProjectLayout}
      */
-    public void updateGridColumns(){
+    public void updateGridColumns() {
         setCheckedStatusesGridColumns();
     }
 
@@ -211,7 +220,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         this.statusChangeListener = statusChangeListener;
     }
 
-    private void initializeStatusContextMenu(){
+    private void initializeStatusContextMenu() {
         Report.Status[] statuses = Report.Status.values();
         for (Report.Status status : statuses) {
 
@@ -219,12 +228,11 @@ public class ReportStatusLayout extends HorizontalLayout {
 
             statusMenuItem.getElement().setAttribute("onclick", "event.stopPropagation()");
 
-            ComponentEventListener<ClickEvent<MenuItem>> statusMenuItemItemClickListener = event -> {
+            statusMenuItem.addClickListener((ComponentEventListener<ClickEvent<MenuItem>>) event -> {
                 Optional<String> idOptional = event.getSource().getId();
                 if (idOptional.isEmpty()) {
                     return;
                 }
-
                 String statusId = idOptional.get();
                 Optional<Report.Status> optionalStatus = Arrays.stream(Report.Status.values()).filter(f -> f.name().equals(statusId)).findFirst();
                 if (optionalStatus.isEmpty()) {
@@ -241,24 +249,25 @@ public class ReportStatusLayout extends HorizontalLayout {
                 }
                 setThemeVariables();
                 customContextMenu.getElement().executeJs("this.requestContentUpdate($0)", true);
-            };
-            statusMenuItem.addClickListener(statusMenuItemItemClickListener);
+            });
+
             statusMenuItem.setId(status.name());
             statusMenuItem.setCheckable(true);
             statusMenuItem.setChecked(selectedStatusSet.contains(status));
 
         }
     }
-    private void setThemeVariables(){
-        if(selectedStatusSet.isEmpty()){
+
+    private void setThemeVariables() {
+        if (selectedStatusSet.isEmpty()) {
             openStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             customStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        }else if(selectedStatusSet.size() == 1 && selectedStatusSet.iterator().next().equals(Report.Status.OPEN)){
+        } else if (selectedStatusSet.size() == 1 && Objects.equals(selectedStatusSet.iterator().next(), Report.Status.OPEN)) {
             openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             customStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        }else{
+        } else {
             openStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             allKindsStatusBtn.removeThemeVariants(ButtonVariant.LUMO_PRIMARY);
             customStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -266,12 +275,12 @@ public class ReportStatusLayout extends HorizontalLayout {
 
         customContextMenu.getItems().forEach(subMenuItem -> {
             Optional<String> idOptional = subMenuItem.getId();
-            if(idOptional.isEmpty()){
+            if (idOptional.isEmpty()) {
                 return;
             }
             String statusId = idOptional.get();
-            Optional<Report.Status> optionalStatus = Arrays.stream(Report.Status.values()).filter(f -> f.name().equals(statusId)).findFirst();
-            if(optionalStatus.isEmpty()){
+            Optional<Report.Status> optionalStatus = Arrays.stream(Report.Status.values()).filter(f -> Objects.equals(f.name(), statusId)).findFirst();
+            if (optionalStatus.isEmpty()) {
                 return;
             }
             Report.Status checkedStatus = optionalStatus.get();

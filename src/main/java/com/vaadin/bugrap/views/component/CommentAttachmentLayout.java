@@ -38,7 +38,7 @@ public class CommentAttachmentLayout extends VerticalLayout {
     private final MultiFileMemoryBuffer attachmentFileMemoryBuffer;
     private final Upload attachmentUpload;
     private final Button saveCommentBtn;
-    private ConfirmDialog emptyTextConfirmDialog;
+    private final ConfirmDialog emptyTextConfirmDialog;
 
     private final Map<String, byte[]> fileMap = new HashMap<>();
 
@@ -86,15 +86,15 @@ public class CommentAttachmentLayout extends VerticalLayout {
 
 
         initializeEvents(cancelCommentBtn);
-        initializeConfirmDialog();
-    }
 
-    private void initializeConfirmDialog(){
+
         emptyTextConfirmDialog = new ConfirmDialog();
         emptyTextConfirmDialog.setHeader("Save failed");
         emptyTextConfirmDialog.setText("Comment should not be empty.");
         emptyTextConfirmDialog.setConfirmText("OK");
+
     }
+
 
     private void initializeEvents(Button cancelCommentBtn){
         commentRichTextEditor.addKeyPressListener((ComponentEventListener<KeyPressEvent>) event ->

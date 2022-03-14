@@ -1,12 +1,10 @@
 package com.vaadin.bugrap.views.pages;
 
-import com.vaadin.bugrap.config.ContextWrapper;
 import com.vaadin.bugrap.services.CommentService;
 import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.utils.CookieUtils;
-import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.CommentAttachmentLayout;
 import com.vaadin.bugrap.views.component.ReportDetailBreadcrumb;
 import com.vaadin.bugrap.views.component.overview.CommentList;
@@ -47,11 +45,11 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
     private Report report;
 
 
-    public ReportDetailPage(){
-        projectService = ContextWrapper.getBean(ProjectService.class);
-        reportService = ContextWrapper.getBean(ReportService.class);
-        userService = ContextWrapper.getBean(UserService.class);
-        commentService = ContextWrapper.getBean(CommentService.class);
+    public ReportDetailPage(ProjectService projectService, ReportService reportService, UserService userService, CommentService commentService) {
+        this.projectService = projectService;
+        this.reportService = reportService;
+        this.userService = userService;
+        this.commentService = commentService;
 
         reportDetailBreadcrumb = new ReportDetailBreadcrumb();
 
@@ -89,13 +87,14 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         setClassName("report-detail-page");
 
     }
+
     private void onSaveCommentClick() {
-        String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
+        String currentUserName = CookieUtils.getCurrentUserName();
         Reporter user = null;
-        if(currentUserName != null){
+        if (currentUserName != null) {
             user = userService.getUser(currentUserName);
         }
-        if(user == null){
+        if (user == null) {
             Notification.show("Session timeout. Please open home page and return");
             return;
         }
@@ -107,7 +106,7 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
     }
 
-    private void setReport(Report report){
+    private void setReport(Report report) {
         this.report = report;
         reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version");
         overviewUpdateBar.setProjectVersions(projectService.getProjectVersions(report.getProject()));
@@ -121,18 +120,19 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
 
     /**
      * Query parameter initializer for report Id. If report or project is not found hides all elements and shows the {@link NotFoundLayout}
-     * @param event Internal event
+     *
+     * @param event    Internal event
      * @param reportId Report Id
      */
     @Override
     public void setParameter(BeforeEvent event, Long reportId) {
         Report report = reportService.getReport(reportId);
 
-        if(report != null){
+        if (report != null) {
             Project project = report.getProject();
-            if(project != null){
+            if (project != null) {
                 reportDetailBreadcrumb.setProjectName(project.getName());
-            }else{
+            } else {
                 reportDetailBreadcrumb.setVisible(false);
                 notFoundLayout.setVisible(true);
             }
@@ -155,10 +155,10 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
      * If version is changed, it updates the breadcrumb version as well.
      *
      * @param priority Report priority
-     * @param type Report type
-     * @param status Report status
+     * @param type     Report type
+     * @param status   Report status
      * @param reporter Reporter
-     * @param version Project version.
+     * @param version  Project version.
      */
     @Override
     public void onUpdate(Report.Priority priority, Report.Type type, Report.Status status, Reporter reporter, ProjectVersion version) {
@@ -167,8 +167,8 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         report.setStatus(status);
         report.setAssigned(reporter);
         report.setVersion(version);
-        this.report =  reportService.save(report);
-        reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version" );
+        this.report = reportService.save(report);
+        reportDetailBreadcrumb.setVersionName(report.getVersion() != null ? report.getVersion().getVersion() : "No version");
         Notification.show("Report updated successfully").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
     }
 }

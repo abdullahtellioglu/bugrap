@@ -4,7 +4,6 @@ import com.vaadin.bugrap.services.ProjectService;
 import com.vaadin.bugrap.services.ReportService;
 import com.vaadin.bugrap.services.UserService;
 import com.vaadin.bugrap.utils.CookieUtils;
-import com.vaadin.bugrap.utils.RequestUtils;
 import com.vaadin.bugrap.views.component.ProjectSelector;
 import com.vaadin.bugrap.views.container.ProjectLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -35,7 +34,8 @@ public class HomePage extends VerticalLayout {
     private final ProjectLayout projectLayout;
 
 
-    public HomePage(ReportService reportService, ProjectService projectService, UserService userService){
+    public HomePage(ReportService reportService, ProjectService projectService, UserService userService, ProjectLayout projectLayout) {
+        this.projectLayout = projectLayout;
         this.reportService = reportService;
         this.userService = userService;
 
@@ -44,7 +44,7 @@ public class HomePage extends VerticalLayout {
 
         // we dont have login screen. That's why we need to find the current user from assignees if it is first run, otherwise read username from cookie
         Reporter currentUser = createDummyUserFromListOrReadFromCookie(activeProjects.get(0));
-        projectLayout = new ProjectLayout(currentUser);
+        this.projectLayout.setCurrentUser(currentUser);
 
         projectSelector.setProjectSelectListener(project -> {
             projectLayout.setOpenedReportCount(reportService.getCountOpenedReports(project));
@@ -52,7 +52,7 @@ public class HomePage extends VerticalLayout {
             projectSelector.setManagerName(project.getManager().getName());
         });
         add(projectSelector);
-        add(projectLayout);
+        add(this.projectLayout);
         projectSelector.setActiveProjects(activeProjects);
 
         setClassName("home-page");
@@ -63,34 +63,36 @@ public class HomePage extends VerticalLayout {
     /**
      * In this method a dummy user is created from a given project. Because there is no authentication process(login page or any authentication provider)
      * a user needs to be created. In this process we select all reports in the first project and find the first assigned report in them.
+     *
      * @param project
      * @return User or null.
      */
-    private Reporter createDummyUserFromListOrReadFromCookie(Project project){
-        String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
+    private Reporter createDummyUserFromListOrReadFromCookie(Project project) {
+        String currentUserName = CookieUtils.getCurrentUserName();
         Reporter user;
-        if(currentUserName != null){
+        if (currentUserName != null) {
             user = userService.getUser(currentUserName);
-        }else{
+        } else {
             user = getDummyUserFromProject(project);
-            if(user == null){
+            if (user == null) {
                 return null;
             }
             String name = user.getName();
-            CookieUtils.putCurrentUserName(name, RequestUtils.getCurrentHttpResponse());
+            CookieUtils.putCurrentUserName(name);
         }
         return user;
 
     }
-    private Reporter getDummyUserFromProject(Project project){
+
+    private Reporter getDummyUserFromProject(Project project) {
         BugrapRepository.ReportsQuery reportsQuery = new BugrapRepository.ReportsQuery();
         reportsQuery.project = project;
         List<Report> reports = this.reportService.findReports(reportsQuery);
 
-        String currentUserName = CookieUtils.getCurrentUserName(RequestUtils.getCurrentHttpRequest());
-        if(currentUserName == null){
+        String currentUserName = CookieUtils.getCurrentUserName();
+        if (currentUserName == null) {
             Optional<Report> foundNotUnAssignedReport = reports.stream().filter(f -> f.getAssigned() != null).findFirst();
-            if(foundNotUnAssignedReport.isPresent()){
+            if (foundNotUnAssignedReport.isPresent()) {
                 return foundNotUnAssignedReport.get().getAssigned();
             }
         }

@@ -20,8 +20,8 @@ import java.util.Arrays;
  * </table>
  */
 public enum GridColumn {
-    VERSION("Version",true, false),
-    PRIORITY("Priority",true, false),
+    VERSION("Version", true, false),
+    PRIORITY("Priority", true, false),
     TYPE("Type", true, true),
     SUMMARY("Summary", true, true),
     STATUS("Status", false, true),
@@ -32,30 +32,48 @@ public enum GridColumn {
     private final boolean initialVisible;
     private final boolean changeable;
     private final String label;
+
     GridColumn(String label, boolean initialVisible, boolean changeable) {
         this.label = label;
         this.initialVisible = initialVisible;
         this.changeable = changeable;
     }
 
+    /**
+     * Finds the grid column based on enum's name
+     *
+     * @param name {@link GridColumn#name()}
+     * @return GridColumn or null if not found.
+     */
+    public static GridColumn find(String name) {
+        return Arrays.stream(GridColumn.values()).filter(gridColumn -> gridColumn.name().equals(name)).findFirst().orElse(null);
+    }
+
+    /**
+     * Visible by default or not
+     *
+     * @return Visible if true otherwise invisible
+     */
     public boolean isInitialVisible() {
         return initialVisible;
     }
 
+    /**
+     * Can column visibility change.
+     *
+     * @return If true it is changeable otherwise false.
+     */
     public boolean isChangeable() {
+
         return changeable;
     }
 
+    /**
+     * Column label in grid.
+     *
+     * @return
+     */
     public String getLabel() {
         return label;
-    }
-
-    /**
-     * Finds the grid column based on enum's name
-     * @param name {@link GridColumn#name()}
-     * @return GridColumn or null if not found.
-     */
-    public static GridColumn find(String name){
-        return Arrays.stream(GridColumn.values()).filter(gridColumn -> gridColumn.name().equals(name)).findFirst().orElse(null);
     }
 }

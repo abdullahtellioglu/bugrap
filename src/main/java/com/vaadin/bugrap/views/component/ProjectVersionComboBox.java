@@ -13,23 +13,28 @@ import java.util.List;
  * Project Version is a wrapper component to display label in the left of combobox instead of displaying on top
  */
 public class ProjectVersionComboBox extends HorizontalLayout {
-    private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();;
+    private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();
+
     public ProjectVersionComboBox() {
         Label label = new Label("Reports for");
+
         add(versionComboBox);
         add(label);
 
         setClassName("version-combo-container");
         setJustifyContentMode(JustifyContentMode.CENTER);
     }
-    public void setItems(List<ProjectVersion> projectVersions){
+
+    public void setItems(List<ProjectVersion> projectVersions) {
         this.versionComboBox.setItems(projectVersions);
     }
-    public void setValue(ProjectVersion projectVersion){
+
+    public void setValue(ProjectVersion projectVersion) {
         this.versionComboBox.setValue(projectVersion);
 
     }
-    public void addValueChangeListener(HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<ProjectVersion>, ProjectVersion>> valueChangeListener){
+
+    public void addValueChangeListener(HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<ComboBox<ProjectVersion>, ProjectVersion>> valueChangeListener) {
         this.versionComboBox.addValueChangeListener(valueChangeListener);
     }
 }

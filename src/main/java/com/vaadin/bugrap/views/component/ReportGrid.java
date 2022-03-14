@@ -20,29 +20,28 @@ import java.util.*;
 /**
  * ReportGrid is a component to display Reports. All columns are defined in {@link GridColumn}, and columns visibility can be changed in {@link ReportStatusLayout}.<br/>
  * If user selects All Versions <i>the Version column</i> is shown otherwise it is hidden.<br/>
- *
  */
 public class ReportGrid extends Grid<Report> {
 
     private Column<Report> versionColumn;
     private Column<Report> priorityColumn;
 
-    public ReportGrid(){
+    public ReportGrid() {
         setSelectionMode(SelectionMode.MULTI);
         setMultiSort(true);
         addCellFocusListener((ComponentEventListener<CellFocusEvent<Report>>) event -> {
-            if(event.getColumn().isEmpty()){
+            if (event.getColumn().isEmpty()) {
                 //for selection checkboxes
                 return;
             }
             Set<Report> selectedItems = getSelectionModel().getSelectedItems();
-            if(selectedItems.size() > 1){
+            if (selectedItems.size() > 1) {
                 return;
             }
             event.getItem().ifPresent(report -> {
-                if(selectedItems.iterator().hasNext()){
+                if (selectedItems.iterator().hasNext()) {
                     Report current = selectedItems.iterator().next();
-                    if(current.getId() != report.getId()){
+                    if (current.getId() != report.getId()) {
                         deselect(current);
                     }
                 }
@@ -54,15 +53,59 @@ public class ReportGrid extends Grid<Report> {
 
         initializeColumns();
     }
-    public void setColumns(Set<GridColumn> gridColumns){
+
+    private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer() {
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            if (report != null && report.getVersion() != null) {
+                return new Span(report.getVersion().getVersion());
+            }
+            return new Span();
+        });
+    }
+
+    private static ComponentRenderer<Component, Report> createReportLastModifiedComponentRenderer() {
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            //is timestamp correct ?
+            Date timestamp = report.getTimestamp();
+            return new Span(DateUtils.getRelativeFormat(timestamp));
+        });
+    }
+
+    private static ComponentRenderer<Component, Report> createReportTimeStampComponentRenderer() {
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            Date reportedTimestamp = report.getReportedTimestamp();
+            return new Span(DateUtils.getRelativeFormat(reportedTimestamp));
+        });
+    }
+
+    private static ComponentRenderer<Component, Report> createAssigneeComponentRenderer() {
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            if (report != null && report.getAssigned() != null && report.getAssigned().getName() != null) {
+                return new Span(report.getAssigned().getName());
+            }
+            return new Span();
+        });
+    }
+
+    private static ComponentRenderer<Component, Report> createPriorityComponentRenderer() {
+        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
+            if (report.getPriority() != null) {
+                return new PriorityBar(report.getPriority());
+            }
+            return null;
+
+        });
+    }
+
+    public void setColumns(Set<GridColumn> gridColumns) {
         getColumns().forEach(column -> column.getId().ifPresent(columnId -> {
             GridColumn foundGridColumn = GridColumn.find(columnId);
-            if(foundGridColumn != null && foundGridColumn.isChangeable()){
+            if (foundGridColumn != null && foundGridColumn.isChangeable()) {
                 column.setVisible(gridColumns.contains(foundGridColumn));
             }
         }));
         boolean updateRequired = getSortOrder().stream().anyMatch(sortedColumn -> !sortedColumn.getSorted().isVisible());
-        if(updateRequired){
+        if (updateRequired) {
             List<GridSortOrder<Report>> previousSortOrder = getSortOrder();
             List<GridSortOrder<Report>> currentSortOrder = new ArrayList<>(previousSortOrder);
             currentSortOrder.removeIf(reportGridSortOrder -> !reportGridSortOrder.getSorted().isVisible());
@@ -70,17 +113,17 @@ public class ReportGrid extends Grid<Report> {
         }
     }
 
-    private void initializeColumns(){
+    private void initializeColumns() {
         versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader(GridColumn.VERSION.getLabel());
         versionColumn.setId(GridColumn.VERSION.name());
         versionColumn.setComparator((o1, o2) -> {
-            if(o1.getVersion() == null && o2.getVersion() != null){
+            if (o1.getVersion() == null && o2.getVersion() != null) {
                 return 1;
             }
-            if(o1.getVersion() != null && o2.getVersion() == null){
+            if (o1.getVersion() != null && o2.getVersion() == null) {
                 return -1;
             }
-            if(o1.getVersion() != null && o2.getVersion() != null){
+            if (o1.getVersion() != null && o2.getVersion() != null) {
                 return o1.getVersion().getVersion().compareTo(o2.getVersion().getVersion());
             }
             return 0;
@@ -106,13 +149,13 @@ public class ReportGrid extends Grid<Report> {
         Column<Report> assignedToColumn = addColumn(createAssigneeComponentRenderer()).setHeader(GridColumn.ASSIGNED_TO.getLabel());
         assignedToColumn.setId(GridColumn.ASSIGNED_TO.name());
         assignedToColumn.setComparator((o1, o2) -> {
-            if(o1.getAssigned() == null && o2.getAssigned() != null){
+            if (o1.getAssigned() == null && o2.getAssigned() != null) {
                 return 1;
             }
-            if(o1.getAssigned() != null && o2.getAssigned() == null){
+            if (o1.getAssigned() != null && o2.getAssigned() == null) {
                 return -1;
             }
-            if(o1.getAssigned() != null && o2.getAssigned() != null){
+            if (o1.getAssigned() != null && o2.getAssigned() != null) {
                 return o1.getAssigned().getName().compareTo(o2.getAssigned().getName());
             }
             return 0;
@@ -136,15 +179,16 @@ public class ReportGrid extends Grid<Report> {
 
     /**
      * If any version is selected or all version is selected, this method show/hide the version column and re-order all sorting operations.
+     *
      * @param allVersionSelected true if all version is selected to display otherwise false
      */
-    public void createGridColumns(boolean allVersionSelected){
+    public void createGridColumns(boolean allVersionSelected) {
         List<GridSortOrder<Report>> sortOrderList = new ArrayList<>();
-        if(allVersionSelected){
+        if (allVersionSelected) {
             versionColumn.setVisible(true);
             GridSortOrder<Report> versionOrder = new GridSortOrder<>(versionColumn, SortDirection.ASCENDING);
             sortOrderList.add(versionOrder);
-        }else{
+        } else {
             versionColumn.setVisible(false);
         }
 
@@ -156,9 +200,10 @@ public class ReportGrid extends Grid<Report> {
 
     /**
      * Updating the indicators
+     *
      * @param sortOrderList
      */
-    private void updateSorting(List<GridSortOrder<Report>> sortOrderList){
+    private void updateSorting(List<GridSortOrder<Report>> sortOrderList) {
         clearSorting();
         List<QuerySortOrder> sortProperties = new ArrayList<>();
         sortOrderList.stream().map(
@@ -170,48 +215,6 @@ public class ReportGrid extends Grid<Report> {
                 false));
         sort(sortOrderList);
 
-    }
-
-    private static ComponentRenderer<Component, Report> createReportVersionComponentRenderer(){
-        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
-            if (report != null && report.getVersion() != null) {
-                return new Span(report.getVersion().getVersion());
-            }
-            return new Span();
-        });
-    }
-
-    private static ComponentRenderer<Component, Report> createReportLastModifiedComponentRenderer(){
-        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
-            //is timestamp correct ?
-            Date timestamp = report.getTimestamp();
-            return new Span(DateUtils.getRelativeFormat(timestamp));
-        });
-    }
-    private static ComponentRenderer<Component, Report> createReportTimeStampComponentRenderer(){
-        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
-            Date reportedTimestamp = report.getReportedTimestamp();
-            return new Span(DateUtils.getRelativeFormat(reportedTimestamp));
-        });
-    }
-
-    private static ComponentRenderer<Component, Report> createAssigneeComponentRenderer(){
-        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
-            if (report != null && report.getAssigned() != null && report.getAssigned().getName() != null) {
-                return new Span(report.getAssigned().getName());
-            }
-            return new Span();
-        });
-    }
-
-    private static ComponentRenderer<Component, Report> createPriorityComponentRenderer() {
-        return new ComponentRenderer<>((SerializableFunction<Report, Component>) report -> {
-            if(report.getPriority() != null){
-                return new PriorityBar(report.getPriority());
-            }
-            return null;
-
-        });
     }
 
     /**

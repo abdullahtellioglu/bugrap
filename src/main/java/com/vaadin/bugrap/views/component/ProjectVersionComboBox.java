@@ -16,6 +16,8 @@ public class ProjectVersionComboBox extends HorizontalLayout {
     private final ComboBox<ProjectVersion> versionComboBox = new ComboBox<>();
 
     public ProjectVersionComboBox() {
+        versionComboBox.setId("version-combo-box");
+
         Label label = new Label("Reports for");
 
         add(versionComboBox);

@@ -47,10 +47,12 @@ public class ReportStatusLayout extends HorizontalLayout {
 
     public ReportStatusLayout() {
         onlyMeButton = new Button("Only me");
+        onlyMeButton.setId("only-me-btn");
         onlyMeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         onlyMeButton.setWidth(MIN_BUTTON_WIDTH);
 
         everyoneButton = new Button("Everyone");
+        everyoneButton.setId("everyone-btn");
         everyoneButton.setMinWidth(MIN_BUTTON_WIDTH);
 
         HorizontalLayout assigneeButtonContainer = new HorizontalLayout(onlyMeButton, everyoneButton);
@@ -63,14 +65,17 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusLabel.setClassName("status-label");
 
         openStatusBtn = new Button("Open");
+        openStatusBtn.setId("open-status-btn");
         openStatusBtn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         openStatusBtn.setMinWidth(MIN_BUTTON_WIDTH);
 
         allKindsStatusBtn = new Button("All kinds");
+        allKindsStatusBtn.setId("all-kinds-btn");
         allKindsStatusBtn.setMinWidth(MIN_BUTTON_WIDTH);
 
         customStatusBtn = new Button();
         customStatusBtn.setText("Custom...");
+        customStatusBtn.setId("custom-btn");
         customContextMenu = new ContextMenu(customStatusBtn);
 
         customContextMenu.addAttachListener((ComponentEventListener<AttachEvent>) event ->
@@ -84,6 +89,7 @@ public class ReportStatusLayout extends HorizontalLayout {
         statusButtonContainer.setSpacing(false);
 
         Button editColumnsBtn = new Button(VaadinIcon.PENCIL.create());
+        editColumnsBtn.setId("edit-columns-btn");
 
         columnsContextMenu = new ContextMenu(editColumnsBtn);
         columnsContextMenu.setOpenOnClick(true);
@@ -91,9 +97,11 @@ public class ReportStatusLayout extends HorizontalLayout {
                 columnsContextMenu.getElement().setAttribute("onclick", "event.preventDefault()"));
 
         Button clearSelectionBtn = new Button(VaadinIcon.CLOSE_CIRCLE.create());
+        clearSelectionBtn.setId("clear-selection-btn");
         clearSelectionBtn.getElement().setProperty("title", "Clear selections");
 
         Button clearSortBtn = new Button(new Icon("lumo", "unordered-list"));
+        clearSortBtn.setId("clear-sort-btn");
         clearSortBtn.getElement().setProperty("title", "Clear sorting");
 
         HorizontalLayout gridOptionBtnContainer = new HorizontalLayout(editColumnsBtn, clearSelectionBtn, clearSortBtn);

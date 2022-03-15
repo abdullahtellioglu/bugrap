@@ -35,7 +35,10 @@ public class ProjectToolbarLayout extends HorizontalLayout {
     public ProjectToolbarLayout() {
 
         reportBugButton = new Button("Report a bug", new Icon(VaadinIcon.BUG));
+        reportBugButton.setId("report-bug");
+
         requestFeatureButton = new Button("Request a feature", new Icon(VaadinIcon.LIGHTBULB));
+        requestFeatureButton.setId("request-feature-btn");
 
         Icon cogIcon = VaadinIcon.COG.create();
         Label manageProjectLabel = new Label("Manage project");
@@ -43,9 +46,11 @@ public class ProjectToolbarLayout extends HorizontalLayout {
         HorizontalLayout manageButtonInternalContainer = new HorizontalLayout(cogIcon, manageProjectLabel, manageProjectCountSpan);
         manageButtonInternalContainer.setClassName("manage-button-container");
         manageProjectButton = new Button(manageButtonInternalContainer);
+        manageProjectButton.setId("manage-project-btn");
         manageProjectButton.setThemeName("icon-text-badge-button");
 
         searchTextField = new TextField();
+        searchTextField.setId("search");
         searchTextField.setPlaceholder("Search");
         searchTextField.setPrefixComponent(VaadinIcon.SEARCH.create());
         searchTextField.setClearButtonVisible(true);

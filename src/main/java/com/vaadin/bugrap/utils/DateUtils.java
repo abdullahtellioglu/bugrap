@@ -12,25 +12,29 @@ public class DateUtils {
             TimeUnit.DAYS.toMillis(1),
             TimeUnit.HOURS.toMillis(1),
             TimeUnit.MINUTES.toMillis(1),
-            TimeUnit.SECONDS.toMillis(1) );
-    public static final List<String> timesString = Arrays.asList("year","month","day","hour","minute","second");
+            TimeUnit.SECONDS.toMillis(1));
+    protected static final List<String> timesString = Arrays.asList("year", "month", "day", "hour", "minute", "second");
+
+    private DateUtils() {
+
+    }
 
     public static String getRelativeFormat(Date date) {
-        if(date == null){
+        if (date == null) {
             return "";
         }
         Date now = new Date();
         long duration = now.getTime() - date.getTime();
         StringBuilder res = new StringBuilder();
-        for(int i=0;i< times.size(); i++) {
+        for (int i = 0; i < times.size(); i++) {
             Long current = times.get(i);
-            long temp = duration/current;
-            if(temp>0) {
-                res.append(temp).append(" ").append( timesString.get(i) ).append(temp != 1 ? "s" : "").append(" ago");
+            long temp = duration / current;
+            if (temp > 0) {
+                res.append(temp).append(" ").append(timesString.get(i)).append(temp != 1 ? "s" : "").append(" ago");
                 break;
             }
         }
-        if("".equals(res.toString()))
+        if ("".equals(res.toString()))
             return "0 seconds ago";
         else
             return res.toString();

@@ -33,13 +33,13 @@ public class HomePage extends VerticalLayout {
     private final UserService userService;
     private final ProjectLayout projectLayout;
 
+    public HomePage(ReportService reportService, ProjectService projectService, UserService userService, ProjectLayout projectLayout, ProjectSelector projectSelector) {
 
-    public HomePage(ReportService reportService, ProjectService projectService, UserService userService, ProjectLayout projectLayout) {
         this.projectLayout = projectLayout;
         this.reportService = reportService;
         this.userService = userService;
+        this.projectSelector = projectSelector;
 
-        projectSelector = new ProjectSelector();
         List<Project> activeProjects = projectService.getActiveProjects();
 
         // we dont have login screen. That's why we need to find the current user from assignees if it is first run, otherwise read username from cookie

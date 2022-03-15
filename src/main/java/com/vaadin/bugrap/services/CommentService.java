@@ -50,7 +50,6 @@ public class CommentService {
             comments.add(comment);
         }
         comments.forEach(bugrapRepository::save);
-
     }
 
     /**

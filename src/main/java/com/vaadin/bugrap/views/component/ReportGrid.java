@@ -14,6 +14,7 @@ import com.vaadin.flow.data.provider.SortDirection;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializableFunction;
 import org.vaadin.bugrap.domain.entities.Report;
+import org.vaadin.bugrap.domain.entities.Reporter;
 
 import java.util.*;
 
@@ -116,18 +117,7 @@ public class ReportGrid extends Grid<Report> {
     private void initializeColumns() {
         versionColumn = addColumn(createReportVersionComponentRenderer()).setHeader(GridColumn.VERSION.getLabel());
         versionColumn.setId(GridColumn.VERSION.name());
-        versionColumn.setComparator((o1, o2) -> {
-            if (o1.getVersion() == null && o2.getVersion() != null) {
-                return 1;
-            }
-            if (o1.getVersion() != null && o2.getVersion() == null) {
-                return -1;
-            }
-            if (o1.getVersion() != null && o2.getVersion() != null) {
-                return o1.getVersion().getVersion().compareTo(o2.getVersion().getVersion());
-            }
-            return 0;
-        });
+        versionColumn.setComparator(Comparator.nullsLast(Comparator.comparing(Report::getVersion, Comparator.nullsLast(Comparator.naturalOrder()))));
 
         priorityColumn = addColumn(createPriorityComponentRenderer()).setHeader(GridColumn.PRIORITY.getLabel());
         priorityColumn.setId(GridColumn.PRIORITY.name());
@@ -148,18 +138,9 @@ public class ReportGrid extends Grid<Report> {
 
         Column<Report> assignedToColumn = addColumn(createAssigneeComponentRenderer()).setHeader(GridColumn.ASSIGNED_TO.getLabel());
         assignedToColumn.setId(GridColumn.ASSIGNED_TO.name());
-        assignedToColumn.setComparator((o1, o2) -> {
-            if (o1.getAssigned() == null && o2.getAssigned() != null) {
-                return 1;
-            }
-            if (o1.getAssigned() != null && o2.getAssigned() == null) {
-                return -1;
-            }
-            if (o1.getAssigned() != null && o2.getAssigned() != null) {
-                return o1.getAssigned().getName().compareTo(o2.getAssigned().getName());
-            }
-            return 0;
-        });
+        assignedToColumn.setComparator(
+                Comparator.comparing(a -> Optional.ofNullable(a.getAssigned()).map(Reporter::getName).orElse(null),
+                        Comparator.nullsLast(Comparator.naturalOrder())));
 
         Column<Report> lastModifiedColumn = addColumn(createReportLastModifiedComponentRenderer()).setHeader(GridColumn.LAST_MODIFIED.getLabel());
         lastModifiedColumn.setId(GridColumn.LAST_MODIFIED.name());
@@ -201,7 +182,7 @@ public class ReportGrid extends Grid<Report> {
     /**
      * Updating the indicators
      *
-     * @param sortOrderList
+     * @param sortOrderList list of sorted orders
      */
     private void updateSorting(List<GridSortOrder<Report>> sortOrderList) {
         clearSorting();

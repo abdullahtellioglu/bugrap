@@ -1,11 +1,12 @@
 package com.vaadin.bugrap.util;
 
-import org.checkerframework.checker.nullness.qual.Nullable;
 import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
+
+import javax.annotation.Nullable;
 
 public class TestUtils {
     //maybe imported from environment
@@ -18,7 +19,8 @@ public class TestUtils {
     public static ExpectedCondition<Object> waitHomePageLoadCondition() {
         return new ExpectedCondition<>() {
             @Override
-            public @Nullable WebElement apply(@Nullable WebDriver webDriver) {
+            public @Nullable
+            WebElement apply(@Nullable WebDriver webDriver) {
                 if (webDriver == null) {
                     return null;
                 }

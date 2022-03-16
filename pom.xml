@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/157bfed3-9bc0-427b-b356-a7883e184a9e -->
     <groupId>com.vaadin.bugrap</groupId>
@@ -11,7 +12,7 @@
 
     <properties>
         <java.version>11</java.version>
-        <vaadin.version>22.0.5</vaadin.version>
+        <vaadin.version>23.0.1</vaadin.version>
     </properties>
 
     <parent>
@@ -140,7 +141,6 @@
             <version>4.13.1</version>
             <scope>test</scope>
         </dependency>
-
 
 
     </dependencies>

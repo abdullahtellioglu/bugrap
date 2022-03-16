@@ -45,10 +45,7 @@ public class ProjectSelector extends HorizontalLayout {
         add(projectSelect);
         add(rightContainer);
         add(chartDialog);
-        showChartBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> {
-            chartDialog.initializeData();
-            chartDialog.open();
-        });
+        showChartBtn.addClickListener((ComponentEventListener<ClickEvent<Button>>) event -> chartDialog.open());
 
         projectSelect.addValueChangeListener((HasValue.ValueChangeListener<AbstractField.ComponentValueChangeEvent<Select<Project>, Project>>) event -> {
             Project value = event.getValue();

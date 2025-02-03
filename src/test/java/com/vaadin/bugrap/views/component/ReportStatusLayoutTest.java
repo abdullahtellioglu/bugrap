@@ -42,6 +42,7 @@ public class ReportStatusLayoutTest extends TestBenchTestCase {
         for (int i = 0; i < rowCount; i++) {
             GridTRElement row = gridElement.getRow(i);
             GridTHTDElement cell = row.getCell(column);
+
             String text = cell.getText();
             assigneeNames.add(text);
         }

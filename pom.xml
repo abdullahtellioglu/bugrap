@@ -11,14 +11,14 @@
     <packaging>jar</packaging>
 
     <properties>
-        <java.version>11</java.version>
-        <vaadin.version>23.0.1</vaadin.version>
+        <java.version>21</java.version>
+        <vaadin.version>24.7.0.alpha6</vaadin.version>
     </properties>
 
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.6.2</version>
+        <version>3.3.2</version>
     </parent>
 
     <repositories>
@@ -134,6 +134,15 @@
             <artifactId>bugrap-domain-hibernate</artifactId>
             <version>1.1</version>
         </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.jsoup/jsoup -->
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+            <version>1.18.3</version>
+        </dependency>
+
+
         <!-- https://mvnrepository.com/artifact/junit/junit -->
         <dependency>
             <groupId>junit</groupId>
@@ -175,7 +184,7 @@
                         </goals>
                     </execution>
                 </executions>
-            </plugin>
+            </plugin><plugin><groupId>org.apache.maven.plugins</groupId><artifactId>maven-compiler-plugin</artifactId><configuration><source>21</source><target>21</target></configuration></plugin>
         </plugins>
     </build>
 

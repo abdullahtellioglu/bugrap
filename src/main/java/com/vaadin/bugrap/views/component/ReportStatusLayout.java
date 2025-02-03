@@ -1,5 +1,7 @@
 package com.vaadin.bugrap.views.component;
 
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+
 import com.vaadin.bugrap.views.model.GridColumn;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.ClickEvent;
@@ -54,8 +56,8 @@ public class ReportStatusLayout extends HorizontalLayout {
         everyoneButton = new Button("Everyone");
         everyoneButton.setId("everyone-btn");
         everyoneButton.setMinWidth(MIN_BUTTON_WIDTH);
+HorizontalLayout assigneeButtonContainer = new HorizontalLayout(onlyMeButton, everyoneButton);
 
-        HorizontalLayout assigneeButtonContainer = new HorizontalLayout(onlyMeButton, everyoneButton);
         assigneeButtonContainer.setClassName("assignee-container");
         assigneeButtonContainer.setPadding(false);
         assigneeButtonContainer.setMargin(false);
@@ -297,4 +299,10 @@ public class ReportStatusLayout extends HorizontalLayout {
         });
 
     }
+public record LabelAndValue(String label, String value, boolean enabled) {
+
+    LabelAndValue(String label, String value) {
+        this(label, value, true);
+    }
+}
 }

@@ -1,5 +1,5 @@
-import {html, customElement} from 'lit-element';
-import {LitElement} from "lit";
+import { customElement } from 'lit/decorators.js';
+import {html, LitElement} from "lit";
 
 @customElement("distribution-bar")
 export class DistributionBar extends LitElement {

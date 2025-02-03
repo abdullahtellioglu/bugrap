@@ -20,8 +20,8 @@ public class ProjectVersionComboBox extends HorizontalLayout {
 
         Label label = new Label("Reports for");
 
-        add(versionComboBox);
         add(label);
+        add(versionComboBox);
 
         setClassName("version-combo-container");
         setJustifyContentMode(JustifyContentMode.CENTER);

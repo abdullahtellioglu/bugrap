@@ -2,10 +2,10 @@ package com.vaadin.bugrap.utils;
 
 import com.vaadin.flow.server.VaadinRequest;
 import com.vaadin.flow.server.VaadinResponse;
+import jakarta.servlet.http.Cookie;
 import org.vaadin.bugrap.domain.entities.Project;
 import org.vaadin.bugrap.domain.entities.ProjectVersion;
 
-import javax.servlet.http.Cookie;
 import java.util.Arrays;
 import java.util.Optional;
 

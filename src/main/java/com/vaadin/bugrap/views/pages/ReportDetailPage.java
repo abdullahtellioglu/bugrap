@@ -30,7 +30,6 @@ import org.vaadin.bugrap.domain.entities.Reporter;
  */
 @PageTitle("Report Detail")
 @Route(value = "/report")
-@RouteAlias(value = "/report")
 public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<Long>, OverviewUpdateBar.ReportsUpdateListener {
     private final ProjectService projectService;
     private final ReportService reportService;
@@ -69,6 +68,8 @@ public class ReportDetailPage extends VerticalLayout implements HasUrlParameter<
         innerPanel.setPadding(false);
         innerPanel.setHeight(100, Unit.PERCENTAGE);
         innerPanel.setWidth(100, Unit.PERCENTAGE);
+Button button = new Button("Button");
+innerPanel.add(button);
 
         VerticalLayout topLayout = new VerticalLayout(reportDetailBreadcrumb, innerPanel);
         topLayout.setHeight("calc(100% - 520px)");

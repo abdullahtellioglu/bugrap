@@ -42,8 +42,9 @@ public class ProjectToolbarLayout extends HorizontalLayout {
 
         Icon cogIcon = VaadinIcon.COG.create();
         Label manageProjectLabel = new Label("Manage project");
+Button button = new Button("Button");
         manageProjectCountSpan = new Span("10");
-        HorizontalLayout manageButtonInternalContainer = new HorizontalLayout(cogIcon, manageProjectLabel, manageProjectCountSpan);
+HorizontalLayout manageButtonInternalContainer = new HorizontalLayout(cogIcon, manageProjectLabel, button, manageProjectCountSpan);
         manageButtonInternalContainer.setClassName("manage-button-container");
         manageProjectButton = new Button(manageButtonInternalContainer);
         manageProjectButton.setId("manage-project-btn");

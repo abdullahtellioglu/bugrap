@@ -15,7 +15,7 @@
 @import url('./custom/not-found-layout.css');
 
 html {
-    --_lumo-button-background-color: white;
+    /*--_lumo-button-background-color: white;*/
     --lumo-primary-color: #4B5BD6;
     --lumo-primary-text-color: #414FBC;
     --lumo-secondary-color: #0A8BAE;
